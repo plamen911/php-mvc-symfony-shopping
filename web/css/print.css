@@ -1,0 +1,19 @@
+div.large-3.columns img {
+    max-width: 137px !important;
+}
+.columns {
+    width: auto !important;
+}
+div.small-4.columns {
+    float: right;
+}
+div.large-4.columns {
+    min-width: 110px;
+}
+div.row .large-9 .large-12 h3 {
+    font-size: 1em;
+    max-width: 200px;
+}
+.large-4 p > span {
+    font-size: .9em;
+}

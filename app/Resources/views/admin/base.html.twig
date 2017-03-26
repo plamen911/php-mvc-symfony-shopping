@@ -1,0 +1,146 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+    <link rel="stylesheet"
+          href="{{ asset('css/ui-lightness/jquery-ui-1.10.4.custom.min.css') }}"/>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- based on: http://aehlke.github.io/tag-it/examples.html -->
+    <link rel="stylesheet" href="{{ asset('css/jquery.tagit.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/tagit.ui-zendesk.css') }}"/>
+
+    <link rel="stylesheet" href="{{ asset('css/foundation.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/foundation-icons.css') }}"/>
+
+    <!-- Based on: http://www.dropzonejs.com/ -->
+    <link rel="stylesheet" href="{{ asset('css/dropzone.css') }}"/>
+
+    <style>
+        .top-bar input[type="text"], .top-bar .button {
+            height: 1.9rem;
+        }
+
+        #dropzone {
+            border-radius: 3px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.13);
+            margin: 30px 0;
+            padding: 4px;
+        }
+
+        #sortable {
+            padding: 0;
+            margin: 0;
+        }
+
+        #sortable li {
+            list-style-type: none;
+        }
+
+        #sortable li span.handler {
+            margin-top: 10px;
+            margin-left: 26%;
+        }
+
+        #sortable a.delimage {
+            position: absolute;
+            margin-left: 10px;
+            margin-top: 4px;
+            font-weight: bold;
+            color: #FF0000;
+            padding: 2px 6px;
+        }
+
+        #sortable a.delimage:hover {
+            background-color: #000000;
+        }
+
+        #discount_codes input {
+            width: 94px;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    {% block stylesheets %}{% endblock %}
+    <script src="{{ asset('js/vendor/modernizr.js') }}"></script>
+
+    <script src="{{ asset('js/vendor/jquery.js') }}"></script>
+    <script src="{{ asset('js/foundation.min.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui-1.10.4.custom.min.js') }}"></script>
+    <!-- Based on: http://www.dropzonejs.com/ -->
+    <script src="{{ asset('js/dropzone.js') }}"></script>
+    <!-- Based on: http://aehlke.github.io/tag-it/examples.html -->
+    <script src="{{ asset('js/tag-it.js') }}"></script>
+    <!-- foundation datepicker start -->
+    <link rel="stylesheet" href="{{ asset('css/foundation-datepicker.css') }}"/>
+    <script src="{{ asset('js/foundation-datepicker.js') }}"></script>
+    <!-- foundation datepicker end -->
+    <script>
+        var ajax_endpoint = '/ajax';
+    </script>
+</head>
+<body>
+<header id="header">
+    <div data-annotation-alignment="bottom left" data-edit-main-image="Banner"
+         data-collection-id="54f7f6c9e4b0683da0c7e15c" data-content-field="page-settings" class="wrapper clear"
+         id="yui_3_17_2_1_1432459322975_342">
+        <div class="primary-image default"></div>
+        <div class="logo-image" id="logo">
+            <h1 data-content-field="site-title" class="site-title" id="yui_3_17_2_1_1432459322975_341">
+                <div class="site-title-border"></div>
+                <a href="/" id="yui_3_17_2_1_1432459322975_340">
+                    <img alt="Enjoy Kitchen Catering" src="{{ asset('img/logo.png') }}">
+                    <span class="site-title-span" data-shrink-original-size="100" style="letter-spacing: 0.04em;">Enjoy Kitchen Catering</span>
+                </a>
+            </h1>
+        </div>
+        <div class="folder-nav"></div>
+    </div>
+</header>
+
+{% block navigation %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% for type, messages in app.session.flashbag.all() %}
+    <div data-alert class="alert-box {{ type }} radius">
+        {% for message in messages %}
+            {{message}}
+        {% endfor %}
+        <a href="#" class="close">&times;</a>
+    </div>
+{% endfor %}
+
+{% block body %}{% endblock %}
+
+<footer id="footer" class="large-12 columns">
+    <div class="row">
+        <div class="large-6 medium-6 small-12 columns social">
+            <div id="footerNav">
+                <a href="#" title="Instagram" target="_blank">
+                    <i class="fa fa-instagram"></i>
+                </a>
+                <a href="#" title="Facebook" target="_blank">
+                    <i class="fa fa-facebook"></i>
+                </a>
+                <a href="#" title="Twitter" target="_blank">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </div>
+        </div>
+        <div class="large-6 medium-6 small-12 columns contacts">
+            <h3>
+                <a href="mailto:hello@enjoykitchencatering.com" target="_blank">hello@enjoykitchencatering.com</a>
+            </h3>
+            <h3>
+                <a href="#" target="_blank">508.XXX.XXXX</a>
+            </h3>
+        </div>
+    </div>
+</footer>
+<script>
+    $(document).foundation();
+</script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

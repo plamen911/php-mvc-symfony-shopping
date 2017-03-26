@@ -1,0 +1,29 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block body %}
+    <section id="adminLoginContainer" class="content-box">
+        <div class="row">
+            <div class="large-6 columns large-centered">
+                <fieldset>
+                    <legend>Register Form</legend>
+                    {{ form_start(form) }}
+                        {{ form_row(form.firstName, {'required': false}) }}
+                        {{ form_row(form.lastName, {'required': false}) }}
+                        {{ form_row(form.email) }}
+                        {{ form_row(form.password) }}
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <input type="submit" value="Register" class="button expand">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <a href="{{ path('security_login') }}">Login</a>
+                            </div>
+                        </div>
+                    {{ form_end(form) }}
+                </fieldset>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block body %}
+    <section id="adminLoginContainer" class="content-box">
+        <div class="row">
+            <div class="large-6 columns large-centered">
+                <fieldset>
+                    <legend>Login Form</legend>
+                    <form action="{{ path('security_login') }}" method="post" accept-charset="utf-8" id="loginForm">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                        <input type="hidden" name="_target_path" value="/admin"/>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <label>E-mail
+                                    <input type="text" id="user_email" name="_username" value="{{ last_username }}"
+                                           autofocus="true" placeholder="E-mail...">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <label>Password
+                                    <input type="password" id="password" name="_password" placeholder="Password...">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <input type="submit" value="Login" class="button expand">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <a href="{{ path('user_register') }}">Register</a>
+                            </div>
+                        </div>
+                    </form>
+                </fieldset>
+            </div>
+        </div>
+    </section>
+{% endblock %}
