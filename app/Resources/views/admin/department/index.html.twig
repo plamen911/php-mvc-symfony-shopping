@@ -156,6 +156,62 @@
                     } // End error
                 }); // End ajax method
             });
+
+            $('#addItemBtn').bind('click', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'post',
+                    url: '{{ path('department_new') }}',
+                    dataType: 'json',
+                    data: { _csrf_token: '{{ csrf_token('authenticate') }}' },
+                    success: function (result) {
+                        if (!result) {
+                            alert('No response from the server.');
+                        } else if (result.code == '2') {
+                            window.location = '{{ path('security_login') }}';// expired session
+                        } else if (result.code == '0') {
+                            var item_id = result.data.id;
+                            var name = result.data.name;
+
+                            var s = '<li id="item_' + item_id + '">';
+                            s += '<div class="row collapse">';
+                            s += '<div class="small-2 columns handle">';
+                            s += '<label><input type="checkbox" id="show_in_menu_' + item_id + '" name="show_in_menu_' + item_id + '" value="1" data-department-id="' + item_id + '"> ';
+                            s += '<small>Show in menu</small>';
+                            s += '</label>';
+                            s += '</div>';
+                            s += '<div class="small-10 columns handle">';
+                            s += '<div class="row collapse">';
+                            s += '<div class="small-1 columns handle">';
+                            s += '<span class="prefix">';
+                            s += '<span class="ui-icon ui-icon-arrowthick-2-n-s handler"></span>';
+                            s += '</span>';
+                            s += '</div>';
+                            s += '<div class="small-6 columns">';
+                            s += '<input type="text" id="name_' + item_id + '" name="name_' + item_id + '" data-department-id="' + item_id + '" value="' + name + '" placeholder="Department Title..." />';
+                            s += '</div>';
+                            s += '<div class="small-4 columns">';
+                            s += '<a id="goto_children_' + item_id + '" href="#" class="button postfix tiny">Go to categories</a>';
+                            s += '</div>';
+                            s += '<div class="small-1 columns">';
+                            s += '<a id="delItem_' + item_id + '" href="#" class="button postfix alert">X</a>';
+                            s += '</div>';
+                            s += '</div>';
+                            s += '</li>';
+
+                            $('#sortable').append(s).sortable('refresh');
+                        } else {
+                            alert(result.message);
+                        }
+                    }, // End success
+                    error: function (request, error) {
+                        var errmsg = '';
+                        if (error == 'timeout') errmsg = 'The request timed out';
+                        else errmsg = "ERROR: " + error;
+                        if (errmsg != '') alert(errmsg);
+                    } // End error
+                });
+            });
         });
 
         // sortable

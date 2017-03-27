@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="categories")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
- * @UniqueEntity(fields="email", message="Category name should be unique.")
  */
 class Category
 {
@@ -28,7 +27,7 @@ class Category
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, nullable=true, unique=true)
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="This field is required.")
      */
     private $name;

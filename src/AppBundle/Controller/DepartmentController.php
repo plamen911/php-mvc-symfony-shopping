@@ -22,7 +22,6 @@ class DepartmentController extends Controller
      *
      * @Route("/", name="department_index")
      * @Method("GET")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
     public function indexAction()
     {
@@ -39,42 +38,26 @@ class DepartmentController extends Controller
      * Creates a new department entity.
      *
      * @Route("/new", name="department_new")
-     * @Method({"GET", "POST"})
+     * @Method({"POST"})
+     *
+     * @return JsonResponse
      */
-    public function newAction(Request $request)
+    public function newAction()
     {
         $department = new Department();
-        $form = $this->createForm('AppBundle\Form\DepartmentType', $department);
-        $form->handleRequest($request);
+        $department->setName('Unspecified');
+        $department->setShowInMenu(false);
+        $department->setPosition($this->getMaxPosition() + 1);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($department);
-            $em->flush();
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($department);
+        $em->flush();
 
-            return $this->redirectToRoute('department_show', array('id' => $department->getId()));
-        }
-
-        return $this->render('admin/department/new.html.twig', array(
-            'department' => $department,
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Finds and displays a department entity.
-     *
-     * @Route("/{id}", name="department_show")
-     * @Method("GET")
-     */
-    public function showAction(Department $department)
-    {
-        $deleteForm = $this->createDeleteForm($department);
-
-        return $this->render('admin/department/show.html.twig', array(
-            'department' => $department,
-            'delete_form' => $deleteForm->createView(),
-        ));
+        return new JsonResponse([
+            'code' => 0,
+            'message' => 'ok',
+            'data' => ['id' => $department->getId(), 'name' => $department->getName()]
+        ]);
     }
 
     /**
@@ -102,11 +85,10 @@ class DepartmentController extends Controller
             ]);
         }
 
-        $em = $this->getDoctrine()->getManager();
-
         $department->setName($request->get('name'));
         $department->setShowInMenu((bool)$request->get('show_in_menu'));
 
+        $em = $this->getDoctrine()->getManager();
         $em->persist($department);
         $em->flush();
 
@@ -165,7 +147,7 @@ class DepartmentController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($department);
-            $em->flush($department);
+            $em->flush();
         }
 
         return $this->redirectToRoute('department_index');
@@ -185,5 +167,12 @@ class DepartmentController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    private function getMaxPosition() {
+        $em = $this->getDoctrine()->getManager();
+        $department = $em->getRepository('AppBundle:Department')->findOneBy([], ['position' => 'DESC']);
+
+        return ($department) ? $department->getPosition() : 0;
     }
 }
