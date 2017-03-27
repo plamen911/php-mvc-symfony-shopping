@@ -8,7 +8,7 @@
                     <legend>Login Form</legend>
                     <form action="{{ path('security_login') }}" method="post" accept-charset="utf-8" id="loginForm">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-                        <input type="hidden" name="_target_path" value="/admin"/>
+                        <input type="hidden" name="_target_path" value="/admin/departments"/>
                         <div class="row">
                             <div class="large-12 columns">
                                 <label>E-mail

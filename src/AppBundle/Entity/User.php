@@ -29,14 +29,14 @@ class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="firstName", type="string", length=255, nullable=true)
+     * @ORM\Column(name="first_name", type="string", length=255, nullable=true)
      */
     private $firstName;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="lastName", type="string", length=255, nullable=true)
+     * @ORM\Column(name="last_name", type="string", length=255, nullable=true)
      */
     private $lastName;
 
@@ -44,7 +44,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="Това поле е задължително.")
+     * @Assert\NotBlank(message="This field is required.")
      * @Assert\Email()
      */
     private $email;
@@ -53,7 +53,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255)
-     * @Assert\NotBlank(message="Това поле е задължително.")
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $password;
 
@@ -119,13 +119,6 @@ class User implements UserInterface
      * @ORM\Column(name="facebook", type="string", length=255, nullable=true)
      */
     private $facebook;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="lastLogin", type="datetime", nullable=true)
-     */
-    private $lastLogin;
 
     /**
      * @var bool
@@ -471,30 +464,6 @@ class User implements UserInterface
     public function getFacebook()
     {
         return $this->facebook;
-    }
-
-    /**
-     * Set lastLogin
-     *
-     * @param \DateTime $lastLogin
-     *
-     * @return User
-     */
-    public function setLastLogin($lastLogin)
-    {
-        $this->lastLogin = $lastLogin;
-
-        return $this;
-    }
-
-    /**
-     * Get lastLogin
-     *
-     * @return \DateTime
-     */
-    public function getLastLogin()
-    {
-        return $this->lastLogin;
     }
 
     /**

@@ -1,0 +1,196 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block body %}
+    <section id="adminIndexViewContainer" class="admin-content-container">
+        <div class="row">
+            <div class="large-8 columns large-centered">
+                <form id="itemsForm">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Store Departments</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <ul id="sortable">
+                                {% for department in departments %}
+                                    <li id="item_{{ department.id }}">
+                                        <div class="row collapse">
+                                            <div class="small-2 columns handle">
+                                                <label><input type="checkbox" id="show_in_menu_{{ department.id }}"
+                                                              name="show_in_menu_{{ department.id }}"
+                                                              data-department-id="{{ department.id }}"
+                                                              value="1"{% if department.showInMenu %} checked="checked"{% endif %} />
+                                                    <small>Show in menu</small>
+                                                </label>
+                                            </div>
+                                            <div class="small-10 columns handle">
+                                                <div class="row collapse">
+                                                    <div class="small-1 columns handle">
+                                                <span class="prefix">
+                                                    <span class="ui-icon ui-icon-arrowthick-2-n-s handler"></span>
+                                                </span>
+                                                    </div>
+                                                    <div class="small-6 columns">
+                                                        <input type="text" id="name_{{ department.id }}"
+                                                               name="name_{{ department.id }}"
+                                                               value="{{ department.name }}"
+                                                               data-department-id="{{ department.id }}"
+                                                               placeholder="Department Title..."/>
+                                                    </div>
+                                                    <div class="small-4 columns">
+                                                        <a id="goto_children_{{ department.id }}"
+                                                           href="#"
+                                                           class="button postfix tiny">Go to categories</a>
+                                                    </div>
+                                                    <div class="small-1 columns">
+                                                        <a id="delItem_{{ department.id }}" href="#"
+                                                           class="button postfix alert">X</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <input type="button" id="addItemBtn" name="addItemBtn" value="Add Department"
+                                   class="button expand"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Reveal Modals begin -->
+        <div id="confirmModal" class="reveal-modal small" data-reveal>
+            <h2>Please Confirm</h2>
+            <p>Are you sure you want to delete this department?</p>
+            <p>
+                <a id="btnNo" href="#" class="button secondary">No</a>
+                <a id="btnYes" href="#" class="button alert">Yes</a>
+            </p>
+            <a class="close-reveal-modal">&#215;</a>
+        </div>
+    </section>
+
+
+    {#    <h1>Departments list</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Showinmenu</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for department in departments %}
+                <tr>
+                    <td><a href="{{ path('department_show', { 'id': department.id }) }}">{{ department.id }}</a></td>
+                    <td>{{ department.name }}</td>
+                    <td>{{ department.position }}</td>
+                    <td>{% if department.showInMenu %}Yes{% else %}No{% endif %}</td>
+                    <td>
+                        <ul>
+                            <li>
+                                <a href="{{ path('department_show', { 'id': department.id }) }}">show</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('department_edit', { 'id': department.id }) }}">edit</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <ul>
+            <li>
+                <a href="{{ path('department_new') }}">Create a new department</a>
+            </li>
+        </ul>#}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var ajax_endpoint = '{{ app.request.uri }}';
+
+        $(function () {
+            prepareSortable();
+
+            // update department
+            $('#sortable').on('change', 'input[id^="name_"], input[id^="show_in_menu_"]', function () {
+                var item_id = $(this).data('department-id');
+                var name = $.trim($('#name_' + item_id).val());
+                var show_in_menu = $('#show_in_menu_' + item_id)[0].checked ? 1 : 0;
+
+                $.ajax({
+                    type: 'post',
+                    url: ajax_endpoint + item_id + '/edit',
+                    dataType: 'json',
+                    data: { _csrf_token: '{{ csrf_token('authenticate') }}', id: item_id, name: name, show_in_menu: show_in_menu }, // End data
+                    success: function (result) {
+                        if (!result) {
+                            alert('No response from the server.');
+                        } else if (result.code == '2') {
+                            window.location = '{{ path('security_login') }}';// expired session
+                        } else if (result.code == '0') {
+                            //ok
+                        } else {
+                            alert(result.message);
+                        }
+                    }, // End success
+                    error: function (request, error) {
+                        var errmsg = '';
+                        if (error == 'timeout') errmsg = 'The request timed out';
+                        else errmsg = "ERROR: " + error;
+                        if (errmsg != '') alert(errmsg);
+                    } // End error
+                }); // End ajax method
+            });
+        });
+
+        // sortable
+        function prepareSortable () {
+            $('#sortable').sortable({
+                handle: '.handle',
+                axis: 'y',
+                items: 'li',
+                update: function (event, ui) {
+                    $.ajax({
+                        type: 'post',
+                        url: '{{ path('department_sort') }}',
+                        dataType: 'json',
+                        data: $('#sortable').sortable('serialize'), // End data
+                        success: function (result) {
+                            if (!result) {
+                                alert('No response from the server.');
+                            } else if (result.code == '2') {
+                                window.location = '{{ path('security_login') }}';// expired session
+                            } else if (result.code == '0') {
+                                //ok
+                            } else {
+                                alert(result.message);
+                            }
+                        }, // End success
+                        error: function (request, error) {
+                            var errmsg = '';
+                            if (error == "timeout") errmsg = "The request timed out";
+                            else errmsg = "ERROR: " + error;
+                            if (errmsg != '') console.log(errmsg);
+                        } // End error
+                    }); // End ajax method
+                }
+            });
+        }
+
+    </script>
+{% endblock %}
