@@ -173,6 +173,9 @@ class DepartmentController extends Controller
         $em = $this->getDoctrine()->getManager();
         $department = $em->getRepository('AppBundle:Department')->findOneBy([], ['position' => 'DESC']);
 
+        /**
+         * @var \AppBundle\Entity\Department $department
+         */
         return ($department) ? $department->getPosition() : 0;
     }
 }
