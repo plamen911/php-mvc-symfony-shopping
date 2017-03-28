@@ -109,11 +109,11 @@ class ProductController extends Controller
      * Displays a form to edit an existing product entity.
      *
      * @Route("/{id}/edit", name="product_edit")
-     * @Method({"POST"})
+     * @Method({"GET","POST"})
      *
      * @param int $id
      * @param Request $request
-     * @return JsonResponse
+     * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function editAction($id = 0, Request $request)
     {
@@ -122,25 +122,37 @@ class ProductController extends Controller
          */
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
 
-        if ($product === null) {
+        if($request->isXmlHttpRequest()) {
+            if ($product === null) {
+                return new JsonResponse([
+                    'code' => 1,
+                    'message' => 'Product not found',
+                    'data' => []
+                ]);
+            }
+
+            $product->setName($request->get('name'));
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($product);
+            $em->flush();
+
             return new JsonResponse([
-                'code' => 1,
-                'message' => 'Product not found',
-                'data' => []
+                'code' => 0,
+                'message' => 'ok',
+                'data' => ['id' => $product->getId(), 'categoryId' => $product->getCategoryId()]
             ]);
+
+        } else {
+
+
+
+            return $this->render('admin/product/edit.html.twig', array(
+                'department' => $product->getCategory()->getDepartment(),
+                'category' => $product->getCategory(),
+                'product' => $product,
+            ));
         }
-
-        $product->setName($request->get('name'));
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($product);
-        $em->flush();
-
-        return new JsonResponse([
-            'code' => 0,
-            'message' => 'ok',
-            'data' => ['id' => $product->getId(), 'categoryId' => $product->getCategoryId()]
-        ]);
     }
 
     /**

@@ -69,6 +69,13 @@ class Product
     /**
      * @var string
      *
+     * @ORM\Column(name="availability_days", type="string", length=255, nullable=true)
+     */
+    private $availabilityDays;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="description", type="string", length=255, nullable=true)
      */
     private $description;
@@ -353,5 +360,22 @@ class Product
     {
         $this->photos = $photos;
     }
+
+    /**
+     * @return string
+     */
+    public function getAvailabilityDays()
+    {
+        return $this->availabilityDays;
+    }
+
+    /**
+     * @param string $availabilityDays
+     */
+    public function setAvailabilityDays($availabilityDays)
+    {
+        $this->availabilityDays = $availabilityDays;
+    }
+
 }
 

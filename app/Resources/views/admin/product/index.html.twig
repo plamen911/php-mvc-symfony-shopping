@@ -42,7 +42,7 @@
                                                     </div>
                                                     <div class="small-4 columns">
                                                         <a id="goto_children_{{ product.id }}"
-                                                           href="#"
+                                                           href="{{ path('product_edit', {'departmentId': category.departmentId, 'categoryId': category.id, 'id': product.id}) }}"
                                                            class="button postfix tiny">Details</a>
                                                     </div>
                                                     <div class="small-1 columns">
@@ -146,7 +146,7 @@
                             s += '<input type="text" id="name_' + item_id + '" name="name_' + item_id + '" data-product-id="' + item_id + '" value="' + name + '" placeholder="Product Title..." />';
                             s += '</div>';
                             s += '<div class="small-4 columns">';
-                            s += '<a id="goto_children_' + item_id + '" href="#" class="button postfix tiny">Details</a>';
+                            s += '<a id="goto_children_' + item_id + '" href="admin/department/{{ department.id }}/category/{{ category.id }}/products/' + item_id + '/edit" class="button postfix tiny">Details</a>';
                             s += '</div>';
                             s += '<div class="small-1 columns">';
                             s += '<a id="delItem_' + item_id + '" href="#" class="button postfix alert">X</a>';

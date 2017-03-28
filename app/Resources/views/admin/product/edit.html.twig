@@ -1,0 +1,120 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Store Products{% endblock %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumbs">
+        <li><a href="{{ path('department_index') }}">Departments</a></li>
+        <li><a href="{{ path('category_index', {'departmentId': department.id}) }}">Categories</a></li>
+        <li><a href="{{ path('product_index', {'departmentId': department.id, 'categoryId': category.id}) }}">Products</a></li>
+        <li class="current"><a href="{{ path('product_index', {'departmentId': department.id, 'categoryId': category.id, 'productId': product.id}) }}">Product Details</a></li>
+    </ul>
+{% endblock %}
+
+{% block body %}
+    <section id="adminProductsDetailViewContainer" class="admin-content-container">
+        <div class="row">
+            <div class="large-8 columns large-centered">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="large-10 columns">
+                            <label>Product Title
+                                <input type="text" id="title" name="title" placeholder="Product Title..." value="{{ product.name }}" autofocus="true">
+                            </label>
+                        </div>
+                        <div class="large-2 columns">
+                            <label style="margin-top:28px;">
+                                <input type="checkbox" id="taxable" name="taxable" value="1"{% if product.isTaxable %} checked="checked"{% endif %}>
+                                Taxable
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-4 columns">
+                            <label>Price
+                                <input type="number" id="price" name="price" placeholder="Price..." value="{{ product.price }}">
+                            </label>
+                        </div>
+                        <div class="large-4 columns">
+                            <label>Qty
+                                <input type="number" id="qty" name="qty" placeholder="Qty..." value="{{ product.qty }}">
+                            </label>
+                        </div>
+                        <div class="large-4 columns">
+                            <label>Dimension
+                                <select id="dimension" name="dimension">
+                                    <option value="">&nbsp;</option>
+                                    <option value="lb"{% if (product.dimension == 'lb') %} selected="selected"{% endif %}>lb</option>
+                                    <option value="oz"{% if (product.dimension == 'oz') %} selected="selected"{% endif %}>oz</option>
+                                    <option value="per person"{% if (product.dimension == 'per person') %} selected="selected"{% endif %}>per person</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Availability Time
+                                <select id="availability" name="availability">
+                                    <option value="">- product is not available -</option>
+                                    <option value="daily"{% if (product.availability == 'daily') %} selected="selected"{% endif %}>Daily</option>
+                                    <option value="weekdays"{% if (product.availability == 'weekdays') %} selected="selected"{% endif %}>Week Days</option>
+                                    <option value="multidays"{% if (product.availability == 'multidays') %} selected="selected"{% endif %}>Multiple Days</option>
+                                </select>
+                            </label>
+
+                            <div id="availability-tags"{% if (product.availability != 'weekdays' and product.availability != 'multidays') %} style="display: none;"{% endif %}>
+                                <input type="hidden" id="availabilityDays" name="availabilityDays" value="{{ product.availabilityDays }}">
+                                <ul id="availability_days_tags"></ul>
+                                <small id="availability_days_error" class="error" style="display: none;"></small>
+                            </div>
+                            <p{% if (product.availability != 'weekdays') %} style="display: none;"{% endif %} id="prepopulate-inner"><a id="lnkPrepopulate" href="#" class="button tiny">Pre-populate Dates</a></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Description
+                                <textarea id="description" name="description" placeholder="Product Description...">{{ product.description }}</textarea>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Tags
+                                <small>(comma separated)</small>
+                                <input id="tags" name="tags" value="" data-default-value="" placeholder="Product Tags..." type="text">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Uploaded Images</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <ul id="sortable" class="small-block-grid-2 large-block-grid-4 ui-sortable">
+                                <li id="image_191">
+                                    <a id="delimage_191" href="#" class="delimage">X</a>
+                                    <img data-caption="" class="th" src="http://localhost/ivanov/enjoykitchenonline.com/static/no_image_707x539.gif" alt=""><br>
+                                    <input id="caption_191" name="caption_191" value="" placeholder="Caption..." type="text">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var ajax_endpoint = '{{ app.request.uri }}';
+
+        $(function () {
+
+        });
+
+    </script>
+{% endblock %}
