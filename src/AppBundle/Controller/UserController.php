@@ -35,7 +35,6 @@ class UserController extends Controller
                 return $this->redirectToRoute('user_register');
             }
 
-
             // 3) Encode the password (you could also do this via Doctrine listener)
             $password = $this->get('security.password_encoder')
                 ->encodePassword($user, $user->getPassword());

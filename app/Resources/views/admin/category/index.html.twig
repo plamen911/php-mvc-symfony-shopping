@@ -1,12 +1,6 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}Store Departments{% endblock %}
-
-{% block breadcrumbs %}
-    <ul class="breadcrumbs">
-        <li class="current"><a href="{{ path('department_index') }}">Departments</a></li>
-    </ul>
-{% endblock %}
+{% block title %}Store Categories{% endblock %}
 
 {% block body %}
     <section id="adminIndexViewContainer" class="admin-content-container">
@@ -15,20 +9,20 @@
                 <form id="itemsForm">
                     <div class="row">
                         <div class="large-12 columns">
-                            <h3>Store Departments</h3>
+                            <h3>Store Categories</h3>
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <ul id="sortable">
-                                {% for department in departments %}
-                                    <li id="item_{{ department.id }}">
+                                {% for category in categories %}
+                                    <li id="item_{{ category.id }}">
                                         <div class="row collapse">
                                             <div class="small-2 columns handle">
-                                                <label><input type="checkbox" id="show_in_menu_{{ department.id }}"
-                                                              name="show_in_menu_{{ department.id }}"
-                                                              data-department-id="{{ department.id }}"
-                                                              value="1"{% if department.showInMenu %} checked="checked"{% endif %} />
+                                                <label><input type="checkbox" id="show_in_menu_{{ category.id }}"
+                                                              name="show_in_menu_{{ category.id }}"
+                                                              data-category-id="{{ category.id }}"
+                                                              value="1"{% if category.showInMenu %} checked="checked"{% endif %} />
                                                     <small>Show in menu</small>
                                                 </label>
                                             </div>
@@ -40,19 +34,19 @@
                                                 </span>
                                                     </div>
                                                     <div class="small-6 columns">
-                                                        <input type="text" id="name_{{ department.id }}"
-                                                               name="name_{{ department.id }}"
-                                                               value="{{ department.name }}"
-                                                               data-department-id="{{ department.id }}"
-                                                               placeholder="Department Title..."/>
+                                                        <input type="text" id="name_{{ category.id }}"
+                                                               name="name_{{ category.id }}"
+                                                               value="{{ category.name }}"
+                                                               data-category-id="{{ category.id }}"
+                                                               placeholder="Category Title..."/>
                                                     </div>
                                                     <div class="small-4 columns">
-                                                        <a id="goto_children_{{ department.id }}"
+                                                        <a id="goto_children_{{ category.id }}"
                                                            href="#"
                                                            class="button postfix tiny">Go to categories</a>
                                                     </div>
                                                     <div class="small-1 columns">
-                                                        <a id="delItem_{{ department.id }}" href="#"
+                                                        <a id="delItem_{{ category.id }}" href="#"
                                                            class="button postfix alert">X</a>
                                                     </div>
                                                 </div>
@@ -65,7 +59,7 @@
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            <input type="button" id="addItemBtn" name="addItemBtn" value="Add Department"
+                            <input type="button" id="addItemBtn" name="addItemBtn" value="Add Category"
                                    class="button expand"/>
                         </div>
                     </div>
@@ -76,7 +70,7 @@
         <!-- Reveal Modals begin -->
         <div id="confirmModal" class="reveal-modal small" data-reveal>
             <h2>Please Confirm</h2>
-            <p>Are you sure you want to delete this department?</p>
+            <p>Are you sure you want to delete this category?</p>
             <p>
                 <a id="btnNo" href="#" class="button secondary">No</a>
                 <a id="btnYes" href="#" class="button alert">Yes</a>
@@ -86,7 +80,7 @@
     </section>
 
 
-    {#    <h1>Departments list</h1>
+    {#    <h1>Categorys list</h1>
 
         <table>
             <thead>
@@ -99,19 +93,19 @@
                 </tr>
             </thead>
             <tbody>
-            {% for department in departments %}
+            {% for category in categories %}
                 <tr>
-                    <td><a href="{{ path('department_show', { 'id': department.id }) }}">{{ department.id }}</a></td>
-                    <td>{{ department.name }}</td>
-                    <td>{{ department.position }}</td>
-                    <td>{% if department.showInMenu %}Yes{% else %}No{% endif %}</td>
+                    <td><a href="{{ path('category_show', { 'id': category.id }) }}">{{ category.id }}</a></td>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.position }}</td>
+                    <td>{% if category.showInMenu %}Yes{% else %}No{% endif %}</td>
                     <td>
                         <ul>
                             <li>
-                                <a href="{{ path('department_show', { 'id': department.id }) }}">show</a>
+                                <a href="{{ path('category_show', { 'id': category.id }) }}">show</a>
                             </li>
                             <li>
-                                <a href="{{ path('department_edit', { 'id': department.id }) }}">edit</a>
+                                <a href="{{ path('category_edit', { 'id': category.id }) }}">edit</a>
                             </li>
                         </ul>
                     </td>
@@ -122,7 +116,7 @@
 
         <ul>
             <li>
-                <a href="{{ path('department_new') }}">Create a new department</a>
+                <a href="{{ path('category_new') }}">Create a new category</a>
             </li>
         </ul>#}
 {% endblock %}
@@ -134,9 +128,9 @@
         $(function () {
             prepareSortable();
 
-            // update department
+            // update category
             $('#sortable').on('change', 'input[id^="name_"], input[id^="show_in_menu_"]', function () {
-                var item_id = $(this).data('department-id');
+                var item_id = $(this).data('category-id');
                 var name = $.trim($('#name_' + item_id).val());
                 var show_in_menu = $('#show_in_menu_' + item_id)[0].checked ? 1 : 0;
 
@@ -169,7 +163,7 @@
                 e.preventDefault();
                 $.ajax({
                     type: 'post',
-                    url: '{{ path('department_new') }}',
+                    url: '{{ path('category_new') }}',
                     dataType: 'json',
                     data: { _csrf_token: '{{ csrf_token('authenticate') }}' },
                     success: function (result) {
@@ -184,7 +178,7 @@
                             var s = '<li id="item_' + item_id + '">';
                             s += '<div class="row collapse">';
                             s += '<div class="small-2 columns handle">';
-                            s += '<label><input type="checkbox" id="show_in_menu_' + item_id + '" name="show_in_menu_' + item_id + '" value="1" data-department-id="' + item_id + '"> ';
+                            s += '<label><input type="checkbox" id="show_in_menu_' + item_id + '" name="show_in_menu_' + item_id + '" value="1" data-category-id="' + item_id + '"> ';
                             s += '<small>Show in menu</small>';
                             s += '</label>';
                             s += '</div>';
@@ -196,7 +190,7 @@
                             s += '</span>';
                             s += '</div>';
                             s += '<div class="small-6 columns">';
-                            s += '<input type="text" id="name_' + item_id + '" name="name_' + item_id + '" data-department-id="' + item_id + '" value="' + name + '" placeholder="Department Title..." />';
+                            s += '<input type="text" id="name_' + item_id + '" name="name_' + item_id + '" data-category-id="' + item_id + '" value="' + name + '" placeholder="Category Title..." />';
                             s += '</div>';
                             s += '<div class="small-4 columns">';
                             s += '<a id="goto_children_' + item_id + '" href="#" class="button postfix tiny">Go to categories</a>';
@@ -231,7 +225,7 @@
                 update: function (event, ui) {
                     $.ajax({
                         type: 'post',
-                        url: '{{ path('department_sort') }}',
+                        url: '{{ path('category_sort') }}',
                         dataType: 'json',
                         data: $('#sortable').sortable('serialize'), // End data
                         success: function (result) {

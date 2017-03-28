@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>{% block title %}Welcome!{% endblock %}</title>
+    <title>Administration | {% block title %}{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
     <link rel="stylesheet"
           href="{{ asset('css/ui-lightness/jquery-ui-1.10.4.custom.min.css') }}"/>
@@ -76,9 +76,6 @@
     <link rel="stylesheet" href="{{ asset('css/foundation-datepicker.css') }}"/>
     <script src="{{ asset('js/foundation-datepicker.js') }}"></script>
     <!-- foundation datepicker end -->
-    <script>
-        var ajax_endpoint = '/ajax';
-    </script>
 </head>
 <body>
 <header id="header">
@@ -99,11 +96,61 @@
     </div>
 </header>
 
-{% block navigation %}{% endblock %}
+<div class="fixed">
+    <nav data-topbar="" class="top-bar">
+        <ul class="title-area">
+            <li class="name"></li>
+            <li class="toggle-topbar menu-icon"><a href="">Menu</a></li>
+        </ul>
+        <section class="top-bar-section">
+            {% if app.user %}
+                <ul class="left">
+                    <li><a href="#">Manage Store</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Orders</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Discount Codes</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Settings</a></li>
+                    <li class="divider"></li>
+                </ul>
+            {% endif %}
+            <ul class="right">
+                <li class="divider"></li>
+                {% if app.user %}
+                    <!-- Search Form -->
+                    <li class="has-form">
+                        <form action="#" accept-charset="utf-8" method="get" class="search-form" role="search">
+                            <div class="row collapse">
+                                <div class="large-8 small-9 columns">
+                                    <input id="search-field" name="q" value="" placeholder="Search Products..." class="hint" type="text">
+                                </div>
+                                <div class="large-4 small-3 columns">
+                                    <input id="search-submit" class="alert button expand" value="Search" type="submit">
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                    <!-- End Search Form -->
+                    <li class="divider"></li>
+                    <li class="active">
+                        <a href="{{ path('security_logout') }}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="divider"></li>
+                    <li class="active">
+                        <a href="#">Go To Store</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </section>
+    </nav>
+</div>
+
 {% block breadcrumbs %}{% endblock %}
 
 {% for type, messages in app.session.flashbag.all() %}
-    <div data-alert class="alert-box {{ type }} radius">
+    <div data-alert class="alert-box {{ type }} radius" style="margin-top: 48px; margin-bottom: 0;">
         {% for message in messages %}
             {{message}}
         {% endfor %}
