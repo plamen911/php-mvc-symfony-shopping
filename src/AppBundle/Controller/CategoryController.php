@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Category;
+use AppBundle\Entity\Department;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -13,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Category controller.
  *
- * @Route("admin/categories")
+ * @Route("admin/department/{departmentId}/categories")
  */
 class CategoryController extends Controller
 {
@@ -22,14 +23,22 @@ class CategoryController extends Controller
      *
      * @Route("/", name="category_index")
      * @Method("GET")
+     *
+     * @param int $departmentId
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function indexAction($departmentId = 0)
     {
-        $em = $this->getDoctrine()->getManager();
+        $department = $this->getDoctrine()->getRepository(Department::class)->find((int)$departmentId);
+        if ($department === null) {
+            throw $this->createNotFoundException('Department does not exist!');
+        }
 
-        $categories = $em->getRepository('AppBundle:Category')->findBy([], ['position' => 'ASC']);
+        $em = $this->getDoctrine()->getManager();
+        $categories = $em->getRepository('AppBundle:Category')->findBy(['departmentId' => $department->getId()], ['position' => 'ASC']);
 
         return $this->render('admin/category/index.html.twig', array(
+            'department' => $department,
             'categories' => $categories,
         ));
     }
@@ -40,14 +49,25 @@ class CategoryController extends Controller
      * @Route("/new", name="category_new")
      * @Method({"POST"})
      *
+     * @param int $departmentId
      * @return JsonResponse
      */
-    public function newAction()
+    public function newAction($departmentId = 0)
     {
+        $department = $this->getDoctrine()->getRepository(Department::class)->find((int)$departmentId);
+        if ($department === null) {
+            return new JsonResponse([
+                'code' => 1,
+                'message' => 'Department does not exist!',
+                'data' => []
+            ]);
+        }
+
         $category = new Category();
+        $category->setDepartmentId($department->getId());
+        $category->setDepartment($department);
         $category->setName('Unspecified');
-        $category->setShowInMenu(false);
-        $category->setPosition($this->getMaxPosition() + 1);
+        $category->setPosition($this->getMaxPosition($departmentId) + 1);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($category);
@@ -56,7 +76,7 @@ class CategoryController extends Controller
         return new JsonResponse([
             'code' => 0,
             'message' => 'ok',
-            'data' => ['id' => $category->getId(), 'name' => $category->getName()]
+            'data' => ['id' => $category->getId(), 'departmentId' => $department->getId(), 'name' => $category->getName()]
         ]);
     }
 
@@ -86,7 +106,7 @@ class CategoryController extends Controller
         }
 
         $category->setName($request->get('name'));
-        $category->setShowInMenu((bool)$request->get('show_in_menu'));
+        $category->setDescription($request->get('description'));
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($category);
@@ -95,7 +115,7 @@ class CategoryController extends Controller
         return new JsonResponse([
             'code' => 0,
             'message' => 'ok',
-            'data' => ['id' => $category->getId()]
+            'data' => ['id' => $category->getId(), 'departmentId' => $category->getDepartmentId()]
         ]);
     }
 
@@ -169,9 +189,9 @@ class CategoryController extends Controller
         ;
     }
 
-    private function getMaxPosition() {
+    private function getMaxPosition($departmentId = 0) {
         $em = $this->getDoctrine()->getManager();
-        $category = $em->getRepository('AppBundle:Category')->findOneBy([], ['position' => 'DESC']);
+        $category = $em->getRepository('AppBundle:Category')->findOneBy(['departmentId' => $departmentId], ['position' => 'DESC']);
 
         /**
          * @var \AppBundle\Entity\Category $category

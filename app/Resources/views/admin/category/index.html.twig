@@ -2,6 +2,13 @@
 
 {% block title %}Store Categories{% endblock %}
 
+{% block breadcrumbs %}
+    <ul class="breadcrumbs">
+        <li><a href="{{ path('department_index') }}">Departments</a></li>
+        <li class="current"><a href="{{ path('category_new', {'departmentId': department.id}) }}">Categories</a></li>
+    </ul>
+{% endblock %}
+
 {% block body %}
     <section id="adminIndexViewContainer" class="admin-content-container">
         <div class="row">
@@ -9,7 +16,7 @@
                 <form id="itemsForm">
                     <div class="row">
                         <div class="large-12 columns">
-                            <h3>Store Categories</h3>
+                            <h3>Categories in {{ department.name }}</h3>
                         </div>
                     </div>
                     <div class="row">
@@ -18,20 +25,12 @@
                                 {% for category in categories %}
                                     <li id="item_{{ category.id }}">
                                         <div class="row collapse">
-                                            <div class="small-2 columns handle">
-                                                <label><input type="checkbox" id="show_in_menu_{{ category.id }}"
-                                                              name="show_in_menu_{{ category.id }}"
-                                                              data-category-id="{{ category.id }}"
-                                                              value="1"{% if category.showInMenu %} checked="checked"{% endif %} />
-                                                    <small>Show in menu</small>
-                                                </label>
-                                            </div>
-                                            <div class="small-10 columns handle">
+                                            <div class="small-12 columns handle">
                                                 <div class="row collapse">
                                                     <div class="small-1 columns handle">
-                                                <span class="prefix">
-                                                    <span class="ui-icon ui-icon-arrowthick-2-n-s handler"></span>
-                                                </span>
+                                                        <span class="prefix">
+                                                            <span class="ui-icon ui-icon-arrowthick-2-n-s handler"></span>
+                                                        </span>
                                                     </div>
                                                     <div class="small-6 columns">
                                                         <input type="text" id="name_{{ category.id }}"
@@ -43,13 +42,19 @@
                                                     <div class="small-4 columns">
                                                         <a id="goto_children_{{ category.id }}"
                                                            href="#"
-                                                           class="button postfix tiny">Go to categories</a>
+                                                           class="button postfix tiny">Go to products</a>
                                                     </div>
                                                     <div class="small-1 columns">
                                                         <a id="delItem_{{ category.id }}" href="#"
                                                            class="button postfix alert">X</a>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="row collapse">
+                                            <div class="small-1 columns"></div>
+                                            <div class="small-11 columns">
+                                                <textarea id="description_{{ category.id }}" name="description_{{ category.id }}" data-category-id="{{ category.id }}" placeholder="Sub heading...">{{ category.description }}</textarea>
                                             </div>
                                         </div>
                                     </li>
@@ -129,16 +134,16 @@
             prepareSortable();
 
             // update category
-            $('#sortable').on('change', 'input[id^="name_"], input[id^="show_in_menu_"]', function () {
+            $('#sortable').on('change', 'input[id^="name_"], textarea[id^="description_"]', function () {
                 var item_id = $(this).data('category-id');
                 var name = $.trim($('#name_' + item_id).val());
-                var show_in_menu = $('#show_in_menu_' + item_id)[0].checked ? 1 : 0;
+                var description = $.trim($('#description_' + item_id).val());
 
                 $.ajax({
                     type: 'post',
                     url: ajax_endpoint + item_id + '/edit',
                     dataType: 'json',
-                    data: { _csrf_token: '{{ csrf_token('authenticate') }}', id: item_id, name: name, show_in_menu: show_in_menu }, // End data
+                    data: { _csrf_token: '{{ csrf_token('authenticate') }}', id: item_id, name: name, description: description }, // End data
                     success: function (result) {
                         if (!result) {
                             alert('No response from the server.');
@@ -163,7 +168,7 @@
                 e.preventDefault();
                 $.ajax({
                     type: 'post',
-                    url: '{{ path('category_new') }}',
+                    url: '{{ path('category_new', {'departmentId': department.id}) }}',
                     dataType: 'json',
                     data: { _csrf_token: '{{ csrf_token('authenticate') }}' },
                     success: function (result) {
@@ -177,12 +182,7 @@
 
                             var s = '<li id="item_' + item_id + '">';
                             s += '<div class="row collapse">';
-                            s += '<div class="small-2 columns handle">';
-                            s += '<label><input type="checkbox" id="show_in_menu_' + item_id + '" name="show_in_menu_' + item_id + '" value="1" data-category-id="' + item_id + '"> ';
-                            s += '<small>Show in menu</small>';
-                            s += '</label>';
-                            s += '</div>';
-                            s += '<div class="small-10 columns handle">';
+                            s += '<div class="small-12 columns handle">';
                             s += '<div class="row collapse">';
                             s += '<div class="small-1 columns handle">';
                             s += '<span class="prefix">';
@@ -197,6 +197,12 @@
                             s += '</div>';
                             s += '<div class="small-1 columns">';
                             s += '<a id="delItem_' + item_id + '" href="#" class="button postfix alert">X</a>';
+                            s += '</div>';
+                            s += '</div>';
+                            s += '<div class="row collapse">';
+                            s += '<div class="small-1 columns"></div>';
+                            s += '<div class="small-11 columns">';
+                            s += '<textarea id="description_' + item_id + '" name="description_' + item_id + '" placeholder="Sub heading..."></textarea>';
                             s += '</div>';
                             s += '</div>';
                             s += '</li>';
@@ -225,7 +231,7 @@
                 update: function (event, ui) {
                     $.ajax({
                         type: 'post',
-                        url: '{{ path('category_sort') }}',
+                        url: '{{ path('category_sort', {'departmentId': department.id}) }}',
                         dataType: 'json',
                         data: $('#sortable').sortable('serialize'), // End data
                         success: function (result) {
