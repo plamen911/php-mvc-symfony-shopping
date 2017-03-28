@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Category;
+use AppBundle\Entity\Photo;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Department;
 use AppBundle\Form\ProductType;
@@ -10,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -145,6 +147,7 @@ class ProductController extends Controller
             ]);
 
         } else {
+
             if ($product === null) {
                 throw $this->createNotFoundException('Product not found');
             }
@@ -157,6 +160,35 @@ class ProductController extends Controller
             if ($editForm->isSubmitted() && $editForm->isValid()) {
                 $em = $this->getDoctrine()->getManager();
 
+                /**
+                 * @var UploadedFile $file
+                 */
+                foreach ($request->files->get('photos') as $file) {
+                    if ($file === null) continue;
+
+                    $fileName = str_replace(' ', '_', $file->getClientOriginalName());
+                    if (preg_match('/.*?\.(gif|png|jpg|jpeg)$/i', $fileName, $matches)) {
+                        $fileName = substr($fileName, 0, strrpos($fileName, '.')) . '_' . time() . '.' . $matches[1];
+                    }
+
+                    // move takes the target directory and then the
+                    // target filename to move to
+                    $file->move(Photo::getUploadDirOriginals(), $fileName);
+
+                    // Image resize
+                    Photo::resizeImage(Photo::getUploadDirOriginals() . $fileName, Photo::getUploadDirThumbs() . $fileName, 100, 100);
+                    Photo::resizeImage(Photo::getUploadDirOriginals() . $fileName, Photo::getUploadDirLarge() . $fileName, 1120, 720);
+
+                    $photo = new Photo();
+                    $photo->setProductId($product->getId());
+                    $photo->setProduct($product);
+                    $photo->setFileName($fileName);
+                    $photo->setCaption('');
+                    $photo->setPosition($this->getPhotoMaxPosition($product->getId()) + 1);
+
+                    $em->persist($photo);
+                    $em->flush();
+                }
 
                 $em->persist($product);
                 $em->flush();
@@ -175,6 +207,7 @@ class ProductController extends Controller
                 'category' => $product->getCategory(),
                 'product' => $product,
                 'form' => $editForm->createView(),
+                'uploadDirLarge' => Photo::getUploadDirLarge()
             ));
         }
     }
@@ -257,5 +290,15 @@ class ProductController extends Controller
          * @var \AppBundle\Entity\Product $product
          */
         return ($product) ? $product->getPosition() : 0;
+    }
+
+    private function getPhotoMaxPosition($productId = 0) {
+        $em = $this->getDoctrine()->getManager();
+        $photo = $em->getRepository('AppBundle:Photo')->findOneBy(['productId' => $productId], ['position' => 'DESC']);
+
+        /**
+         * @var \AppBundle\Entity\Product $photo
+         */
+        return ($photo) ? $photo->getPosition() : 0;
     }
 }

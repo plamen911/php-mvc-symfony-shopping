@@ -64,7 +64,7 @@
                     <div class="row">
                         <div class="large-12 columns">
                             <label>Photo(s) Upload
-                                <input type="file" name="fileName" placeholder="Product Photo...">
+                                <input type="file" name="photos[]" placeholder="Product Photo..." multiple>
                             </label>
                         </div>
                     </div>
@@ -86,7 +86,7 @@
                                     {% for photo in product.photos %}
                                         <li id="image{{ photo.id }}">
                                             <a id="delimage{{ photo.id }}" href="#" class="delimage">X</a>
-                                            <img data-caption="" class="th" src="static/no_image_707x539.gif" alt=""><br>
+                                            <img data-caption="" class="th" src="/{{ uploadDirLarge }}{{ photo.fileName }}" alt=""><br>
                                             <input type="text" id="caption{{ photo.id }}" name="caption{{ photo.id }}" value="{{ photo.caption }}" placeholder="Caption...">
                                         </li>
                                     {% endfor %}
