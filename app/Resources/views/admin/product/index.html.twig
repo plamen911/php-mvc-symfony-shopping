@@ -1,11 +1,12 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}Store Categories{% endblock %}
+{% block title %}Store Products{% endblock %}
 
 {% block breadcrumbs %}
     <ul class="breadcrumbs">
         <li><a href="{{ path('department_index') }}">Departments</a></li>
-        <li class="current"><a href="{{ path('category_new', {'departmentId': department.id}) }}">Categories</a></li>
+        <li><a href="{{ path('category_index', {'departmentId': department.id}) }}">Categories</a></li>
+        <li class="current"><a href="{{ path('product_index', {'departmentId': department.id, 'categoryId': category.id}) }}">Products</a></li>
     </ul>
 {% endblock %}
 
@@ -16,14 +17,14 @@
                 <form id="itemsForm">
                     <div class="row">
                         <div class="large-12 columns">
-                            <h3>Categories in {{ department.name }}</h3>
+                            <h3>Products in {{ category.name }}</h3>
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <ul id="sortable">
-                                {% for category in categories %}
-                                    <li id="item_{{ category.id }}">
+                                {% for product in products %}
+                                    <li id="item_{{ product.id }}">
                                         <div class="row collapse">
                                             <div class="small-12 columns handle">
                                                 <div class="row collapse">
@@ -33,28 +34,22 @@
                                                         </span>
                                                     </div>
                                                     <div class="small-6 columns">
-                                                        <input type="text" id="name_{{ category.id }}"
-                                                               name="name_{{ category.id }}"
-                                                               value="{{ category.name }}"
-                                                               data-category-id="{{ category.id }}"
-                                                               placeholder="Category Title..."/>
+                                                        <input type="text" id="name_{{ product.id }}"
+                                                               name="name_{{ product.id }}"
+                                                               value="{{ product.name }}"
+                                                               data-product-id="{{ product.id }}"
+                                                               placeholder="Product Title..."/>
                                                     </div>
                                                     <div class="small-4 columns">
-                                                        <a id="goto_children_{{ category.id }}"
-                                                           href="{{ path('product_index', {'departmentId': category.departmentId, 'categoryId': category.id}) }}"
-                                                           class="button postfix tiny">Go to products</a>
+                                                        <a id="goto_children_{{ product.id }}"
+                                                           href="#"
+                                                           class="button postfix tiny">Details</a>
                                                     </div>
                                                     <div class="small-1 columns">
-                                                        <a id="delItem_{{ category.id }}" href="#"
+                                                        <a id="delItem_{{ product.id }}" href="#"
                                                            class="button postfix alert">X</a>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="row collapse">
-                                            <div class="small-1 columns"></div>
-                                            <div class="small-11 columns">
-                                                <textarea id="description_{{ category.id }}" name="description_{{ category.id }}" data-category-id="{{ category.id }}" placeholder="Sub heading...">{{ category.description }}</textarea>
                                             </div>
                                         </div>
                                     </li>
@@ -64,7 +59,7 @@
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            <input type="button" id="addItemBtn" name="addItemBtn" value="Add Category"
+                            <input type="button" id="addItemBtn" name="addItemBtn" value="Add Product"
                                    class="button expand"/>
                         </div>
                     </div>
@@ -75,7 +70,7 @@
         <!-- Reveal Modals begin -->
         <div id="confirmModal" class="reveal-modal small" data-reveal>
             <h2>Please Confirm</h2>
-            <p>Are you sure you want to delete this category?</p>
+            <p>Are you sure you want to delete this product?</p>
             <p>
                 <a id="btnNo" href="#" class="button secondary">No</a>
                 <a id="btnYes" href="#" class="button alert">Yes</a>
@@ -83,47 +78,6 @@
             <a class="close-reveal-modal">&#215;</a>
         </div>
     </section>
-
-
-    {#    <h1>Categorys list</h1>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Showinmenu</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for category in categories %}
-                <tr>
-                    <td><a href="{{ path('category_show', { 'id': category.id }) }}">{{ category.id }}</a></td>
-                    <td>{{ category.name }}</td>
-                    <td>{{ category.position }}</td>
-                    <td>{% if category.showInMenu %}Yes{% else %}No{% endif %}</td>
-                    <td>
-                        <ul>
-                            <li>
-                                <a href="{{ path('category_show', { 'id': category.id }) }}">show</a>
-                            </li>
-                            <li>
-                                <a href="{{ path('category_edit', { 'id': category.id }) }}">edit</a>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        <ul>
-            <li>
-                <a href="{{ path('category_new') }}">Create a new category</a>
-            </li>
-        </ul>#}
 {% endblock %}
 
 {% block javascripts %}
@@ -133,17 +87,16 @@
         $(function () {
             prepareSortable();
 
-            // update category
-            $('#sortable').on('change', 'input[id^="name_"], textarea[id^="description_"]', function () {
-                var item_id = $(this).data('category-id');
+            // update product
+            $('#sortable').on('change', 'input[id^="name_"]', function () {
+                var item_id = $(this).data('product-id');
                 var name = $.trim($('#name_' + item_id).val());
-                var description = $.trim($('#description_' + item_id).val());
 
                 $.ajax({
                     type: 'post',
                     url: ajax_endpoint + item_id + '/edit',
                     dataType: 'json',
-                    data: { _csrf_token: '{{ csrf_token('authenticate') }}', id: item_id, name: name, description: description }, // End data
+                    data: { _csrf_token: '{{ csrf_token('authenticate') }}', id: item_id, name: name }, // End data
                     success: function (result) {
                         if (!result) {
                             alert('No response from the server.');
@@ -168,7 +121,7 @@
                 e.preventDefault();
                 $.ajax({
                     type: 'post',
-                    url: '{{ path('category_new', {'departmentId': department.id}) }}',
+                    url: '{{ path('product_new', {'departmentId': department.id, 'categoryId': category.id}) }}',
                     dataType: 'json',
                     data: { _csrf_token: '{{ csrf_token('authenticate') }}' },
                     success: function (result) {
@@ -190,19 +143,13 @@
                             s += '</span>';
                             s += '</div>';
                             s += '<div class="small-6 columns">';
-                            s += '<input type="text" id="name_' + item_id + '" name="name_' + item_id + '" data-category-id="' + item_id + '" value="' + name + '" placeholder="Category Title..." />';
+                            s += '<input type="text" id="name_' + item_id + '" name="name_' + item_id + '" data-product-id="' + item_id + '" value="' + name + '" placeholder="Product Title..." />';
                             s += '</div>';
                             s += '<div class="small-4 columns">';
-                            s += '<a id="goto_children_' + item_id + '" href="admin/department/{{ department.id }}/category/' + item_id + '/products/" class="button postfix tiny">Go to products</a>';
+                            s += '<a id="goto_children_' + item_id + '" href="#" class="button postfix tiny">Details</a>';
                             s += '</div>';
                             s += '<div class="small-1 columns">';
                             s += '<a id="delItem_' + item_id + '" href="#" class="button postfix alert">X</a>';
-                            s += '</div>';
-                            s += '</div>';
-                            s += '<div class="row collapse">';
-                            s += '<div class="small-1 columns"></div>';
-                            s += '<div class="small-11 columns">';
-                            s += '<textarea id="description_' + item_id + '" name="description_' + item_id + '" placeholder="Sub heading..."></textarea>';
                             s += '</div>';
                             s += '</div>';
                             s += '</li>';
@@ -231,7 +178,7 @@
                 update: function (event, ui) {
                     $.ajax({
                         type: 'post',
-                        url: '{{ path('category_sort', {'departmentId': department.id}) }}',
+                        url: '{{ path('product_sort', {'departmentId': department.id, 'categoryId': category.id}) }}',
                         dataType: 'json',
                         data: $('#sortable').sortable('serialize'), // End data
                         success: function (result) {
