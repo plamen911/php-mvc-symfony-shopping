@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Department;
+use AppBundle\Form\ProductType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -144,13 +145,36 @@ class ProductController extends Controller
             ]);
 
         } else {
+            if ($product === null) {
+                throw $this->createNotFoundException('Product not found');
+            }
+
+            $editForm = $this->createForm(ProductType::class, $product);
+            $editForm->handleRequest($request);
+
+            //dump($editForm->isValid());
+
+            if ($editForm->isSubmitted() && $editForm->isValid()) {
+                $em = $this->getDoctrine()->getManager();
 
 
+                $em->persist($product);
+                $em->flush();
+
+                $this->addFlash('success', 'Product successfully saved.');
+                return $this->redirectToRoute('product_edit', array(
+                        'departmentId' => $product->getCategory()->getDepartmentId(),
+                        'categoryId' => $product->getCategoryId(),
+                        'id' => $product->getId()
+                    )
+                );
+            }
 
             return $this->render('admin/product/edit.html.twig', array(
                 'department' => $product->getCategory()->getDepartment(),
                 'category' => $product->getCategory(),
                 'product' => $product,
+                'form' => $editForm->createView(),
             ));
         }
     }

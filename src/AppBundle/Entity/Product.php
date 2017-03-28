@@ -376,6 +376,5 @@ class Product
     {
         $this->availabilityDays = $availabilityDays;
     }
-
 }
 

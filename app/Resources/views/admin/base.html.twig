@@ -150,7 +150,7 @@
 {% block breadcrumbs %}{% endblock %}
 
 {% for type, messages in app.session.flashbag.all() %}
-    <div data-alert class="alert-box {{ type }} radius" style="margin-top: 48px; margin-bottom: 0;">
+    <div data-alert class="alert-box {{ type }} radius"{% block alert_inline_styles %}{% endblock %}">
         {% for message in messages %}
             {{message}}
         {% endfor %}

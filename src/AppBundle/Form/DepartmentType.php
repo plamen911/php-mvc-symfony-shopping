@@ -13,7 +13,7 @@ class DepartmentType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name')->add('position')->add('showInMenu')        ;
+        $builder->add('name')->add('position')->add('showInMenu');
     }
     
     /**
@@ -31,7 +31,7 @@ class DepartmentType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'appbundle_department';
+        return 'app_bundle_department_type';
     }
 
 
