@@ -119,6 +119,7 @@
 
             $('#addItemBtn').bind('click', function (e) {
                 e.preventDefault();
+
                 $.ajax({
                     type: 'post',
                     url: '{{ path('product_new', {'departmentId': department.id, 'categoryId': category.id}) }}',
@@ -146,7 +147,7 @@
                             s += '<input type="text" id="name_' + item_id + '" name="name_' + item_id + '" data-product-id="' + item_id + '" value="' + name + '" placeholder="Product Title..." />';
                             s += '</div>';
                             s += '<div class="small-4 columns">';
-                            s += '<a id="goto_children_' + item_id + '" href="admin/department/{{ department.id }}/category/{{ category.id }}/products/' + item_id + '/edit" class="button postfix tiny">Details</a>';
+                            s += '<a id="goto_children_' + item_id + '" href="' + ajax_endpoint + item_id + '/edit" class="button postfix tiny">Details</a>';
                             s += '</div>';
                             s += '<div class="small-1 columns">';
                             s += '<a id="delItem_' + item_id + '" href="#" class="button postfix alert">X</a>';
