@@ -190,6 +190,18 @@ class ProductController extends Controller
                     $em->flush();
                 }
 
+                // update photo captions
+                foreach ($request->request->all() as $key => $item) {
+                    if (preg_match('/^caption_(\d+)$/', $key, $matches)) {
+                        $photo = $em->getRepository('AppBundle:Photo')->find($matches[1]);
+                        if ($photo !== null) {
+                            $photo->setCaption(trim($item));
+                            $em->persist($photo);
+                            $em->flush();
+                        }
+                    }
+                }
+
                 $em->persist($product);
                 $em->flush();
 
@@ -234,6 +246,40 @@ class ProductController extends Controller
                 if ($product) {
                     $product->setPosition($i + 1);
                     $em->persist($product);
+                    $em->flush();
+                }
+            }
+        }
+
+        return new JsonResponse([
+            'code' => 0,
+            'message' => 'ok',
+            'data' => []
+        ]);
+    }
+
+    /**
+     * Sort departments with drag and drop.
+     *
+     * @Route("/sort-photos", name="photo_sort")
+     * @Method({"POST"})
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function sortPhotosAction(Request $request)
+    {
+        $sorted = $request->get('image', []);
+        if (!empty($sorted)) {
+            $em = $this->getDoctrine()->getManager();
+            foreach ($sorted as $i => $item_id) {
+                /**
+                 * @var \AppBundle\Entity\Photo $photo
+                 */
+                $photo = $this->getDoctrine()->getRepository(Photo::class)->find($item_id);
+                if ($photo) {
+                    $photo->setPosition($i + 1);
+                    $em->persist($photo);
                     $em->flush();
                 }
             }

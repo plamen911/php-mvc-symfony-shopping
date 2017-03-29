@@ -82,12 +82,12 @@
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
-                                <ul id="sortable" class="small-block-grid-2 large-block-grid-4 ui-sortable">
+                                <ul id="sortable" class="small-block-grid-2 large-block-grid-4">
                                     {% for photo in product.photos %}
-                                        <li id="image{{ photo.id }}">
-                                            <a id="delimage{{ photo.id }}" href="#" class="delimage">X</a>
+                                        <li id="image_{{ photo.id }}">
+                                            <a id="delimage_{{ photo.id }}" href="#" class="delimage">X</a>
                                             <img data-caption="" class="th" src="/{{ uploadDirLarge }}{{ photo.fileName }}" alt=""><br>
-                                            <input type="text" id="caption{{ photo.id }}" name="caption{{ photo.id }}" value="{{ photo.caption }}" placeholder="Caption...">
+                                            <input type="text" id="caption_{{ photo.id }}" name="caption_{{ photo.id }}" value="{{ photo.caption }}" placeholder="Caption...">
                                         </li>
                                     {% endfor %}
                                 </ul>
@@ -105,7 +105,66 @@
         var ajax_endpoint = '{{ app.request.uri }}';
 
         $(function () {
+            $sortableElem = $('#sortable');
+            
+            // sortable
+            $sortableElem.sortable({
+                items: 'li',
+                update: function (event, ui) {
+                    $.ajax({
+                        type: 'post',
+                        url: '{{ path('photo_sort', {'departmentId': department.id, 'categoryId': category.id}) }}',
+                        dataType: 'json',
+                        data: $('#sortable').sortable('serialize'), // End data
+                        success: function (result) {
+                            if (!result) {
+                                alert('No response from the server.');
+                            } else if (result.code == '2') {
+                                window.location = '{{ path('security_login') }}';// expired session
+                            } else if (result.code == '0') {
+                                //ok
+                            } else {
+                                alert(result.message);
+                            }
+                        }, // End success
+                        error: function (request, error) {
+                            var errmsg = '';
+                            if (error == 'timeout') errmsg = 'The request timed out';
+                            else errmsg = 'ERROR: ' + error;
+                            if (errmsg != '') console.log(errmsg);
+                        } // End error
+                    }); // End ajax method
+                }
+            });
 
+            $sortableElem.on('click', 'a[id^="delimage_"]', function(e){
+                e.preventDefault();
+                var photo_id = $(this).attr('id').split('_')[1];
+                $.ajax({
+                    type: 'post',
+                    url: ajax_endpoint,
+                    dataType: 'json',
+                    data: { ajax_req: 'delete_photo', photo_id: photo_id }, // End data
+                    success: function(result) {
+                        if(!result) {
+                            alert('No response from the server.');
+                        } else if (result.code == '2') {
+                            window.location = '{{ path('security_login') }}';// expired session
+                        } else if(result.code == '0') {
+                            $('#image_' + photo_id).remove();
+                            $('#sortable').sortable('refresh');
+                        } else {
+                            alert(result.message);
+                        }
+                    }, // End success
+                    error: function(request, error) {
+                        var errmsg = '';
+                        if (error == 'timeout') errmsg = 'The request timed out';
+                        else errmsg = 'ERROR: ' + error;
+                        if (errmsg != '') alert(errmsg);
+                    } // End error
+                }); // End ajax method
+            });
         });
 
     </script>

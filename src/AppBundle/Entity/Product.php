@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -106,6 +107,7 @@ class Product
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Photo", mappedBy="product")
+     * @OrderBy({"position" = "ASC"})
      */
     private $photos;
 
