@@ -293,6 +293,58 @@ class ProductController extends Controller
     }
 
     /**
+     * Delete photo.
+     *
+     * @Route("/{productId}/photo/{photoId}", name="photo_delete")
+     * @Method({"POST"})
+     *
+     * @param int $productId
+     * @param int $photoId
+     * @return JsonResponse
+     */
+    public function deletePhoto($productId = 0, $photoId = 0)
+    {
+        /**
+         * @var \AppBundle\Entity\Product $product
+         */
+        $product = $this->getDoctrine()->getRepository(Product::class)->find($productId);
+        if ($product === null) {
+            return new JsonResponse([
+                'code' => 1,
+                'message' => 'Product not found',
+                'data' => []
+            ]);
+        }
+
+        /**
+         * @var \AppBundle\Entity\Photo $photo
+         */
+        $photo = $this->getDoctrine()->getRepository(Photo::class)->find($photoId);
+        if ($photo === null) {
+            return new JsonResponse([
+                'code' => 1,
+                'message' => 'Photo cannot be found.',
+                'data' => []
+            ]);
+        }
+
+        dump($product);
+        dump($photo);
+
+        $product->removePhoto($photo);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($product);
+        $em->flush();
+
+        return new JsonResponse([
+            'code' => 0,
+            'message' => 'ok',
+            'data' => []
+        ]);
+    }
+
+    /**
      * Deletes a product entity.
      *
      * @Route("/{id}", name="product_delete")

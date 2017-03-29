@@ -139,19 +139,19 @@
 
             $sortableElem.on('click', 'a[id^="delimage_"]', function(e){
                 e.preventDefault();
-                var photo_id = $(this).attr('id').split('_')[1];
+                var photoId = $(this).attr('id').split('_')[1];
                 $.ajax({
                     type: 'post',
-                    url: ajax_endpoint,
+                    url: '{{ path('photo_delete', {'departmentId': department.id, 'categoryId': category.id, 'productId': product.id}) }}/' + photoId,
                     dataType: 'json',
-                    data: { ajax_req: 'delete_photo', photo_id: photo_id }, // End data
+                    data: { productId: {{ product.id }}, photoId: photoId }, // End data
                     success: function(result) {
                         if(!result) {
                             alert('No response from the server.');
                         } else if (result.code == '2') {
                             window.location = '{{ path('security_login') }}';// expired session
                         } else if(result.code == '0') {
-                            $('#image_' + photo_id).remove();
+                            $('#image_' + photoId).remove();
                             $('#sortable').sortable('refresh');
                         } else {
                             alert(result.message);

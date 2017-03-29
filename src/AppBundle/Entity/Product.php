@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\AppBundle;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
@@ -106,7 +107,7 @@ class Product
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Photo", mappedBy="product")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Photo", mappedBy="product", cascade={"persist", "remove"}, orphanRemoval=true)
      * @OrderBy({"position" = "ASC"})
      */
     private $photos;
@@ -377,6 +378,27 @@ class Product
     public function setAvailabilityDays($availabilityDays)
     {
         $this->availabilityDays = $availabilityDays;
+    }
+
+    /**
+     * @param \AppBundle\Entity\Photo $photo
+     */
+    public function removePhoto($photo)
+    {
+        if (!empty($photo->getFileName())) {
+            if (file_exists(Photo::getUploadDirLarge() . $photo->getFileName())) {
+                unlink(Photo::getUploadDirLarge() . $photo->getFileName());
+            }
+            if (file_exists(Photo::getUploadDirThumbs() . $photo->getFileName())) {
+                unlink(Photo::getUploadDirThumbs() . $photo->getFileName());
+            }
+            if (file_exists(Photo::getUploadDirOriginals() . $photo->getFileName())) {
+                unlink(Photo::getUploadDirOriginals() . $photo->getFileName());
+            }
+        }
+
+        $this->photos->removeElement($photo);
+        $photo->setProduct(null);
     }
 }
 
