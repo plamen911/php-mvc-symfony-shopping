@@ -85,10 +85,12 @@
         var ajax_endpoint = '{{ app.request.uri }}';
 
         $(function () {
-            prepareSortable();
+            $sortableElem = $('#sortable');
+
+            prepareSortable($sortableElem);
 
             // update product
-            $('#sortable').on('change', 'input[id^="name_"]', function () {
+            $sortableElem.on('change', 'input[id^="name_"]', function () {
                 var item_id = $(this).data('product-id');
                 var name = $.trim($('#name_' + item_id).val());
 
@@ -111,6 +113,47 @@
                     error: function (request, error) {
                         var errmsg = '';
                         if (error == 'timeout') errmsg = 'The request timed out';
+                        else errmsg = "ERROR: " + error;
+                        if (errmsg != '') alert(errmsg);
+                    } // End error
+                }); // End ajax method
+            });
+
+            $sortableElem.on('click', 'a[id^="delItem_"]', function (e) {
+                e.preventDefault();
+                item_to_delete = $(this).attr('id').split('_')[1];
+                $('#confirmModal').foundation('reveal', 'open');
+            });
+
+            $('#btnNo').bind('click', function (e) {
+                e.preventDefault();
+                $('#confirmModal').foundation('reveal', 'close');
+            });
+
+            $('#btnYes').bind('click', function (e) {
+                e.preventDefault();
+                var item_id = item_to_delete;
+                $.ajax({
+                    type: 'post',
+                    url: ajax_endpoint + item_id + '/delete',
+                    dataType: 'json',
+                    data: { _csrf_token: '{{ csrf_token('authenticate') }}', id: item_id }, // End data
+                    success: function (result) {
+                        if (!result) {
+                            alert('No response from the server.');
+                        } else if (result.code == '2') {
+                            window.location = '{{ path('security_login') }}';// expired session
+                        } else if (result.code == '0') {
+                            item_to_delete = 0;
+                            $('#item_' + item_id).remove();
+                            $('#confirmModal').foundation('reveal', 'close');
+                        } else {
+                            alert(result.message);
+                        }
+                    }, // End success
+                    error: function (request, error) {
+                        var errmsg = '';
+                        if (error == "timeout") errmsg = "The request timed out";
                         else errmsg = "ERROR: " + error;
                         if (errmsg != '') alert(errmsg);
                     } // End error
@@ -171,8 +214,8 @@
         });
 
         // sortable
-        function prepareSortable () {
-            $('#sortable').sortable({
+        function prepareSortable ($sortableElem) {
+            $sortableElem.sortable({
                 handle: '.handle',
                 axis: 'y',
                 items: 'li',

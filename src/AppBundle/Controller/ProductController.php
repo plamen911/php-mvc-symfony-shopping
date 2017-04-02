@@ -344,9 +344,6 @@ class ProductController extends Controller
             ]);
         }
 
-        dump($product);
-        dump($photo);
-
         $product->removePhoto($photo);
 
         $em = $this->getDoctrine()->getManager();
@@ -363,21 +360,42 @@ class ProductController extends Controller
     /**
      * Deletes a product entity.
      *
-     * @Route("/{id}", name="product_delete", requirements={"id": "\d+"})
-     * @Method("DELETE")
+     * @Route("/{id}/delete", name="product_delete", requirements={"id": "\d+"})
+     * @Method("POST")
+     *
+     * @param int $id
+     * @return JsonResponse
      */
-    public function deleteAction(Request $request, Product $product)
+    public function deleteAction($id = 0)
     {
-        $form = $this->createDeleteForm($product);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($product);
-            $em->flush();
+        /**
+         * @var \AppBundle\Entity\Product $product
+         */
+        $product = $this->getDoctrine()->getRepository(Product::class)->find((int)$id);
+        if ($product === null) {
+            return new JsonResponse([
+                'code' => 1,
+                'message' => 'Product not found',
+                'data' => []
+            ]);
         }
 
-        return $this->redirectToRoute('product_index');
+        /**
+         * @var \AppBundle\Entity\Photo $photo
+         */
+        foreach ($product->getPhotos() as $photo) {
+            $product->removePhoto($photo);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($product);
+        $em->flush();
+
+        return new JsonResponse([
+            'code' => 0,
+            'message' => 'ok',
+            'data' => []
+        ]);
     }
 
     /**
