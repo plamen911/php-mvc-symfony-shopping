@@ -360,8 +360,8 @@ class ProductController extends Controller
     /**
      * Deletes a product entity.
      *
-     * @Route("/{id}/delete", name="product_delete", requirements={"id": "\d+"})
-     * @Method("POST")
+     * @Route("/{id}", name="product_delete", requirements={"id": "\d+"})
+     * @Method("DELETE")
      *
      * @param int $id
      * @return JsonResponse

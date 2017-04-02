@@ -134,8 +134,8 @@
                 e.preventDefault();
                 var item_id = item_to_delete;
                 $.ajax({
-                    type: 'post',
-                    url: ajax_endpoint + item_id + '/delete',
+                    type: 'DELETE',
+                    url: ajax_endpoint + item_id,
                     dataType: 'json',
                     data: { _csrf_token: '{{ csrf_token('authenticate') }}', id: item_id }, // End data
                     success: function (result) {
@@ -224,7 +224,7 @@
                         type: 'post',
                         url: '{{ path('product_sort', {'departmentId': department.id, 'categoryId': category.id}) }}',
                         dataType: 'json',
-                        data: $('#sortable').sortable('serialize'), // End data
+                        data: $sortableElem.sortable('serialize'), // End data
                         success: function (result) {
                             if (!result) {
                                 alert('No response from the server.');

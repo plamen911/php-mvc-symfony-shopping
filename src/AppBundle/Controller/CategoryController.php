@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Category controller.
  *
- * @Route("admin/departments/{departmentId}/categories")
+ * @Route("admin/departments/{departmentId}/categories", requirements={"departmentId": "\d+"})
  */
 class CategoryController extends Controller
 {
@@ -83,7 +83,7 @@ class CategoryController extends Controller
     /**
      * Displays a form to edit an existing category entity.
      *
-     * @Route("/{id}/edit", name="category_edit")
+     * @Route("/{id}/edit", name="category_edit", requirements={"id": "\d+"})
      * @Method({"POST"})
      *
      * @param int $id
@@ -156,21 +156,50 @@ class CategoryController extends Controller
     /**
      * Deletes a category entity.
      *
-     * @Route("/{id}", name="category_delete")
+     * @Route("/{id}", name="category_delete", requirements={"id": "\d+"})
      * @Method("DELETE")
+     *
+     * @param int $id
+     * @return JsonResponse
      */
-    public function deleteAction(Request $request, Category $category)
+    public function deleteAction($id = 0)
     {
-        $form = $this->createDeleteForm($category);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($category);
-            $em->flush();
+        /**
+         * @var \AppBundle\Entity\Category $category
+         */
+        $category = $this->getDoctrine()->getRepository(Category::class)->find((int)$id);
+        if ($category === null) {
+            return new JsonResponse([
+                'code' => 1,
+                'message' => 'Category not found',
+                'data' => []
+            ]);
         }
 
-        return $this->redirectToRoute('category_index');
+        $em = $this->getDoctrine()->getManager();
+
+        /**
+         * @var \AppBundle\Entity\Product $product
+         */
+        foreach ($category->getProducts() as $product) {
+            /**
+             * @var \AppBundle\Entity\Photo $photo
+             */
+            foreach ($product->getPhotos() as $photo) {
+                $product->removePhoto($photo);
+            }
+
+            $em->remove($product);
+        }
+
+        $em->remove($category);
+        $em->flush();
+
+        return new JsonResponse([
+            'code' => 0,
+            'message' => 'ok',
+            'data' => []
+        ]);
     }
 
     /**

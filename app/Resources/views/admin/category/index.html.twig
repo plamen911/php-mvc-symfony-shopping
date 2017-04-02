@@ -131,10 +131,12 @@
         var ajax_endpoint = '{{ app.request.uri }}';
 
         $(function () {
-            prepareSortable();
+            $sortableElem = $('#sortable');
+
+            prepareSortable($sortableElem);
 
             // update category
-            $('#sortable').on('change', 'input[id^="name_"], textarea[id^="description_"]', function () {
+            $sortableElem.on('change', 'input[id^="name_"], textarea[id^="description_"]', function () {
                 var item_id = $(this).data('category-id');
                 var name = $.trim($('#name_' + item_id).val());
                 var description = $.trim($('#description_' + item_id).val());
@@ -158,6 +160,47 @@
                     error: function (request, error) {
                         var errmsg = '';
                         if (error == 'timeout') errmsg = 'The request timed out';
+                        else errmsg = "ERROR: " + error;
+                        if (errmsg != '') alert(errmsg);
+                    } // End error
+                }); // End ajax method
+            });
+
+            $sortableElem.on('click', 'a[id^="delItem_"]', function (e) {
+                e.preventDefault();
+                item_to_delete = $(this).attr('id').split('_')[1];
+                $('#confirmModal').foundation('reveal', 'open');
+            });
+
+            $('#btnNo').bind('click', function (e) {
+                e.preventDefault();
+                $('#confirmModal').foundation('reveal', 'close');
+            });
+
+            $('#btnYes').bind('click', function (e) {
+                e.preventDefault();
+                var item_id = item_to_delete;
+                $.ajax({
+                    type: 'DELETE',
+                    url: ajax_endpoint + item_id,
+                    dataType: 'json',
+                    data: { _csrf_token: '{{ csrf_token('authenticate') }}', id: item_id }, // End data
+                    success: function (result) {
+                        if (!result) {
+                            alert('No response from the server.');
+                        } else if (result.code == '2') {
+                            window.location = '{{ path('security_login') }}';// expired session
+                        } else if (result.code == '0') {
+                            item_to_delete = 0;
+                            $('#item_' + item_id).remove();
+                            $('#confirmModal').foundation('reveal', 'close');
+                        } else {
+                            alert(result.message);
+                        }
+                    }, // End success
+                    error: function (request, error) {
+                        var errmsg = '';
+                        if (error == "timeout") errmsg = "The request timed out";
                         else errmsg = "ERROR: " + error;
                         if (errmsg != '') alert(errmsg);
                     } // End error
@@ -207,7 +250,7 @@
                             s += '</div>';
                             s += '</li>';
 
-                            $('#sortable').append(s).sortable('refresh');
+                            $sortableElem.append(s).sortable('refresh');
                         } else {
                             alert(result.message);
                         }
@@ -223,8 +266,8 @@
         });
 
         // sortable
-        function prepareSortable () {
-            $('#sortable').sortable({
+        function prepareSortable ($sortableElem) {
+            $sortableElem.sortable({
                 handle: '.handle',
                 axis: 'y',
                 items: 'li',
@@ -233,7 +276,7 @@
                         type: 'post',
                         url: '{{ path('category_sort', {'departmentId': department.id}) }}',
                         dataType: 'json',
-                        data: $('#sortable').sortable('serialize'), // End data
+                        data: $sortableElem.sortable('serialize'), // End data
                         success: function (result) {
                             if (!result) {
                                 alert('No response from the server.');
