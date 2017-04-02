@@ -6,7 +6,10 @@ use AppBundle\Entity\Category;
 use AppBundle\Entity\Photo;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Department;
+use AppBundle\Entity\Tag;
 use AppBundle\Form\ProductType;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -18,7 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Product controller.
  *
- * @Route("admin/department/{departmentId}/category/{categoryId}/products")
+ * @Route("admin/departments/{departmentId}/categories/{categoryId}/products", requirements={"departmentId": "\d+", "categoryId": "\d+"})
  */
 class ProductController extends Controller
 {
@@ -51,11 +54,11 @@ class ProductController extends Controller
         $em = $this->getDoctrine()->getManager();
         $products = $em->getRepository('AppBundle:Product')->findBy(['categoryId' => $category->getId()], ['position' => 'ASC']);
 
-        return $this->render('admin/product/index.html.twig', array(
+        return $this->render('admin/product/index.html.twig', [
             'department' => $department,
             'category' => $category,
             'products' => $products,
-        ));
+        ]);
     }
 
     /**
@@ -111,7 +114,7 @@ class ProductController extends Controller
     /**
      * Displays a form to edit an existing product entity.
      *
-     * @Route("/{id}/edit", name="product_edit")
+     * @Route("/{id}/edit", name="product_edit", requirements={"id": "\d+"})
      * @Method({"GET","POST"})
      *
      * @param int $id
@@ -125,6 +128,11 @@ class ProductController extends Controller
          */
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
 
+        /**
+         * @var \Doctrine\ORM\EntityManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
         if($request->isXmlHttpRequest()) {
             if ($product === null) {
                 return new JsonResponse([
@@ -136,7 +144,11 @@ class ProductController extends Controller
 
             $product->setName($request->get('name'));
 
-            $em = $this->getDoctrine()->getManager();
+            $tagsString = $request->get('tags');
+            $tags = $this->getTags($em, $tagsString);
+
+            $product->setTags($tags);
+
             $em->persist($product);
             $em->flush();
 
@@ -152,13 +164,16 @@ class ProductController extends Controller
                 throw $this->createNotFoundException('Product not found');
             }
 
+            $tags = $product->getTags();
+            $tagsString = implode(', ', $tags->toArray());
+
             $editForm = $this->createForm(ProductType::class, $product);
             $editForm->handleRequest($request);
 
-            //dump($editForm->isValid());
-
             if ($editForm->isSubmitted() && $editForm->isValid()) {
-                $em = $this->getDoctrine()->getManager();
+                $tagsString = $request->get('tags');
+                $tags = $this->getTags($em, $tagsString);
+                $product->setTags($tags);
 
                 /**
                  * @var UploadedFile $file
@@ -206,21 +221,22 @@ class ProductController extends Controller
                 $em->flush();
 
                 $this->addFlash('success', 'Product successfully saved.');
-                return $this->redirectToRoute('product_edit', array(
+                return $this->redirectToRoute('product_edit', [
                         'departmentId' => $product->getCategory()->getDepartmentId(),
                         'categoryId' => $product->getCategoryId(),
                         'id' => $product->getId()
-                    )
+                    ]
                 );
             }
 
-            return $this->render('admin/product/edit.html.twig', array(
+            return $this->render('admin/product/edit.html.twig', [
                 'department' => $product->getCategory()->getDepartment(),
                 'category' => $product->getCategory(),
                 'product' => $product,
                 'form' => $editForm->createView(),
+                'tags' => $tagsString,
                 'uploadDirLarge' => Photo::getUploadDirLarge()
-            ));
+            ]);
         }
     }
 
@@ -295,7 +311,7 @@ class ProductController extends Controller
     /**
      * Delete photo.
      *
-     * @Route("/{productId}/photo/{photoId}", name="photo_delete")
+     * @Route("/{productId}/photo/{photoId}", name="photo_delete", requirements={"productId": "\d+", "photoId": "\d+"})
      * @Method({"POST"})
      *
      * @param int $productId
@@ -347,7 +363,7 @@ class ProductController extends Controller
     /**
      * Deletes a product entity.
      *
-     * @Route("/{id}", name="product_delete")
+     * @Route("/{id}", name="product_delete", requirements={"id": "\d+"})
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, Product $product)
@@ -365,6 +381,34 @@ class ProductController extends Controller
     }
 
     /**
+     * @param EntityManager $em
+     * @param string $tagsString
+     * @return ArrayCollection
+     */
+    public function getTags(EntityManager $em, $tagsString = '')
+    {
+        $tags = explode(',', $tagsString);
+        $tagRepo = $this->getDoctrine()->getRepository(Tag::class);
+        $tagsToSave = new ArrayCollection();
+
+        foreach ($tags as $tagName) {
+
+            $tagName = trim($tagName);
+            $tag = $tagRepo->findOneBy(['name' => $tagName]);
+
+            if ($tag === null) {
+                $tag = new Tag();
+                $tag->setName($tagName);
+                $em->persist($tag);
+            }
+
+            $tagsToSave->add($tag);
+        }
+
+        return $tagsToSave;
+    }
+
+    /**
      * Creates a form to delete a product entity.
      *
      * @param Product $product The product entity
@@ -374,7 +418,7 @@ class ProductController extends Controller
     private function createDeleteForm(Product $product)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('product_delete', array('id' => $product->getId())))
+            ->setAction($this->generateUrl('product_delete', ['id' => $product->getId()]))
             ->setMethod('DELETE')
             ->getForm()
         ;

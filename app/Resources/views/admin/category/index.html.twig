@@ -193,7 +193,7 @@
                             s += '<input type="text" id="name_' + item_id + '" name="name_' + item_id + '" data-category-id="' + item_id + '" value="' + name + '" placeholder="Category Title..." />';
                             s += '</div>';
                             s += '<div class="small-4 columns">';
-                            s += '<a id="goto_children_' + item_id + '" href="admin/department/{{ department.id }}/category/' + item_id + '/products/" class="button postfix tiny">Go to products</a>';
+                            s += '<a id="goto_children_' + item_id + '" href="' + ajax_endpoint + item_id + '/products/" class="button postfix tiny">Go to products</a>';
                             s += '</div>';
                             s += '<div class="small-1 columns">';
                             s += '<a id="delItem_' + item_id + '" href="#" class="button postfix alert">X</a>';

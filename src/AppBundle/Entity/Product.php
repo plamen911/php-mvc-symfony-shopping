@@ -113,6 +113,17 @@ class Product
     private $photos;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="products")
+     * @ORM\JoinTable(name="products_tags",
+     *     joinColumns={@ORM\JoinColumn(name="product_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")}
+     *     )
+     */
+    private $tags;
+
+    /**
      * Product constructor.
      */
     public function __construct()
@@ -120,6 +131,7 @@ class Product
         $this->photos = new ArrayCollection();
         $this->position = 0;
         $this->isTaxable = 0;
+        $this->tags = new ArrayCollection();
     }
 
     /**
@@ -399,6 +411,22 @@ class Product
 
         $this->photos->removeElement($photo);
         $photo->setProduct(null);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param ArrayCollection $tags
+     */
+    public function setTags(ArrayCollection $tags)
+    {
+        $this->tags = $tags;
     }
 }
 
