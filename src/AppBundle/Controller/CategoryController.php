@@ -177,7 +177,6 @@ class CategoryController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-
         /**
          * @var \AppBundle\Entity\Product $product
          */
@@ -188,10 +187,8 @@ class CategoryController extends Controller
             foreach ($product->getPhotos() as $photo) {
                 $product->removePhoto($photo);
             }
-
             $em->remove($product);
         }
-
         $em->remove($category);
         $em->flush();
 

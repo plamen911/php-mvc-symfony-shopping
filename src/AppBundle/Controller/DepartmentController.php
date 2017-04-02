@@ -63,7 +63,7 @@ class DepartmentController extends Controller
     /**
      * Displays a form to edit an existing department entity.
      *
-     * @Route("/{id}/edit", name="department_edit")
+     * @Route("/{id}/edit", name="department_edit", requirements={"id": "\d+"})
      * @Method({"POST"})
      *
      * @param int $id
@@ -136,21 +136,53 @@ class DepartmentController extends Controller
     /**
      * Deletes a department entity.
      *
-     * @Route("/{id}", name="department_delete")
+     * @Route("/{id}", name="department_delete", requirements={"id": "\d+"})
      * @Method("DELETE")
+     *
+     * @param int $id
+     * @return JsonResponse
      */
-    public function deleteAction(Request $request, Department $department)
+    public function deleteAction($id = 0)
     {
-        $form = $this->createDeleteForm($department);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($department);
-            $em->flush();
+        /**
+         * @var \AppBundle\Entity\Department $department
+         */
+        $department = $this->getDoctrine()->getRepository(Department::class)->find((int)$id);
+        if ($department === null) {
+            return new JsonResponse([
+                'code' => 1,
+                'message' => 'Department not found',
+                'data' => []
+            ]);
         }
 
-        return $this->redirectToRoute('department_index');
+        $em = $this->getDoctrine()->getManager();
+        /**
+         * @var \AppBundle\Entity\Department $department
+         */
+        foreach ($department->getCategories() as $category) {
+            /**
+             * @var \AppBundle\Entity\Product $product
+             */
+            foreach ($category->getProducts() as $product) {
+                /**
+                 * @var \AppBundle\Entity\Photo $photo
+                 */
+                foreach ($product->getPhotos() as $photo) {
+                    $product->removePhoto($photo);
+                }
+                $em->remove($product);
+            }
+            $em->remove($category);
+        }
+        $em->remove($department);
+        $em->flush();
+
+        return new JsonResponse([
+            'code' => 0,
+            'message' => 'ok',
+            'data' => []
+        ]);
     }
 
     /**
