@@ -1,0 +1,35 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block body %}
+    <section id="adminSearchViewContainer" class="admin-content-container">
+        <div class="row">
+            <div class="large-12 columns">
+                <h3>Search Results</h3>
+                <ul>
+                    {% for departmentId, catgs in items %}
+                        <li>
+                            <a href="{{ path('department_index') }}">{{ departments[departmentId].name }}</a>
+                            <ul>
+                                {% for categoryId, products in catgs %}
+                                    <li>
+                                        <a href="{{ path('category_index', { 'departmentId': departmentId }) }}">{{ categories[categoryId].name }}</a>
+                                        <ul>
+                                            {% for productId, product in products %}
+                                                <li>
+                                                    <a href="{{ path('product_edit', {'departmentId': departmentId, 'categoryId': categoryId, 'id': productId}) }}">{{ product.name }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+

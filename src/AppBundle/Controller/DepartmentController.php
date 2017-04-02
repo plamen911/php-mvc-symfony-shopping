@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Department controller.
+ * @package AppBundle\Controller
+ * @author Plamen Markov <plamen@lynxlake.org>
  *
  * @Route("admin/departments")
  */

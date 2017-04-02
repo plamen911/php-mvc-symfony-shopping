@@ -20,6 +20,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Product controller.
+ * @package AppBundle\Controller
+ * @author Plamen Markov <plamen@lynxlake.org>
  *
  * @Route("admin/departments/{departmentId}/categories/{categoryId}/products", requirements={"departmentId": "\d+", "categoryId": "\d+"})
  */

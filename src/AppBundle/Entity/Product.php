@@ -129,6 +129,8 @@ class Product
     public function __construct()
     {
         $this->photos = new ArrayCollection();
+        $this->price = 0;
+        $this->qty = 0;
         $this->position = 0;
         $this->isTaxable = 0;
         $this->tags = new ArrayCollection();

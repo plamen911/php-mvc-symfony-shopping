@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Category controller.
+ * @package AppBundle\Controller
+ * @author Plamen Markov <plamen@lynxlake.org>
  *
  * @Route("admin/departments/{departmentId}/categories", requirements={"departmentId": "\d+"})
  */

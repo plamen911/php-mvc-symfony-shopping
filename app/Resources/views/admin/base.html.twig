@@ -105,7 +105,7 @@
         <section class="top-bar-section">
             {% if app.user %}
                 <ul class="left">
-                    <li><a href="#">Manage Store</a></li>
+                    <li><a href="{{ path('department_index') }}">Manage Store</a></li>
                     <li class="divider"></li>
                     <li><a href="#">Orders</a></li>
                     <li class="divider"></li>
@@ -120,10 +120,10 @@
                 {% if app.user %}
                     <!-- Search Form -->
                     <li class="has-form">
-                        <form action="#" accept-charset="utf-8" method="get" class="search-form" role="search">
+                        <form action="{{ path('product_search') }}" accept-charset="utf-8" method="get" class="search-form" role="search">
                             <div class="row collapse">
                                 <div class="large-8 small-9 columns">
-                                    <input id="search-field" name="q" value="" placeholder="Search Products..." class="hint" type="text">
+                                    <input id="keyword" name="keyword" value="{{ keyword|default('') }}" placeholder="Search Products..." class="hint" type="text">
                                 </div>
                                 <div class="large-4 small-3 columns">
                                     <input id="search-submit" class="alert button expand" value="Search" type="submit">
