@@ -18,8 +18,8 @@
                 {{ form_start(form, {'multipart': true}) }}
                     <div class="row">
                         <div class="large-12 columns">
-                            <label for="app_bundle_product_type_departmentId">Department</label>
-                            <select id="app_bundle_product_type_departmentId" name="app_bundle_product_type[departmentId]">
+                            <label for="departmentId">Department</label>
+                            <select id="departmentId" name="departmentId">
                                 <option value="0">- change -</option>
                                 {% for dept in departments %}
                                     <option value="{{ dept.id }}"{% if dept.id == product.category.departmentId %} selected="selected"{% endif %}>{{ dept.name }}</option>
@@ -29,13 +29,14 @@
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            <label for="app_bundle_product_type_categoryId">Category</label>
+                            {{ form_row(form.category, {'label': 'Category', 'required': true}) }}
+                            {#<label for="app_bundle_product_type_categoryId">Category</label>
                             <select id="app_bundle_product_type_categoryId" name="app_bundle_product_type[categoryId]">
                                 <option value="0">- change -</option>
                                 {% for catg in categories %}
                                     <option value="{{ catg.id }}"{% if catg.id == product.categoryId %} selected="selected"{% endif %}>{{ catg.name }}</option>
                                 {% endfor %}
-                            </select>
+                            </select>#}
                         </div>
                     </div>
                     <div class="row">

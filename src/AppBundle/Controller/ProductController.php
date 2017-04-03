@@ -233,16 +233,10 @@ class ProductController extends Controller
                 );
             }
 
-            $departments = $em->getRepository(Department::class)->findBy([], ['position' => 'ASC']);
-            $categories = $em->getRepository(Category::class)->findBy(['departmentId' => $product->getCategory()->getDepartment()->getId()], ['position' => 'ASC']);
-
-            dump($departments);
-
             return $this->render('admin/product/edit.html.twig', [
                 'department' => $product->getCategory()->getDepartment(),
                 'category' => $product->getCategory(),
-                'departments' => $departments,
-                'categories' => $categories,
+                'departments' => $em->getRepository(Department::class)->findBy([], ['position' => 'ASC']),
                 'product' => $product,
                 'form' => $editForm->createView(),
                 'tags' => $tagsString,

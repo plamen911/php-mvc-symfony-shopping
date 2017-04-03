@@ -19,6 +19,10 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('category', EntityType::class, [
+                'class' => 'AppBundle\Entity\Category',
+                'choice_label' => 'name',
+            ])
             ->add('name', TextType::class)
             ->add('isTaxable', CheckboxType::class)
             ->add('price', TextType::class)
