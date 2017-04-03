@@ -125,10 +125,12 @@ class ProductController extends Controller
      */
     public function editAction($id = 0, Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+
         /**
          * @var \AppBundle\Entity\Product $product
          */
-        $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
+        $product = $em->getRepository(Product::class)->find($id);
 
         /**
          * @var \Doctrine\ORM\EntityManager $em
@@ -231,9 +233,16 @@ class ProductController extends Controller
                 );
             }
 
+            $departments = $em->getRepository(Department::class)->findBy([], ['position' => 'ASC']);
+            $categories = $em->getRepository(Category::class)->findBy(['departmentId' => $product->getCategory()->getDepartment()->getId()], ['position' => 'ASC']);
+
+            dump($departments);
+
             return $this->render('admin/product/edit.html.twig', [
                 'department' => $product->getCategory()->getDepartment(),
                 'category' => $product->getCategory(),
+                'departments' => $departments,
+                'categories' => $categories,
                 'product' => $product,
                 'form' => $editForm->createView(),
                 'tags' => $tagsString,
