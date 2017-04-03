@@ -125,17 +125,15 @@ class ProductController extends Controller
      */
     public function editAction($id = 0, Request $request)
     {
+        /**
+         * @var \Doctrine\ORM\EntityManager $em
+         */
         $em = $this->getDoctrine()->getManager();
 
         /**
          * @var \AppBundle\Entity\Product $product
          */
         $product = $em->getRepository(Product::class)->find($id);
-
-        /**
-         * @var \Doctrine\ORM\EntityManager $em
-         */
-        $em = $this->getDoctrine()->getManager();
 
         if($request->isXmlHttpRequest()) {
             if ($product === null) {
@@ -172,6 +170,8 @@ class ProductController extends Controller
             $tagsString = implode(', ', $tags->toArray());
 
             $editForm = $this->createForm(ProductType::class, $product);
+            // $editForm = $this->createForm(ProductType::class, $product, ['attr' => ['departmentId' => $product->getCategory()->getDepartmentId()]]);
+            // $editForm = $this->createForm(ProductType::class, $product, ['departmentId' => $product->getCategory()->getDepartmentId()]);
             $editForm->handleRequest($request);
 
             if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -400,6 +400,77 @@ class ProductController extends Controller
             'code' => 0,
             'message' => 'ok',
             'data' => []
+        ]);
+    }
+
+    /**
+     * @Route("/{productId}/new-department/{newDepartmentId}", name="change_department", requirements={"productId": "\d+", "newDepartmentId": "\d+"})
+     * @Method("POST")
+     *
+     * @param int $productId
+     * @param int $newDepartmentId
+     * @return JsonResponse
+     */
+    public function changeDepartmentAction($productId = 0, $newDepartmentId = 0)
+    {
+        /**
+         * @var \Doctrine\ORM\EntityManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
+        /**
+         * @var \AppBundle\Entity\Product $product
+         */
+        $product = $em->getRepository(Product::class)->find($productId);
+        if ($product === null) {
+            return new JsonResponse([
+                'code' => 1,
+                'message' => 'Product not found',
+                'data' => []
+            ]);
+        }
+
+        /**
+         * @var \AppBundle\Entity\Department $department
+         */
+        $department = $em->getRepository(Department::class)->find($newDepartmentId);
+        if ($department === null) {
+            return new JsonResponse([
+                'code' => 1,
+                'message' => 'Department not found',
+                'data' => []
+            ]);
+        }
+
+        /**
+         * @var \AppBundle\Entity\Category $category
+         */
+        $category = $department->getCategories()->first();
+
+        if ($category === null || !is_object($category)) {
+            return new JsonResponse([
+                'code' => 1,
+                'message' => 'This department has no categories',
+                'data' => []
+            ]);
+        }
+
+        $product->setCategory($category);
+        $product->setCategoryId($category->getId());
+
+        $em->persist($product);
+        $em->flush();
+
+        return new JsonResponse([
+            'code' => 0,
+            'message' => 'ok',
+            'data' => [
+                'url' => $this->generateUrl('product_edit', [
+                        'departmentId' => $department->getId(),
+                        'categoryId' => $category->getId(),
+                        'id' => $product->getId()
+                    ])
+            ]
         ]);
     }
 

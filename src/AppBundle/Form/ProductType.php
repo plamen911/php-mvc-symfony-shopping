@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Photo;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -19,8 +20,23 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+//            ->add('category', EntityType::class, [
+//                'class' => 'AppBundle\Entity\Category',
+//                'choice_label' => 'name',
+//            ])
             ->add('category', EntityType::class, [
                 'class' => 'AppBundle\Entity\Category',
+                'query_builder' => function (EntityRepository $er) use ($options) {
+                    /**
+                     * @var \AppBundle\Entity\Product $product
+                     */
+                    $product = $options['data'];
+
+                    return $er->createQueryBuilder('c')
+                        ->where('c.departmentId = :departmentId')
+                        ->setParameter('departmentId', $product->getCategory()->getDepartmentId())
+                        ->orderBy('c.position', 'ASC');
+                },
                 'choice_label' => 'name',
             ])
             ->add('name', TextType::class)
