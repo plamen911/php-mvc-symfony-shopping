@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enjoy Kitchen {% block title %}{% endblock %}</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="{{ asset('css/foundation.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/foundation-icons.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/main-styles.css') }}" />
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+<header id="mainHeader">
+    <nav id="mainNavigation">
+        <ul class="nav-ul main" id="navbar">
+            <li>
+                <a href="{{ url('homepage') }}" title="Menu">Menu</a>
+            </li>
+            <li>
+                <a href="{{ url('homepage') }}#how-it-works" title="How it Works" id="how-it-works-btn">How it Works</a>
+            </li>
+            <li>
+                <a href="{{ path('about') }}" title="About Us">About Us</a>
+            </li>
+        </ul>
+        <div id="logo">
+            <a href="/" title="Tilbury &amp; Skiff">
+                <img src="{{ asset('img/main-page-logo.svg') }}" alt="Tilbury and Skiff Logo" title="Tilbury &amp; Skiff" />
+            </a>
+        </div>
+        <ul class="nav-ul login">
+            <li>
+                <a href="#" title="Login">Login</a>
+            </li>
+            <li>
+                <a href="#" title="Sign Up">Sign Up</a>
+            </li>
+        </ul>
+        <a href="#" class="mobile-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </a>
+    </nav>
+</header>
+<section id="contentWrapper">
+    {% block body %}{% endblock %}
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr>
+            <div class="row">
+                <div class="large-6 columns">
+                    <p>&copy; Tilbury &amp; Skiff</p>
+                </div>
+                <div class="large-6 columns">
+                    <ul class="inline-list right" style="line-height: 1.6em">
+                        <li>
+                            <a href="{{ url('homepage') }}">Our Store</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('about') }}">About Us</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('privacy') }}">Privacy</a>
+                        </li>
+                        <li>
+                            <a href="#">Sign In</a>
+                        </li>
+                        <li>
+                            <a href="#">Join</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#" class="fi-social-facebook" style="font-size: 1.6em;"></a>
+                        </li>
+                        <li>
+                            <a href="#" class="fi-social-twitter large" style="font-size: 1.6em;"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</section>
+<script type="text/javascript" src="{{ asset('js/vendor/jquery.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/custom.js') }}"></script>
+
+<script>
+    $("#how-it-works-btn").on('click', function (e) {
+        $jumpTarget = $('#how-it-works');
+        if ($jumpTarget.length > 0) {
+            e.preventDefault();
+            $('html, body').animate({
+                scrollTop: $jumpTarget.offset().top - 20
+            }, 1300);
+        }
+    });
+</script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,117 @@
+{% extends 'home.html.twig' %}
+
+{% block title %}| Welcome!{% endblock %}
+
+{% block body %}
+    <section class="main banner">
+        <img src="{{ asset('img/images/main-banner.jpg') }}" title="" alt=""/>
+        <div class="overlay">
+            <div class="title-holder">
+                <h2 class="main-headings">Fresh Food Delivered</h2>
+                <h3 class="main-headings">Now Serving Nantucket</h3>
+                <a class="order-now-btn" id="topOrder" href="{{ path('store_index') }}">Order Now</a>
+            </div>
+        </div>
+    </section>
+    <section id="menuSignUp">
+        <h3 class="sign-up titles">Sign up below to receive our weekly menu</h3>
+        <form id="menuForm">
+            <input type="text" id="email" placeholder="ENTER YOUR EMAIL" required="required"/>
+            <input type="submit" id="signUp" class="button small" value="SIGN UP"/>
+        </form>
+    </section>
+    <section id="barTableBanner">
+        <a href="#" name="how-it-works" id="how-it-works"></a>
+        <h3 class="titles">Tilbury and Skiff Chefs shop, cook, prepare & deliver.</h3>
+        <h3 class="titles">All you have to do is serve!</h3>
+        <div class="bar-table-images">
+            <img src="{{ asset('img/images/bar-table.jpg') }}" title="" alt=""/>
+        </div>
+    </section>
+    <section id="info">
+        <article id="preparedFood" class="home-columns">
+            <header>
+                <h5>PREPARED FOOD</h5>
+            </header>
+            <section class="info-content">
+                <p>
+                    <b><em>Order by 10am for delivery between 4-6pm same day.</em></b> <br> We'll have a variety of
+                    delicious entrees, side dishes and salads and even some appetizers for your own use or for easy
+                    entertaining. You can even plan and order your meals a few weeks in advance for the ultimate worry
+                    free living.
+                </p>
+            </section>
+        </article>
+        <article id="stockUps" class="home-columns">
+            <header>
+                <h5>STOCK UPS</h5>
+            </header>
+            <section class="info-content">
+                <p>
+                    <b><em>Order by 10am Tuesday for delivery between 4-6pm on the next Friday. </em></b> <br> We
+                    recomend stocking up on our ready to eat nourishing bowls so that there is always something good
+                    (and good-for-you!) in your refrigerator. Breakfast, lunch and dinner - all our meals are provided
+                    with nutrition information and instructions.
+                </p>
+            </section>
+        </article>
+        <article id="staples" class="home-columns">
+            <header>
+                <h5>STAPLES</h5>
+            </header>
+            <section class="info-content">
+                <p>
+                    <b><em>Order by 10am Tuesday for delivery between 4-6pm on the next Friday. </em></b> <br> We
+                    provide the grocery basics to get you started on your week or weekend right. Between these items and
+                    our meals, you might just avoid shopping altogether. We feature Nantucket speciality items and
+                    locally grown produce where possible.
+                </p>
+            </section>
+        </article>
+        <section id="orderByOffer">
+            <div id="offer">
+                <h2>Order by 10am, delivery by 6pm</h2>
+                <h3 class="titles">We cater to your lifestyle</h3>
+            </div>
+            <div id="pic">
+                <img src="{{ asset('img/images/delivery-guy.jpg') }}" alt="" title=""/>
+            </div>
+        </section>
+    </section>
+    <section id="chefsBanner" class="chefs banner">
+        <img src="{{ asset('img/images/chefs-banner.jpg') }}" title="" alt=""/>
+        <div class="overlay">
+            <div class="title-holder">
+                <h2 class="main-headings">Chef-prepared meals for 2 or 20...<br>in 1-click </h2>
+                <a class="order-now-btn" id="middleOrder" href="{{ path('store_index') }}">Order Now</a>
+            </div>
+        </div>
+    </section>
+    <section id="grid">
+        <h3 class="titles">Stock Up Your House With:</h3>
+        <ul>
+            <li>
+                <img src="{{ asset('img/images/grid1.jpg') }}" alt="" title=""/>
+            </li>
+            <li>
+                <img src="{{ asset('img/images/grid2.jpg') }}" alt="" title=""/>
+            </li>
+            <li>
+                <img src="{{ asset('img/images/grid3.jpg') }}" alt="" title=""/>
+            </li>
+            <li>
+                <img src="{{ asset('img/images/grid4.jpg') }}" alt="" title=""/>
+            </li>
+            <li>
+                <img src="{{ asset('img/images/grid5.jpg') }}" alt="" title=""/>
+            </li>
+            <li>
+                <img src="{{ asset('img/images/grid6.jpg') }}" alt="" title=""/>
+            </li>
+        </ul>
+        <h3 class="titles">More delicious items to be added soon</h3>
+    </section>
+    <section id="bottomOrderBtn">
+        <a class="order-now-btn" id="bottomOrder" href="{{ path('store_index') }}">Order Now</a>
+    </section>
+{% endblock %}
