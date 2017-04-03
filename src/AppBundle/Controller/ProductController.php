@@ -221,6 +221,8 @@ class ProductController extends Controller
                     }
                 }
 
+                $product->setPhoto($this->getMainPhoto($product->getId()));
+
                 $em->persist($product);
                 $em->flush();
 
@@ -293,16 +295,28 @@ class ProductController extends Controller
         $sorted = $request->get('image', []);
         if (!empty($sorted)) {
             $em = $this->getDoctrine()->getManager();
+            /**
+             * @var \AppBundle\Entity\Product $product
+             */
+            $product = null;
             foreach ($sorted as $i => $item_id) {
                 /**
                  * @var \AppBundle\Entity\Photo $photo
                  */
                 $photo = $this->getDoctrine()->getRepository(Photo::class)->find($item_id);
                 if ($photo) {
+                    $product = $photo->getProduct();
+
                     $photo->setPosition($i + 1);
                     $em->persist($photo);
                     $em->flush();
                 }
+            }
+
+            if ($product !== null) {
+                $product->setPhoto($this->getMainPhoto($product->getId()));
+                $em->persist($product);
+                $em->flush();
             }
         }
 
@@ -326,9 +340,14 @@ class ProductController extends Controller
     public function deletePhoto($productId = 0, $photoId = 0)
     {
         /**
+         * @var \Doctrine\ORM\EntityManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
+        /**
          * @var \AppBundle\Entity\Product $product
          */
-        $product = $this->getDoctrine()->getRepository(Product::class)->find($productId);
+        $product = $em->getRepository(Product::class)->find($productId);
         if ($product === null) {
             return new JsonResponse([
                 'code' => 1,
@@ -340,7 +359,7 @@ class ProductController extends Controller
         /**
          * @var \AppBundle\Entity\Photo $photo
          */
-        $photo = $this->getDoctrine()->getRepository(Photo::class)->find($photoId);
+        $photo = $em->getRepository(Photo::class)->find($photoId);
         if ($photo === null) {
             return new JsonResponse([
                 'code' => 1,
@@ -351,7 +370,7 @@ class ProductController extends Controller
 
         $product->removePhoto($photo);
 
-        $em = $this->getDoctrine()->getManager();
+        $product->setPhoto($this->getMainPhoto($product->getId()));
         $em->persist($product);
         $em->flush();
 
@@ -533,8 +552,19 @@ class ProductController extends Controller
         $photo = $em->getRepository('AppBundle:Photo')->findOneBy(['productId' => $productId], ['position' => 'DESC']);
 
         /**
-         * @var \AppBundle\Entity\Product $photo
+         * @var \AppBundle\Entity\Photo $photo
          */
         return ($photo) ? $photo->getPosition() : 0;
+    }
+
+    private function getMainPhoto($productId = 0)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $photo = $em->getRepository('AppBundle:Photo')->findOneBy(['productId' => $productId], ['position' => 'ASC']);
+
+        /**
+         * @var \AppBundle\Entity\Photo $photo
+         */
+        return ($photo) ? $photo->getFileName() : 0;
     }
 }
