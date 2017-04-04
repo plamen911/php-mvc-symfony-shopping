@@ -12,6 +12,45 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
     public function findAllByKeyword($keyword = '')
     {
+        $qb = $this->createQueryBuilder('product')
+            ->leftJoin('product.category', 'category')
+            ->leftJoin('category.department', 'department');
+
+        switch ($keyword) {
+            case 'today':
+                /**
+
+                $cond = "
+                (
+                    (
+                        availability IN ('weekdays', 'multidays')
+                        AND search_availability_days != ''
+                        AND (search_availability_days LIKE ? OR search_availability_days LIKE ? OR search_availability_days LIKE ?)
+                    )
+                    OR
+                    (
+                        availability IN ('daily')
+                    )
+
+                )";
+
+                 */
+                $qb->where('product.availabilityDays LIKE :keyword')
+                    ->setParameter('keyword', '%' . date('l') . '%');
+                break;
+
+            default:
+                $qb->where('product.name LIKE :keyword')
+                    ->setParameter('keyword', '%' . $keyword . '%');
+                break;
+        }
+
+        $qb->setMaxResults(100)
+            ->orderBy('department.name', 'ASC')
+            ->addOrderBy('category.name', 'ASC')
+            ->addOrderBy('product.name', 'ASC');
+        $query = $qb->getQuery();
+/*
         $query = $this->createQueryBuilder('product')
             ->leftJoin('product.category', 'category')
             ->leftJoin('category.department', 'department')
@@ -21,7 +60,7 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->orderBy('department.name', 'ASC')
             ->addOrderBy('category.name', 'ASC')
             ->addOrderBy('product.name', 'ASC')
-            ->getQuery();
+            ->getQuery();*/
 
         $products = $query->getResult();
 
