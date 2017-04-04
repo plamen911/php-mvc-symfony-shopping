@@ -53,7 +53,6 @@
                 {% if departmentsInMenu|length %}
                     <ul class="left">
                         <li><a href="#">Today's menu</a></li>
-                        <li><a href="#">Upcoming menu</a></li>
                         {% for department in departmentsInMenu %}
                             <li class="has-dropdown"><a id="menuitem_{{ department.id }}" href="#">{{ department.name }}</a>
                                 {% if department.categories|length %}

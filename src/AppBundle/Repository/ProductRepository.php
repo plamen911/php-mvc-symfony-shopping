@@ -18,25 +18,26 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
 
         switch ($keyword) {
             case 'today':
-                /**
-
                 $cond = "
-                (
                     (
-                        availability IN ('weekdays', 'multidays')
-                        AND search_availability_days != ''
-                        AND (search_availability_days LIKE ? OR search_availability_days LIKE ? OR search_availability_days LIKE ?)
-                    )
-                    OR
-                    (
-                        availability IN ('daily')
-                    )
+                      (
+                         product.availability IN ('weekdays', 'multidays')
+                         AND product.availabilityDays IS NOT NULL 
+                         AND product.availabilityDays NOT LIKE ''
+                         AND (
+                            product.availabilityDays LIKE :weekday 
+                            OR product.availabilityDays LIKE :weekday 
+                            OR product.availabilityDays LIKE :weekday
+                         )
+                      )
+                      OR
+                      (
+                         product.availability IN ('daily')
+                      )
+                    )";
 
-                )";
-
-                 */
-                $qb->where('product.availabilityDays LIKE :keyword')
-                    ->setParameter('keyword', '%' . date('l') . '%');
+                $qb->where($cond)
+                    ->setParameter('weekday', '%' . date('l') . '%');
                 break;
 
             default:
@@ -45,12 +46,39 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
                 break;
         }
 
-        $qb->setMaxResults(100)
+        $qb->setMaxResults(1000)
             ->orderBy('department.name', 'ASC')
             ->addOrderBy('category.name', 'ASC')
             ->addOrderBy('product.name', 'ASC');
         $query = $qb->getQuery();
-/*
+        $products = $query->getResult();
+
+        $items = [];
+        $departments = [];
+        $categories = [];
+        /**
+         * @var \AppBundle\Entity\Product $product
+         */
+        foreach ($products as $product) {
+            $departmentId = $product->getCategory()->getDepartment()->getId();
+            $categoryId = $product->getCategory()->getId();
+            $items[$departmentId][$categoryId][$product->getId()] = $product;
+
+            $departments[$departmentId] = $product->getCategory()->getDepartment();
+            $categories[$categoryId] = $product->getCategory();
+        }
+
+        $data = new \stdClass();
+        $data->items = $items;
+        $data->departments = $departments;
+        $data->categories = $categories;
+        $data->keyword = $keyword;
+
+        return $data;
+    }
+
+    public function OLD_findAllByKeyword($keyword = '')
+    {
         $query = $this->createQueryBuilder('product')
             ->leftJoin('product.category', 'category')
             ->leftJoin('category.department', 'department')
@@ -60,7 +88,7 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->orderBy('department.name', 'ASC')
             ->addOrderBy('category.name', 'ASC')
             ->addOrderBy('product.name', 'ASC')
-            ->getQuery();*/
+            ->getQuery();
 
         $products = $query->getResult();
 

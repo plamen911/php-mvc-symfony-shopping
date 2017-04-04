@@ -37,7 +37,7 @@ class StoreController extends Controller
     }
 
     /**
-     * @Route("search", name="store_search")
+     * @Route("/search", name="store_search")
      * @Method({"GET"})
      *
      * @param Request $request
