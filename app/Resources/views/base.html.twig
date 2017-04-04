@@ -28,14 +28,20 @@
         <div class="logo-image" id="logo">
             <h1 data-content-field="site-title" class="site-title" id="yui_3_17_2_1_1432459322975_341">
                 <div class="site-title-border"></div>
-                <a href="http://www.enjoykitchencatering.com/" id="yui_3_17_2_1_1432459322975_340">
+                <a href="{{ path('homepage') }}" id="yui_3_17_2_1_1432459322975_340">
                     <img alt="Enjoy Kitchen Catering" src="{{ asset('img/logo.png') }}">
                     <span class="site-title-span" data-shrink-original-size="100" style="letter-spacing: 0.04em;">Enjoy Kitchen Catering</span>
                 </a>
             </h1>
+            <div class="introText">
+                <h2>
+                    Offering a customized approach to seamless entertaining.
+                </h2>
+                <p>The Enjoy Kitchen chefs will shop, cook, and prepare... All you have to do is serve. As a culinary concierge, we can deliver right to your dining room table allowing you one more hour at the beach!</p>
+                <p>Prices are per person with a $200 minimum order. Our delivery fee is $35 or pick-up at Annye's is free.</p>
+            </div>
         </div>
-        <div class="folder-nav">
-        </div>
+        <div class="folder-nav"></div>
     </div>
     <div class="fixed">
         <nav data-topbar="" class="top-bar">
@@ -44,41 +50,46 @@
                 <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
             </ul>
             <section class="top-bar-section">
-                <ul class="left">
-                    <li class="has-dropdown"><a id="menuitem_78" href="#">MENU1</a>
-                        <ul class="dropdown">
-                            <li><a id="menuitem_246" href="#">Whole Meals - Priced Per Person</a></li>
-                            <li><a id="menuitem_81" href="#">ENTREES</a></li>
-                            <li><a id="menuitem_82" href="#">SIDES, SALADS AND VEGGIES</a></li>
-                            <li><a id="menuitem_83" href="#">APPETIZER PLATTERS AND DIPS</a></li>
-                            <li><a id="menuitem_194" href="#">LUNCH</a></li>
-                            <li><a id="menuitem_153" href="#">DIY - READY GO MEALS AND PATIES</a></li>
-                        </ul>
-                    </li><li class="divider"></li>
-                    <li class="has-dropdown"><a id="menuitem_268" href="#">Unspecified</a></li>
-                    <li class="divider"></li>
-                </ul>
+                {% if departmentsInMenu|length %}
+                    <ul class="left">
+                        <li><a href="#">Today's menu</a></li>
+                        <li><a href="#">Upcoming menu</a></li>
+                        {% for department in departmentsInMenu %}
+                            <li class="has-dropdown"><a id="menuitem_{{ department.id }}" href="#">{{ department.name }}</a>
+                                {% if department.categories|length %}
+                                    <ul class="dropdown">
+                                        {% for category in department.categories %}
+                                            <li><a id="menuitem_{{ category.id }}" href="#">{{ category.name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li><li class="divider"></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
                 <ul class="right">
                     <li>
                         <a href="#" class="has-tip tip-bottom noradius" title="$0.00" style="border-bottom:0;">
-                            <span data-tooltip title="$0.00" data-options="disable_for_touch:true" ><i class="fi-shopping-cart white"></i> 0 items</span>
+                            <span data-tooltip title="$0.00" data-options="disable_for_touch:true"><i class="fi-shopping-cart white"></i> 0 items</span>
                         </a>
                     </li>
                     <!-- Search Form -->
                     <li class="has-form hide-for-medium-down">
-                        <form action="#" accept-charset="utf-8" method="get" class="search-form" role="search">                                         <div class="row collapse">
+                        <form action="#" accept-charset="utf-8" method="get" class="search-form" role="search">
+                            <div class="row collapse">
                                 <div class="large-8 small-9  columns">
-                                    <input type="text" id="search-field" name="q" value="" placeholder="Search store..." class="hint" />
+                                    <input type="text" id="search-field" name="q" value="" placeholder="Search store..."
+                                           class="hint"/>
                                 </div>
                                 <div class="large-4 small-3 columns">
-                                    <input type="submit" id="search-submit" class=" button expand" value="Search" />
+                                    <input type="submit" id="search-submit" class=" button expand" value="Search"/>
                                 </div>
                             </div>
                         </form>
                     </li>
                     <!-- End Search Form -->
                     <li>
-                        <a href="#">My Account</a>
+                        <a href="#">Log In</a>
                     </li>
                 </ul>
             </section>
@@ -113,18 +124,61 @@
         </div>
     </div>
 </footer>
-<script type="text/javascript" src="{{ asset('js/vendor/jquery.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/custom.js') }}"></script>
 
 <script>
-    $("#how-it-works-btn").on('click', function (e) {
-        $jumpTarget = $('#how-it-works');
-        if ($jumpTarget.length > 0) {
-            e.preventDefault();
-            $('html, body').animate({
-                scrollTop: $jumpTarget.offset().top - 20
-            }, 1300);
+    $(document).foundation({
+        abide: {
+            timeout: 1000,
+            validators: {
+                // Custom validator
+                productOptionChecked: function (el, required, parent) {
+                    var valid = false,
+                        groupopt = el.getAttribute('data-groupopt'),
+                        options = document.querySelectorAll('[data-groupopt]');
+
+                    if (options.length > 0) {
+                        for (var i = 0; i < options.length; i++) {
+                            if (options[i].getAttribute('data-groupopt') == groupopt && options[i].checked) {
+                                valid = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    return valid;
+                }
+            }
         }
+    });
+
+    $(function () {
+        var nowTemp = new Date();
+        var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+        $('#upcoming-specials')
+            .fdatepicker({
+                onRender: function (date) {
+                    return date.valueOf() <= now.valueOf() ? 'disabled' : '';
+                }
+            })
+            .on('changeDate', function (ev, l) {
+                dealsDate = new Date(ev.date);
+
+                dealsDate.setDate(dealsDate.getDate() + 1);
+                var yy = dealsDate.getFullYear(),
+                    mm = dealsDate.getMonth(),
+                    dd = dealsDate.getDate();
+
+                mm += 1;
+                if (parseInt(mm) < 10) {
+                    mm = '0' + mm;
+                }
+                if (parseInt(dd) < 10) {
+                    dd = '0' + dd;
+                }
+                window.location.href = '/store/upcoming-specials/' + yy + '-' + mm + '-' + dd;
+            });
     });
 </script>
 {% block javascripts %}{% endblock %}

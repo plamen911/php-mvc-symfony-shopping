@@ -26,43 +26,18 @@ class SearchController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $keyword = $request->get('keyword', '');
-
-        $query = $this->getDoctrine()
-            ->getRepository(Product::class)
-            ->createQueryBuilder('product')
-            ->leftJoin('product.category', 'category')
-            ->leftJoin('category.department', 'department')
-            ->where('product.name LIKE :keyword')
-            ->setParameter('keyword', '%' . $keyword . '%')
-            ->setMaxResults(100)
-            ->orderBy('department.name', 'ASC')
-            ->addOrderBy('category.name', 'ASC')
-            ->addOrderBy('product.name', 'ASC')
-            ->getQuery();
-
-        $items = [];
-        $departments = [];
-        $categories = [];
-
-        $products = $query->getResult();
         /**
-         * @var \AppBundle\Entity\Product $product
+         * @var \Doctrine\ORM\EntityManager $em
          */
-        foreach ($products as $product) {
-            $departmentId = $product->getCategory()->getDepartment()->getId();
-            $categoryId = $product->getCategory()->getId();
-            $items[$departmentId][$categoryId][$product->getId()] = $product;
-
-            $departments[$departmentId] = $product->getCategory()->getDepartment();
-            $categories[$categoryId] = $product->getCategory();
-        }
+        $em = $this->getDoctrine()->getManager();
+        $data = $em->getRepository(Product::class)
+            ->findAllByKeyword($request->get('keyword', ''));
 
         return $this->render('search/index.html.twig', [
-            'items' => $items,
-            'departments' => $departments,
-            'categories' => $categories,
-            'keyword' => $keyword,
+            'items' => $data->items,
+            'departments' => $data->departments,
+            'categories' => $data->categories,
+            'keyword' => $data->keyword,
         ]);
     }
 }

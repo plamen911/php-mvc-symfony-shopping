@@ -39,11 +39,22 @@ class ProductController extends Controller
      */
     public function indexAction($departmentId = 0, $categoryId = 0)
     {
-        $category = $this->getDoctrine()->getRepository(Category::class)->find((int)$categoryId);
+        /**
+         * @var \Doctrine\ORM\EntityManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
+        /**
+         * @var \AppBundle\Entity\Category $category
+         */
+        $category = $em->getRepository(Category::class)->find((int)$categoryId);
         if ($category === null) {
             throw $this->createNotFoundException('Category does not exist!');
         }
 
+        /**
+         * @var \AppBundle\Entity\Department $department
+         */
         $department = $this->getDoctrine()->getRepository(Department::class)->find((int)$departmentId);
         if ($department === null) {
             throw $this->createNotFoundException('Department does not exist!');
@@ -53,7 +64,6 @@ class ProductController extends Controller
             throw $this->createNotFoundException('It seems that the category does not belong to department!');
         }
 
-        $em = $this->getDoctrine()->getManager();
         $products = $em->getRepository('AppBundle:Product')->findBy(['categoryId' => $category->getId()], ['position' => 'ASC']);
 
         return $this->render('admin/product/index.html.twig', [
@@ -260,6 +270,9 @@ class ProductController extends Controller
     {
         $sorted = $request->get('item', []);
         if (!empty($sorted)) {
+            /**
+             * @var \Doctrine\ORM\EntityManager $em
+             */
             $em = $this->getDoctrine()->getManager();
             foreach ($sorted as $i => $item_id) {
                 /**
@@ -294,6 +307,9 @@ class ProductController extends Controller
     {
         $sorted = $request->get('image', []);
         if (!empty($sorted)) {
+            /**
+             * @var \Doctrine\ORM\EntityManager $em
+             */
             $em = $this->getDoctrine()->getManager();
             /**
              * @var \AppBundle\Entity\Product $product
@@ -393,9 +409,14 @@ class ProductController extends Controller
     public function deleteAction($id = 0)
     {
         /**
+         * @var \Doctrine\ORM\EntityManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
+        /**
          * @var \AppBundle\Entity\Product $product
          */
-        $product = $this->getDoctrine()->getRepository(Product::class)->find((int)$id);
+        $product = $em->getRepository(Product::class)->find((int)$id);
         if ($product === null) {
             return new JsonResponse([
                 'code' => 1,
@@ -411,7 +432,6 @@ class ProductController extends Controller
             $product->removePhoto($photo);
         }
 
-        $em = $this->getDoctrine()->getManager();
         $em->remove($product);
         $em->flush();
 
@@ -537,34 +557,45 @@ class ProductController extends Controller
         ;
     }
 
-    private function getMaxPosition($categoryId = 0) {
+    private function getMaxPosition($categoryId = 0)
+    {
+        /**
+         * @var \Doctrine\ORM\EntityManager $em
+         */
         $em = $this->getDoctrine()->getManager();
-        $product = $em->getRepository('AppBundle:Product')->findOneBy(['categoryId' => $categoryId], ['position' => 'DESC']);
-
         /**
          * @var \AppBundle\Entity\Product $product
          */
+        $product = $em->getRepository('AppBundle:Product')->findOneBy(['categoryId' => $categoryId], ['position' => 'DESC']);
+
         return ($product) ? $product->getPosition() : 0;
     }
 
-    private function getPhotoMaxPosition($productId = 0) {
+    private function getPhotoMaxPosition($productId = 0)
+    {
+        /**
+         * @var \Doctrine\ORM\EntityManager $em
+         */
         $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('AppBundle:Photo')->findOneBy(['productId' => $productId], ['position' => 'DESC']);
-
         /**
          * @var \AppBundle\Entity\Photo $photo
          */
+        $photo = $em->getRepository('AppBundle:Photo')->findOneBy(['productId' => $productId], ['position' => 'DESC']);
+
         return ($photo) ? $photo->getPosition() : 0;
     }
 
     private function getMainPhoto($productId = 0)
     {
+        /**
+         * @var \Doctrine\ORM\EntityManager $em
+         */
         $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('AppBundle:Photo')->findOneBy(['productId' => $productId], ['position' => 'ASC']);
-
         /**
          * @var \AppBundle\Entity\Photo $photo
          */
+        $photo = $em->getRepository('AppBundle:Photo')->findOneBy(['productId' => $productId], ['position' => 'ASC']);
+
         return ($photo) ? $photo->getFileName() : 0;
     }
 }

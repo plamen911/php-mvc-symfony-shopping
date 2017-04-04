@@ -10,4 +10,42 @@ namespace AppBundle\Repository;
  */
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findAllByKeyword($keyword = '')
+    {
+        $query = $this->createQueryBuilder('product')
+            ->leftJoin('product.category', 'category')
+            ->leftJoin('category.department', 'department')
+            ->where('product.name LIKE :keyword')
+            ->setParameter('keyword', '%' . $keyword . '%')
+            ->setMaxResults(100)
+            ->orderBy('department.name', 'ASC')
+            ->addOrderBy('category.name', 'ASC')
+            ->addOrderBy('product.name', 'ASC')
+            ->getQuery();
+
+        $products = $query->getResult();
+
+        $items = [];
+        $departments = [];
+        $categories = [];
+        /**
+         * @var \AppBundle\Entity\Product $product
+         */
+        foreach ($products as $product) {
+            $departmentId = $product->getCategory()->getDepartment()->getId();
+            $categoryId = $product->getCategory()->getId();
+            $items[$departmentId][$categoryId][$product->getId()] = $product;
+
+            $departments[$departmentId] = $product->getCategory()->getDepartment();
+            $categories[$categoryId] = $product->getCategory();
+        }
+
+        $data = new \stdClass();
+        $data->items = $items;
+        $data->departments = $departments;
+        $data->categories = $categories;
+        $data->keyword = $keyword;
+
+        return $data;
+    }
 }
