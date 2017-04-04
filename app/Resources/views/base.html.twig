@@ -52,7 +52,8 @@
             <section class="top-bar-section">
                 {% if departmentsInMenu|length %}
                     <ul class="left">
-                        <li><a href="#">Today's menu</a></li>
+                        <li><a href="{{ path('store_search') }}?keyword=today">Today's menu</a></li>
+                        <li><a href="{{ path('store_search') }}?keyword=tomorrow">Tomorrow's menu</a></li>
                         {% for department in departmentsInMenu %}
                             <li class="has-dropdown"><a id="menuitem_{{ department.id }}" href="#">{{ department.name }}</a>
                                 {% if department.categories|length %}

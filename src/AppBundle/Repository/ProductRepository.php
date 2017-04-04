@@ -18,6 +18,17 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
 
         switch ($keyword) {
             case 'today':
+            case 'tomorrow':
+                if ('tomorrow' === $keyword) {
+                    $ts = strtotime('+1 day');
+                    $weekDay = date('l', $ts);
+                    $availabilityDate = date('m/d/Y', $ts);
+                } else {
+                    $ts = time();
+                    $weekDay = date('l', $ts);
+                    $availabilityDate = date('m/d/Y');
+                }
+
                 $cond = "
                     (
                       (
@@ -26,8 +37,7 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
                          AND product.availabilityDays NOT LIKE ''
                          AND (
                             product.availabilityDays LIKE :weekday 
-                            OR product.availabilityDays LIKE :weekday 
-                            OR product.availabilityDays LIKE :weekday
+                            OR product.availabilityDays LIKE :date 
                          )
                       )
                       OR
@@ -37,7 +47,8 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
                     )";
 
                 $qb->where($cond)
-                    ->setParameter('weekday', '%' . date('l') . '%');
+                    ->setParameter('weekday', '%' . $weekDay . '%')
+                    ->setParameter('date', '%' . $availabilityDate . '%');
                 break;
 
             default:
