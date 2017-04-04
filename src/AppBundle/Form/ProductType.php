@@ -43,21 +43,27 @@ class ProductType extends AbstractType
             ->add('isTaxable', CheckboxType::class)
             ->add('price', TextType::class)
             ->add('qty', TextType::class)
-            ->add('dimension', ChoiceType::class, array(
-                'choices'  => array(
-                    '- select -' => null,
-                    'lb' => 'lb',
-                    'oz' => 'oz',
-                    'per person' => 'per person',
-                ))
+            ->add('dimension', ChoiceType::class, [
+                    'choices' => [
+                        'lb' => 'lb',
+                        'oz' => 'oz',
+                        'per person' => 'per person'
+                    ],
+                    'required' => false,
+                    'placeholder' => '- select -',
+                    'empty_data' => null
+                ]
             )
-            ->add('availability', ChoiceType::class, array(
-                    'choices'  => array(
-                        '- product is not available -' => null,
-                        'daily' => 'Daily',
-                        'weekdays' => 'Week Days',
-                        'multidays' => 'Multiple Days',
-                    ))
+            ->add('availability', ChoiceType::class, [
+                    'choices' => [
+                        'Daily' => 'daily',
+                        'Week Days' => 'weekdays',
+                        'Multiple Days' => 'multidays'
+                    ],
+                    'required' => false,
+                    'placeholder' => '- product is not available -',
+                    'empty_data' => null
+                ]
             )
             ->add('availabilityDays', HiddenType::class)
             ->add('description', TextareaType::class);
@@ -65,9 +71,9 @@ class ProductType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'AppBundle\Entity\Product'
-        ));
+        ]);
     }
 
     public function getBlockPrefix()
