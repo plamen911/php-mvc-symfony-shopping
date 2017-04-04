@@ -86,7 +86,7 @@
         <div class="logo-image" id="logo">
             <h1 data-content-field="site-title" class="site-title" id="yui_3_17_2_1_1432459322975_341">
                 <div class="site-title-border"></div>
-                <a href="/" id="yui_3_17_2_1_1432459322975_340">
+                <a href="{{ path('homepage') }}" id="yui_3_17_2_1_1432459322975_340">
                     <img alt="Enjoy Kitchen Catering" src="{{ asset('img/logo.png') }}">
                     <span class="site-title-span" data-shrink-original-size="100" style="letter-spacing: 0.04em;">Enjoy Kitchen Catering</span>
                 </a>
@@ -139,7 +139,7 @@
                 {% else %}
                     <li class="divider"></li>
                     <li class="active">
-                        <a href="#">Go To Store</a>
+                        <a href="{{ path('store_index') }}">Go To Store</a>
                     </li>
                 {% endif %}
             </ul>

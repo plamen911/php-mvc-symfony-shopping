@@ -60,14 +60,9 @@
                         {{ form_row(form.availability, {'label': 'Availability Time', 'required': false}) }}
 
                         <div id="availability-tags"{% if (product.availability != 'weekdays' and product.availability != 'multidays') %} style="display: none;"{% endif %}>
-                            <input type="hidden" id="availabilityDays" name="availabilityDays"
-                                   value="{{ product.availabilityDays }}">
                             <ul id="availability_days_tags"></ul>
                             <small id="availability_days_error" class="error" style="display: none;"></small>
                         </div>
-                        <p{% if (product.availability != 'weekdays') %} style="display: none;"{% endif %}
-                                id="prepopulate-inner"><a id="lnkPrepopulate" href="#" class="button tiny">Pre-populate
-                                Dates</a></p>
                     </div>
                 </div>
                 <div class="row">
@@ -132,6 +127,8 @@
 
         $(function () {
             $sortableElem = $('#sortable');
+            $availability = $('#app_bundle_product_type_availability');
+            $availabilityDays = $('#app_bundle_product_type_availabilityDays');
 
             // sortable
             $sortableElem.sortable({
@@ -218,7 +215,104 @@
                     } // End error
                 }); // End ajax method
             });
+
+            $availability.bind('change', function () {
+                var availability = $.trim($availability.val());
+                var $availabilityTags = $('#availability-tags');
+
+                switch (availability) {
+                    case 'weekdays':
+                        $('input.ui-autocomplete-input', '.tagit-new').attr('placeholder', 'Ex.: Sunday');
+                        $availabilityTags.css('display', 'block');
+                        break;
+
+                    case 'multidays':
+                        $('input.ui-autocomplete-input', '.tagit-new').attr('placeholder', 'Ex.: ' + getTodayDate());
+                        $availabilityTags.css('display', 'block');
+                        break;
+
+                    default:
+                        $availabilityTags.css('display', 'none');
+                        break;
+                }
+
+                if (availability == 'weekdays') {
+                    $('#prepopulate-inner').css('display', 'block');
+                } else {
+                    $('#prepopulate-inner').css('display', 'none');
+                }
+
+                // clear tag area
+                $availabilityDays.val('');
+                window.setTimeout(function () {
+                    $('#availability_days_tags').tagit('removeAll');
+                }, 100);
+
+                updateAvailabilityTime();
+            });
+
+            t = $('#availability_days_tags').tagit({
+                placeholderText: 'Availability Time...',
+                triggerKeys: ['enter', 'comma', 'tab'],
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldNode: $availabilityDays,
+                beforeTagAdded: function (evt, ui) {
+                    if (!ui.duringInitialization) {
+                        var error_field = $('#availability_days_error');
+                        error_field.html('').css('display', 'none');
+
+                        switch ($availability.val()) {
+                            case 'weekdays':
+                                var weekday = $(this).tagit('tagLabel', ui.tag);
+                                var days_of_week = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                                if (days_of_week.indexOf(weekday) == -1) {
+                                    error_field.html('Invalid week day name!').css('display', 'block');
+                                    return false;
+                                }
+                                break;
+
+                            case 'multidays':
+                                var date_label = $(this).tagit('tagLabel', ui.tag);
+                                var regex_date = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+                                if (!regex_date.test(date_label)) {
+                                    error_field.html('Invalid US date format (MM/DD/YYYY)!').css('display', 'block');
+                                    return false;
+                                }
+                                break;
+                        }
+                    }
+                },
+                afterTagAdded: function (evt, ui) {
+                    if (!ui.duringInitialization) {
+                        updateAvailabilityTime();
+                    }
+                },
+                afterTagRemoved: function (evt, ui) {
+                    updateAvailabilityTime();
+                }
+            });
         });
+        
+        function updateAvailabilityTime() {
+            // empty
+        }
+
+        function getTodayDate() {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd;
+            }
+            if (mm < 10) {
+                mm = '0' + mm;
+            }
+
+            return dd + '/' + mm + '/' + yyyy;
+        }
 
     </script>
 {% endblock %}
