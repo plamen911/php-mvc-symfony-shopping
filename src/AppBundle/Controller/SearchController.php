@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Category;
+use AppBundle\Entity\Photo;
 use AppBundle\Entity\Product;
 use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -38,6 +39,7 @@ class SearchController extends Controller
             'departments' => $data->departments,
             'categories' => $data->categories,
             'keyword' => $data->keyword,
+            'uploadDirLarge' => Photo::getUploadDirLarge()
         ]);
     }
 }

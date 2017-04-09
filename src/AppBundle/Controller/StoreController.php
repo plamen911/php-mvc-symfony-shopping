@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Department;
+use AppBundle\Entity\Photo;
 use AppBundle\Entity\Product;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -62,6 +63,7 @@ class StoreController extends Controller
             'departments' => $data->departments,
             'categories' => $data->categories,
             'keyword' => $data->keyword,
+            'uploadDirLarge' => Photo::getUploadDirLarge()
         ]);
     }
 }

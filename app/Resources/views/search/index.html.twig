@@ -3,37 +3,49 @@
 {% block title %}Search Results{% endblock %}
 
 {% block body %}
-    <section id="adminSearchViewContainer" class="admin-content-container">
-        <div class="row">
-            <div class="large-12 columns">
-                <h3>Search Results</h3>
-                {% if items|length > 0 %}
-                    <ul>
-                        {% for departmentId, catgs in items %}
-                            <li>
-                                <a href="{{ path('department_index') }}">{{ departments[departmentId].name }}</a>
-                                <ul>
-                                    {% for categoryId, products in catgs %}
-                                        <li>
-                                            <a href="{{ path('category_index', { 'departmentId': departmentId }) }}">{{ categories[categoryId].name }}</a>
-                                            <ul>
-                                                {% for productId, product in products %}
-                                                    <li>
-                                                        <a href="{{ path('product_edit', {'departmentId': departmentId, 'categoryId': categoryId, 'id': productId}) }}">{{ product.name }}</a>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>No results found.</p>
-                {% endif %}
+    <section id="productsContainer">
+        {% if items|length > 0 %}
+            {% for departmentId, catgs in items %}
+                {% for categoryId, products in catgs %}
+                    <section class="categories clearfix">
+                        <div class="row category-header">
+                            <div class="large-12 columns">
+                                <h1 class="category-title">{{ categories[categoryId].name }}</h1>
+                                {% if categories[categoryId].description|length %}
+                                    <h4 class="subheader">{{ categories[categoryId].description }}</h4>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="large-12 columns category-body">
+                            <div class="row">
+                                {% for productId, product in products %}
+                                    <div class="large-4 medium-6 small-12 columns">
+                                        <div class="product-container">
+                                            <div class="imageInner">
+                                                <a href="">
+                                                    <img src="{% if product.photo|length %}/{{ uploadDirLarge }}{{ product.photo }}{% else %}{{ asset('uploads/no_image_707x539.gif') }}{% endif %}" title="{{ product.name }}" alt="{{ product.name }}">
+                                                </a>
+                                            </div>
+                                            <div class="panel captionInner">
+                                                <h5>{{ product.name }}</h5>
+                                                <h6 class="subheader">${{ product.price }}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </section>
+                {% endfor %}
+            {% endfor %}
+        {% else %}
+        <section class="categories clearfix">
+            <div class="row category-header">
+                <div class="large-12 columns">
+                    <h1 class="category-title">No products found.</h1>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </section>
 {% endblock %}
 

@@ -62,7 +62,7 @@ class Category
     private $department;
 
     /**
-     * @var ArrayCollection
+     * @var Product[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product", mappedBy="category")
      */
