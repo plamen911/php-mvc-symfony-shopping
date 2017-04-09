@@ -10,7 +10,7 @@ namespace AppBundle\Repository;
  */
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function findAllByKeyword($keyword = '')
+    public function findAllByKeyword($keyword = '', $value = '')
     {
         $qb = $this->createQueryBuilder('product')
             ->leftJoin('product.category', 'category')
@@ -49,6 +49,21 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
                 $qb->where($cond)
                     ->setParameter('weekday', '%' . $weekDay . '%')
                     ->setParameter('date', '%' . $availabilityDate . '%');
+                break;
+
+            case 'department':
+                $qb->where('category.departmentId = :departmentId')
+                    ->setParameter('departmentId', (int)$value);
+                break;
+
+            case 'category':
+                $qb->where('product.categoryId = :categoryId')
+                    ->setParameter('categoryId', (int)$value);
+                break;
+
+            case 'keyword':
+                $qb->where('product.name LIKE :keyword')
+                    ->setParameter('keyword', '%' . $value . '%');
                 break;
 
             default:

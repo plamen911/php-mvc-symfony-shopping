@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Category;
 use AppBundle\Entity\Department;
 use AppBundle\Entity\Photo;
 use AppBundle\Entity\Product;
@@ -38,13 +39,63 @@ class StoreController extends Controller
     }
 
     /**
-     * @Route("/search", name="store_search")
+     * @Route("/search", name="store_search_by_keyword")
      * @Method({"GET"})
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function searchAction(Request $request)
+    {
+        return $this->render('search/index.html.twig',
+            $this->getSearchResults($request->get('keyword', ''))
+        );
+    }
+
+    /**
+     * @Route("/search/department/{id}", name="store_search_by_department")
+     * @Method({"GET"})
+     *
+     * @param Department $department
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @internal param Request $request
+     */
+    public function searchByDepartment(Department $department)
+    {
+        if ($department == null) {
+            throw $this->createNotFoundException('Department not found');
+        }
+
+        return $this->render('search/index.html.twig',
+            $this->getSearchResults('department', $department->getId())
+        );
+    }
+
+    /**
+     * @Route("/search/category/{id}", name="store_search_by_category")
+     * @Method({"GET"})
+     *
+     * @param Category $category
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @internal param Request $request
+     */
+    public function searchByCategory(Category $category)
+    {
+        if ($category == null) {
+            throw $this->createNotFoundException('Category not found');
+        }
+
+        return $this->render('search/index.html.twig',
+            $this->getSearchResults('category', $category->getId())
+        );
+    }
+
+    /**
+     * @param string $term
+     * @param string $value
+     * @return array
+     */
+    private function getSearchResults($term = '', $value = '')
     {
         /**
          * @var \Doctrine\ORM\EntityManager $em
@@ -55,15 +106,15 @@ class StoreController extends Controller
             ->findBy(['showInMenu' => true], ['position' => 'ASC']);
 
         $data = $em->getRepository(Product::class)
-            ->findAllByKeyword($request->get('keyword', ''));
+            ->findAllByKeyword($term, $value);
 
-        return $this->render('search/index.html.twig', [
+        return [
             'departmentsInMenu' => $departments,
             'items' => $data->items,
             'departments' => $data->departments,
             'categories' => $data->categories,
             'keyword' => $data->keyword,
             'uploadDirLarge' => Photo::getUploadDirLarge()
-        ]);
+        ];
     }
 }

@@ -52,14 +52,14 @@
             <section class="top-bar-section">
                 {% if departmentsInMenu|length %}
                     <ul class="left">
-                        <li><a href="{{ path('store_search') }}?keyword=today">Today's menu</a></li>
-                        <li><a href="{{ path('store_search') }}?keyword=tomorrow">Tomorrow's menu</a></li>
+                        <li><a href="{{ path('store_search_by_keyword') }}?keyword=today">Today's menu</a></li>
+                        <li><a href="{{ path('store_search_by_keyword') }}?keyword=tomorrow">Tomorrow's menu</a></li>
                         {% for department in departmentsInMenu %}
-                            <li class="has-dropdown"><a id="menuitem_{{ department.id }}" href="#">{{ department.name }}</a>
+                            <li class="has-dropdown"><a href="{{ path('store_search_by_department', {'id': department.id}) }}">{{ department.name }}</a>
                                 {% if department.categories|length %}
                                     <ul class="dropdown">
                                         {% for category in department.categories %}
-                                            <li><a id="menuitem_{{ category.id }}" href="#">{{ category.name }}</a></li>
+                                            <li><a href="{{ path('store_search_by_category', {'id': category.id}) }}">{{ category.name }}</a></li>
                                         {% endfor %}
                                     </ul>
                                 {% endif %}
