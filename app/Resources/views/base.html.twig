@@ -75,10 +75,10 @@
                     </li>
                     <!-- Search Form -->
                     <li class="has-form hide-for-medium-down">
-                        <form action="#" accept-charset="utf-8" method="get" class="search-form" role="search">
+                        <form action="{{ path('store_search_by_keyword') }}" accept-charset="utf-8" method="get" class="search-form" role="search">
                             <div class="row collapse">
                                 <div class="large-8 small-9  columns">
-                                    <input type="text" id="search-field" name="q" value="" placeholder="Search store..."
+                                    <input type="text" id="search-field" name="keyword" value="{{ keyword|default('') }}" placeholder="Search Products..."
                                            class="hint"/>
                                 </div>
                                 <div class="large-4 small-3 columns">

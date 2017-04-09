@@ -66,9 +66,10 @@ class StoreController extends Controller
             throw $this->createNotFoundException('Department not found');
         }
 
-        return $this->render('search/index.html.twig',
-            $this->getSearchResults('department', $department->getId())
-        );
+        $data = $this->getSearchResults('department', $department->getId());
+        $data['keyword'] = '';
+
+        return $this->render('search/index.html.twig', $data);
     }
 
     /**
@@ -85,9 +86,10 @@ class StoreController extends Controller
             throw $this->createNotFoundException('Category not found');
         }
 
-        return $this->render('search/index.html.twig',
-            $this->getSearchResults('category', $category->getId())
-        );
+        $data = $this->getSearchResults('category', $category->getId());
+        $data['keyword'] = '';
+
+        return $this->render('search/index.html.twig', $data);
     }
 
     /**
