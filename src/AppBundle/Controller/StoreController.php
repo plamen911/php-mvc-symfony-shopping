@@ -97,6 +97,10 @@ class StoreController extends Controller
             throw $this->createNotFoundException('Product not found');
         }
 
+        if ((float)$product->getQty() <= 0) {
+            throw $this->createNotFoundException('Product is currently unavailable for shopping');
+        }
+
         return $this->render('product/view.html.twig', [
             'product' => $product,
             'uploadDirLarge' => Photo::getUploadDirLarge(),
