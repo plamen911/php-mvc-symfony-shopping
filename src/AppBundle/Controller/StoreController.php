@@ -25,16 +25,8 @@ class StoreController extends Controller
      */
     public function indexAction()
     {
-        /**
-         * @var \Doctrine\ORM\EntityManager $em
-         */
-        $em = $this->getDoctrine()->getManager();
-
-        $departments = $em->getRepository(Department::class)
-            ->findBy(['showInMenu' => true], ['position' => 'ASC']);
-
         return $this->render('store/index.html.twig', [
-            'departmentsInMenu' => $departments
+            'departmentsInMenu' => $this->getDepartmentsInMenu()
         ]);
     }
 
@@ -93,6 +85,26 @@ class StoreController extends Controller
     }
 
     /**
+     * @Route("/product/{id}", name="store_product")
+     * @Method({"GET"})
+     *
+     * @param Product $product
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function productAction(Product $product)
+    {
+        if ($product == null) {
+            throw $this->createNotFoundException('Product not found');
+        }
+
+        return $this->render('product/view.html.twig', [
+            'product' => $product,
+            'uploadDirLarge' => Photo::getUploadDirLarge(),
+            'departmentsInMenu' => $this->getDepartmentsInMenu()
+        ]);
+    }
+
+    /**
      * @param string $term
      * @param string $value
      * @return array
@@ -104,19 +116,25 @@ class StoreController extends Controller
          */
         $em = $this->getDoctrine()->getManager();
 
-        $departments = $em->getRepository(Department::class)
-            ->findBy(['showInMenu' => true], ['position' => 'ASC']);
-
         $data = $em->getRepository(Product::class)
             ->findAllByKeyword($term, $value);
 
         return [
-            'departmentsInMenu' => $departments,
+            'departmentsInMenu' => $this->getDepartmentsInMenu(),
             'items' => $data->items,
             'departments' => $data->departments,
             'categories' => $data->categories,
             'keyword' => $data->keyword,
             'uploadDirLarge' => Photo::getUploadDirLarge()
         ];
+    }
+
+    /**
+     * @return Department[]
+     */
+    private function getDepartmentsInMenu()
+    {
+        return $this->getDoctrine()->getManager()->getRepository(Department::class)
+            ->findBy(['showInMenu' => true], ['position' => 'ASC']);
     }
 }

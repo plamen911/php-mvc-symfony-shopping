@@ -26,7 +26,7 @@
                                                     <span class="unavailable-tag"></span>
                                                     <img src="{% if product.photo|length %}/{{ uploadDirLarge }}{{ product.photo }}{% else %}{{ asset('uploads/no_image_707x539.gif') }}{% endif %}" title="{{ product.name }}" alt="{{ product.name }}">
                                                 {% else %}
-                                                    <a href="#">
+                                                    <a href="{{ path('store_product', {'id': product.id}) }}">
                                                         <img src="{% if product.photo|length %}/{{ uploadDirLarge }}{{ product.photo }}{% else %}{{ asset('uploads/no_image_707x539.gif') }}{% endif %}" title="{{ product.name }}" alt="{{ product.name }}">
                                                     </a>
                                                 {% endif %}
