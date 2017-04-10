@@ -19,7 +19,7 @@
                         <div class="large-12 columns category-body">
                             <div class="row">
                                 {% for productId, product in products %}
-                                    <div class="large-4 medium-6 small-12 columns">
+                                    <div class="large-4 medium-6 small-12 columns{% if products|length == loop.index %} end{% endif %}">
                                         <div class="product-container">
                                             <div class="imageInner">
                                                 {% if product.qty <= 0 %}
