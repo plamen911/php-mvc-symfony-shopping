@@ -10,6 +10,11 @@ namespace AppBundle\Repository;
  */
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param string $keyword
+     * @param string $value
+     * @return \stdClass
+     */
     public function findAllByKeyword($keyword = '', $value = '')
     {
         $qb = $this->createQueryBuilder('product')

@@ -22,9 +22,14 @@
                                     <div class="large-4 medium-6 small-12 columns">
                                         <div class="product-container">
                                             <div class="imageInner">
-                                                <a href="">
+                                                {% if product.qty <= 0 %}
+                                                    <span class="unavailable-tag"></span>
                                                     <img src="{% if product.photo|length %}/{{ uploadDirLarge }}{{ product.photo }}{% else %}{{ asset('uploads/no_image_707x539.gif') }}{% endif %}" title="{{ product.name }}" alt="{{ product.name }}">
-                                                </a>
+                                                {% else %}
+                                                    <a href="#">
+                                                        <img src="{% if product.photo|length %}/{{ uploadDirLarge }}{{ product.photo }}{% else %}{{ asset('uploads/no_image_707x539.gif') }}{% endif %}" title="{{ product.name }}" alt="{{ product.name }}">
+                                                    </a>
+                                                {% endif %}
                                             </div>
                                             <div class="panel captionInner">
                                                 <h5>{{ product.name }}</h5>
