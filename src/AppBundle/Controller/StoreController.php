@@ -10,9 +10,11 @@ use AppBundle\Form\AddProductType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints;
 
 /**
  * Home controller.
@@ -104,25 +106,10 @@ class StoreController extends Controller
             throw $this->createNotFoundException('Product is currently unavailable for shopping');
         }
 
-        // $form = $this->createForm(AddProductType::class, null, ['data' => $product]);
-
-        /**
-         * @var \Symfony\Component\Form\FormBuilder $form
-         */
-        $form = $this->createFormBuilder()
-            ->setAction($this->generateUrl('store_product_add', ['id' => $product->getId()]))
-            ->setMethod('POST')
-            ->add('qty', NumberType::class)
-            ->add('shippingDate', ChoiceType::class, [
-                    'choices' => $this->getShippingDates($product),
-                    'required' => false,
-                    'placeholder' => 'Choose an option',
-                    'empty_data' => null
-                ]
-            )
-            ->getForm();
+        $form = $this->createProductForm($product);
 
         return $this->render('product/view.html.twig', [
+            'error' => '',
             'product' => $product,
             'form' => $form->createView(),
             'uploadDirLarge' => Photo::getUploadDirLarge(),
@@ -136,6 +123,7 @@ class StoreController extends Controller
      *
      * @param Product $product
      * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function productAddAction(Product $product, Request $request)
     {
@@ -143,31 +131,83 @@ class StoreController extends Controller
             throw $this->createNotFoundException('Product not found');
         }
 
-        $shippingDate = $request->get('shippingDate', '');
-        if (empty($shippingDate)) {
-            // todo: error
+        $form = $this->createProductForm($product);
+        $form->handleRequest($request);
+
+//        dump($form->getErrors(true)->getChildren()->getMessage());
+//        dump($form->getErrors(true)->count());
+
+        $data = $form->getData();
+        $error = [];
+        if (empty($data['qty'])) {
+            $error[] = 'Product quantity is missing.';
+        }
+        if (empty($data['shippingDate'])) {
+            $error[] = 'Delivery date is missing.';
         }
 
-        $qty = (int)$request->get('qty', 0);
-        if (empty($qty)) {
-            // todo: error
+        if ($form->isSubmitted() && $form->isValid()) {
+
+
+            // http://stackoverflow.com/questions/25956185/how-to-manage-a-simple-cart-session-in-symfony-2
+            $session = $request->getSession();
+            /**
+             * @var Product[] $cart
+             */
+            $cart = $session->get('cart', []);
+            for ($i = 0; $i < $data['qty']; $i++) {
+                $cart[] = [
+                    'product' => $product,
+                    'shippingDate' => $data['shippingDate'],
+                ];
+            }
+            $session->set('cart', $cart);
+
+            $this->addFlash('success', 'Product successfully added to card.');
+            // return $this->redirectToRoute(
+
         }
 
-        // http://stackoverflow.com/questions/25956185/how-to-manage-a-simple-cart-session-in-symfony-2
-        $session = $request->getSession();
-        /**
-         * @var Product[] $cart
-         */
-        $cart = $session->get('cart', []);
-        for ($i = 0; $i < $qty; $i++) {
-            $cart[] = [
-                'product' => $product,
-                'shippingDate' => $shippingDate,
-            ];
-        }
-        $session->set('cart', $cart);
+        return $this->render('product/view.html.twig', [
+            'error' => (!empty($error)) ? implode('<br>', $error) : '',
+            'product' => $product,
+            'form' => $form->createView(),
+            'uploadDirLarge' => Photo::getUploadDirLarge(),
+            'departmentsInMenu' => $this->getDepartmentsInMenu()
+        ]);
+    }
 
-        // return $this->redirectToRoute(
+    /**
+     * Creates a form to add a product entity to cart.
+     *
+     * @param Product $product The product entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createProductForm(Product $product)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('store_product_add', ['id' => $product->getId()]))
+            ->setMethod('POST')
+            ->add('qty', IntegerType::class, [
+                    'empty_data' => 0,
+                    'required' => true,
+//                    'constraints' => [
+//                        new Constraints\GreaterThan(['value' => 0, 'message' => 'Please enter product quantity.'])
+//                    ]
+                ]
+            )
+            ->add('shippingDate', ChoiceType::class, [
+                    'choices' => $this->getShippingDates($product),
+                    'required' => true,
+                    'placeholder' => 'Choose an option',
+                    'empty_data' => null,
+//                    'constraints' => [
+//                        new Constraints\NotBlank(['message' => 'Please select delivery date.'])
+//                    ]
+                ]
+            )
+            ->getForm();
     }
 
     /**
