@@ -191,8 +191,11 @@ class StoreController extends Controller
         $session = $request->getSession();
         $cart = $session->get('cart', []);
 
+        $form = $this->createShoppingCartForm();
+
         return $this->render('store/cart.html.twig', [
             'cart' => $cart,
+            'form' => $form->createView(),
             'uploadDirLarge' => Photo::getUploadDirLarge(),
             'departmentsInMenu' => $this->getDepartmentsInMenu()
         ]);
@@ -215,6 +218,21 @@ class StoreController extends Controller
         }
 
         return sprintf('%.2f', $taxes);
+    }
+
+    /**
+     * Creates a form to update product entities in shopping cart.
+     *
+     * @param Product $product The product entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createShoppingCartForm()
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('store_cart'))
+            ->setMethod('POST')
+            ->getForm();
     }
 
     /**

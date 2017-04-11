@@ -3,11 +3,51 @@
 {% block title %}| Your Shopping Cart{% endblock %}
 
 {% block body %}
-    <section id="productsContainer">
-        {{ dump(cart) }}
+    <div class="row">
+        <hr>
+        <div class="large-8 columns"><h1>Shopping Cart</h1></div>
+    </div>
+    <div class="row">
+        <hr>
+        <div class="large-12 columns">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="small-8 columns">
+                        <h5>Item</h5>
+                    </div>
+                    <div class="small-4 columns">
+                        <div class="row">
+                            <div class="large-4 columns">
+                                <h5>Qty</h5>
+                            </div>
+                            <div class="large-4 columns">
+                                <h5>Subtotal</h5>
+                            </div>
+                            <div class="large-4 columns">
+                                <h5>State Tax</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                {% if cart|length > 0 %}
+
+                    {{ dump(cart) }}
+
+                {% else %}
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>Your shopping cart is empty.</p>
+                        </div>
+                    </div>
+                {% endif %}
 
 
-        cart content goes here...
 
-    </section>
+                cart form...
+
+
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}
