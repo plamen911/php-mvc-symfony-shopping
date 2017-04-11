@@ -25,6 +25,9 @@ use Symfony\Component\Validator\Constraints;
  */
 class StoreController extends Controller
 {
+    private const STATE_TAX = 7;
+    private const DELIVERY_COST = 35;
+
     /**
      * @Route("/", name="store_index")
      */
@@ -123,7 +126,7 @@ class StoreController extends Controller
      *
      * @param Product $product
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function productAddAction(Product $product, Request $request)
     {
@@ -146,26 +149,25 @@ class StoreController extends Controller
             $error[] = 'Delivery date is missing.';
         }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-
-
-            // http://stackoverflow.com/questions/25956185/how-to-manage-a-simple-cart-session-in-symfony-2
+        if (empty($error) && $form->isSubmitted() && $form->isValid()) {
             $session = $request->getSession();
-            /**
-             * @var Product[] $cart
-             */
             $cart = $session->get('cart', []);
-            for ($i = 0; $i < $data['qty']; $i++) {
-                $cart[] = [
-                    'product' => $product,
-                    'shippingDate' => $data['shippingDate'],
-                ];
+
+            $item = [];
+            if (isset($cart[$product->getId()])) {
+                $item = $cart[$product->getId()];
+            } else {
+                $item['product'] = $product;
+                $item['qty'] = 0;
             }
+            $item['qty'] += (int)$data['qty'];
+            $item['taxes'] = (float)$this->getProductTaxes($product, $item['qty']);
+            $item['shippingDate'] = $data['shippingDate'];
+            $cart[$product->getId()] = $item;
             $session->set('cart', $cart);
 
             $this->addFlash('success', 'Product successfully added to card.');
-            // return $this->redirectToRoute(
-
+            return $this->redirectToRoute('store_cart');
         }
 
         return $this->render('product/view.html.twig', [
@@ -175,6 +177,44 @@ class StoreController extends Controller
             'uploadDirLarge' => Photo::getUploadDirLarge(),
             'departmentsInMenu' => $this->getDepartmentsInMenu()
         ]);
+    }
+
+    /**
+     * @Route("/cart", name="store_cart")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function cartAction(Request $request)
+    {
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        return $this->render('store/cart.html.twig', [
+            'cart' => $cart,
+            'uploadDirLarge' => Photo::getUploadDirLarge(),
+            'departmentsInMenu' => $this->getDepartmentsInMenu()
+        ]);
+    }
+
+    /**
+     * @param Product $product
+     * @param float $qty
+     * @return string
+     */
+    private function getProductTaxes($product, $qty)
+    {
+        $taxes = 0;
+        /**
+         * @var Product $product
+         */
+        if ($product->getIsTaxable()) {
+            $taxPercent = self::STATE_TAX;
+            $taxes = ($qty * $taxPercent) * $taxPercent / 100;
+        }
+
+        return sprintf('%.2f', $taxes);
     }
 
     /**
