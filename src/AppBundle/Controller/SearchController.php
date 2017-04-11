@@ -34,7 +34,7 @@ class SearchController extends Controller
         $data = $em->getRepository(Product::class)
             ->findAllByKeyword($request->get('keyword', ''));
 
-        return $this->render('search/index.html.twig', [
+        return $this->render('admin/search/index.html.twig', [
             'items' => $data->items,
             'departments' => $data->departments,
             'categories' => $data->categories,

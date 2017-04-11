@@ -3,13 +3,11 @@
 {% block title %}Product Details{% endblock %}
 
 {% block body %}
-    <form action="http://localhost/ivanov/enjoykitchenonline.com/store/add_item" method="post" accept-charset="utf-8" id="product-form-248" data-abide="true" novalidate="novalidate">
-        <input id="item_id_248" name="item_id_248" value="248" type="hidden">
-        <input id="product_url_248" name="product_url_248" value="http://localhost/ivanov/enjoykitchenonline.com/store/products/248" type="hidden">
+    {{ form_start(form, {'attr': {'accept-charset': 'utf-8', 'novalidate': 'novalidate'}}) }}
         <section class="product-detail-container">
             <div class="row">
                 <div class="large-12 columns">
-                    <h1 class="product-title">Shrimp Stir-Fry with Brown Rice and mixed Veggies</h1>
+                    <h1 class="product-title">{{ product.name }}</h1>
                 </div>
             </div>
             <div class="row">
@@ -28,57 +26,57 @@
                 </div>
                 <div id="product-details-248" class="large-4 columns">
                     <div id="product-description-248">
-                        <p></p>
+                        <p>{{ product.description }}</p>
                     </div>
                     <div id="product-price-248">
-                        <p>$<span id="price-label">70.00</span></p>
+                        <p>$<span id="price-label">{{ product.price }}</span></p>
                     </div>
                 </div>
                 <div class="large-2 columns">
                     <div id="product-options-248"></div>
                     <div id="product-variants-248">
                         <div class="columns large-9">
-                            <label for="qty_248">Quantity<br>
-                                <input id="qty_248" name="qty_248" value="1" placeholder="Qty..." required="" pattern="[0-9]+" type="number">
-                                <small class="error">Product quantity is required.</small>
-                            </label>
+                            {{ form_row(form.qty, {'label': 'Quantity', 'required': true, 'pattern': '[0-9]+'}) }}
                         </div>
                     </div>
 
                     <div id="shipping-date-248" class="columns large-12">
-                        <label>Delivery Date <br>
-                            <select id="shipping_date_248" name="shipping_date_248" required="">
-                                <option value="2017-04-11">Tuesday - Apr 11th</option>
-                                <option value="2017-04-12">Wednesday - Apr 12th</option>
-                                <option value="2017-04-13">Thursday - Apr 13th</option>
-                                <option value="2017-04-14">Friday - Apr 14th</option>
-                                <option value="2017-04-15">Saturday - Apr 15th</option>
-                                <option value="2017-04-16">Sunday - Apr 16th</option>
-                                <option value="2017-04-17">Monday - Apr 17th</option>
-                                <option value="2017-04-18">Tuesday - Apr 18th</option>
-                                <option value="2017-04-19">Wednesday - Apr 19th</option>
-                                <option value="2017-04-20">Thursday - Apr 20th</option>
-                                <option value="2017-04-21">Friday - Apr 21st</option>
-                                <option value="2017-04-22">Saturday - Apr 22nd</option>
-                                <option value="2017-04-23">Sunday - Apr 23rd</option>
-                                <option value="2017-04-24">Monday - Apr 24th</option>
-                                <option value="2017-04-25">Tuesday - Apr 25th</option>
-                                <option value="2017-04-26">Wednesday - Apr 26th</option>
-                                <option value="2017-04-27">Thursday - Apr 27th</option>
-                                <option value="2017-04-28">Friday - Apr 28th</option>
-                                <option value="2017-04-29">Saturday - Apr 29th</option>
-                                <option value="2017-04-30">Sunday - Apr 30th</option>
-                                <option value="2017-05-01">Monday - May 1st</option>
-                                <option value="2017-05-02">Tuesday - May 2nd</option>
-                                <option value="2017-05-03">Wednesday - May 3rd</option>
-                                <option value="2017-05-04">Thursday - May 4th</option>
-                                <option value="2017-05-05">Friday - May 5th</option>
-                                <option value="2017-05-06">Saturday - May 6th</option>
-                                <option value="2017-05-07">Sunday - May 7th</option>
-                                <option value="2017-05-08">Monday - May 8th</option>
-                                <option value="2017-05-09">Tuesday - May 9th</option>
-                            </select>
-                        </label>
+                        {{ form_row(form.shippingDate, {'label': 'Delivery Date', 'required': true}) }}
+
+
+                        {#<label>Delivery Date <br>#}
+                            {#<select id="shipping_date_248" name="shipping_date_248" required="">#}
+                                {#<option value="2017-04-11">Tuesday - Apr 11th</option>#}
+                                {#<option value="2017-04-12">Wednesday - Apr 12th</option>#}
+                                {#<option value="2017-04-13">Thursday - Apr 13th</option>#}
+                                {#<option value="2017-04-14">Friday - Apr 14th</option>#}
+                                {#<option value="2017-04-15">Saturday - Apr 15th</option>#}
+                                {#<option value="2017-04-16">Sunday - Apr 16th</option>#}
+                                {#<option value="2017-04-17">Monday - Apr 17th</option>#}
+                                {#<option value="2017-04-18">Tuesday - Apr 18th</option>#}
+                                {#<option value="2017-04-19">Wednesday - Apr 19th</option>#}
+                                {#<option value="2017-04-20">Thursday - Apr 20th</option>#}
+                                {#<option value="2017-04-21">Friday - Apr 21st</option>#}
+                                {#<option value="2017-04-22">Saturday - Apr 22nd</option>#}
+                                {#<option value="2017-04-23">Sunday - Apr 23rd</option>#}
+                                {#<option value="2017-04-24">Monday - Apr 24th</option>#}
+                                {#<option value="2017-04-25">Tuesday - Apr 25th</option>#}
+                                {#<option value="2017-04-26">Wednesday - Apr 26th</option>#}
+                                {#<option value="2017-04-27">Thursday - Apr 27th</option>#}
+                                {#<option value="2017-04-28">Friday - Apr 28th</option>#}
+                                {#<option value="2017-04-29">Saturday - Apr 29th</option>#}
+                                {#<option value="2017-04-30">Sunday - Apr 30th</option>#}
+                                {#<option value="2017-05-01">Monday - May 1st</option>#}
+                                {#<option value="2017-05-02">Tuesday - May 2nd</option>#}
+                                {#<option value="2017-05-03">Wednesday - May 3rd</option>#}
+                                {#<option value="2017-05-04">Thursday - May 4th</option>#}
+                                {#<option value="2017-05-05">Friday - May 5th</option>#}
+                                {#<option value="2017-05-06">Saturday - May 6th</option>#}
+                                {#<option value="2017-05-07">Sunday - May 7th</option>#}
+                                {#<option value="2017-05-08">Monday - May 8th</option>#}
+                                {#<option value="2017-05-09">Tuesday - May 9th</option>#}
+                            {#</select>#}
+                        {#</label>#}
 
                     </div>
                     <div id="product-add-248" class="columns large-12">
@@ -87,7 +85,8 @@
                 </div>
             </div>
         </section>
-    </form>
+    {{ form_end(form) }}
+
 {% endblock %}
 
 {% block javascripts %}
