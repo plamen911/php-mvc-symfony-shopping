@@ -153,6 +153,8 @@ class StoreController extends Controller
             $session = $request->getSession();
             $cart = $session->get('cart', []);
 
+            // TODO - Group and sort products in cart by delivery date.
+
             $item = [];
             if (isset($cart[$product->getId()])) {
                 $item = $cart[$product->getId()];
@@ -163,6 +165,7 @@ class StoreController extends Controller
             $item['qty'] += (int)$data['qty'];
             $item['taxes'] = (float)$this->getProductTaxes($product, $item['qty']);
             $item['shippingDate'] = $data['shippingDate'];
+            $item['deliveryMethod'] = 'Delivery';
             $cart[$product->getId()] = $item;
             $session->set('cart', $cart);
 
