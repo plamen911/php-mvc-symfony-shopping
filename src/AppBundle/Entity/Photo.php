@@ -27,7 +27,7 @@ class Photo
      *
      * @ORM\Column(name="file_name", type="string", length=255, nullable=true)
      *
-     * @Assert\File(mimeTypes={ "image/jpg", "image/jpeg" })
+     * @Assert\File(mimeTypes={ "image/jpg", "image/jpeg", "image/png", "image/gif" }, maxSize="2M")
      */
     private $fileName;
 
@@ -181,7 +181,6 @@ class Photo
     {
         $this->product = $product;
     }
-
 
     public static function getUploadRootDir()
     {

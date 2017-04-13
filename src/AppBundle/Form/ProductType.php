@@ -66,7 +66,13 @@ class ProductType extends AbstractType
                 ]
             )
             ->add('availabilityDays', HiddenType::class)
-            ->add('description', TextareaType::class);
+            ->add('description', TextareaType::class)
+//            ->add('photos', FileType::class, [
+//                // 'data_class' => Photo::class,
+//                'data_class' => null,
+//                'required' => false
+//            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)

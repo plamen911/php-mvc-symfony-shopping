@@ -215,6 +215,8 @@ class ProductController extends Controller
                     $photo->setCaption('');
                     $photo->setPosition($this->getPhotoMaxPosition($product->getId()) + 1);
 
+                    $product->addPhoto($photo);
+
                     $em->persist($photo);
                     $em->flush();
                 }

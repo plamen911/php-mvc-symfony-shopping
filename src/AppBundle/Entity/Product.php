@@ -406,6 +406,14 @@ class Product
     }
 
     /**
+     * @param Photo $photo
+     */
+    public function addPhoto($photo)
+    {
+        $this->getPhotos()->add($photo);
+    }
+
+    /**
      * @return string
      */
     public function getAvailabilityDays()
