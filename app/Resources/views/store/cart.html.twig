@@ -31,19 +31,97 @@
                 </div>
                 <hr/>
                 {% if cart|length > 0 %}
-
-
-
-                    {{ dump(cart) }}
-
+                    {% for shippingDate, items in cart.items %}
+                        <div class="row">
+                            <div class="small-12 columns">
+                                <div class="row">
+                                    <div class="small-8 columns">
+                                        <h3>Delivery Date: {% if shippingDate == "now"|date("Y-m-d") %}Today{% elseif shippingDate == "tomorrow"|date("Y-m-d") %}Tomorrow{% else %}{{ shippingDate|date("F jS, l") }}{% endif %}</h3>
+                                    </div>
+                                    <div class="small-4 columns">
+                                        <select id="delivery-method-{{ shippingDate }}" name="delivery-method-{{ shippingDate }}" required="required" class="delivery_method">
+                                            <option value="">- Delivery Method -</option>
+                                            <option value="Pick Up"{% if cart.deliveries[shippingDate].method == 'Pick Up' %} selected="selected"{% endif %}>Pick Up</option>
+                                            <option value="Delivery"{% if cart.deliveries[shippingDate].method == 'Delivery' %} selected="selected"{% endif %}>Delivery (Add ${{ deliveryCost }})</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h5 class="subheader">Delivery Cost: ${{ cart.deliveries[shippingDate].cost|number_format(2, '.', ',') }}</h5>
+                        {% for item in items %}
+                            <div class="row">
+                                <div class="small-8 columns">
+                                    <div class="row">
+                                        <div class="large-3 columns">
+                                            <a href="{{ path('store_product', {'id': item.product.id}) }}">
+                                                <img alt="{{ item.product.name }}" title="{{ item.product.name }}" src="/{{ uploadDirLarge }}{{ item.product.photo }}"/>
+                                            </a>
+                                        </div>
+                                        <div class="large-9 columns">
+                                            <div class="row">
+                                                <div class="large-12 columns">
+                                                    <h3>
+                                                        <a href="{{ path('store_product', {'id': item.product.id}) }}">
+                                                            {{ item.product.name }}
+                                                            <span> - ${{ item.product.price|number_format(2, '.', ',') }}</span>
+                                                        </a>
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="small-4 columns">
+                                    <div class="row">
+                                        <div class="large-4 columns">
+                                            <p><input type="number" name="4[qty]" value="{{ item.qty }}" maxlength="3" size="5"></p>
+                                        </div>
+                                        <div class="large-4 columns">
+                                            <p><span class="price">${{ (item.qty * item.product.price)|number_format(2, '.', ',') }}</span></p>
+                                        </div>
+                                        <div class="large-4 columns">
+                                            <p><span class="price">${{ item.taxes|number_format(2, '.', ',') }}</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="large-12 columns">
+                                            <a href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr/>
+                        {% endfor %}
+                    {% endfor %}
+                    <div class="row">
+                        <div class="large-6 columns">
+                            <a  class="button small" href="{{ path('store_index') }}">Continue shopping</a>
+                        </div>
+                        <div class="large-6 columns">
+                            <div class="right">
+                                <h5>Subtotal <em>${{ cart.subtotal|number_format(2, '.', ',') }}</em></h5>
+                                <h5>Taxes <em>${{ cart.taxes|number_format(2, '.', ',') }}</em></h5>
+                                <h5>Delivery Cost <em>${{ cart.delivery|number_format(2, '.', ',') }}</em></h5>
+                                <h4>Total <em>${{ cart.total|number_format(2, '.', ',') }}</em></h4>
+                                <input type="submit" value="Update cart" name="update" class="button"/>
+                                <span class="or">&nbsp;</span>
+                                <input type="submit" value="Check out" name="checkout" class="button"/>
+                            </div>
+                        </div>
+                    </div>
                 {% else %}
                     <div class="row">
                         <div class="large-12 columns">
                             <p>Your shopping cart is empty.</p>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <a href="{{ path('store_index') }}" class="button small">Continue shopping</a>
+                        </div>
+                    </div>
                 {% endif %}
-
             {{ form_end(form) }}
         </div>
     </div>

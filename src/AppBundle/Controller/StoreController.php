@@ -6,13 +6,13 @@ use AppBundle\Entity\Category;
 use AppBundle\Entity\Department;
 use AppBundle\Entity\Photo;
 use AppBundle\Entity\Product;
-use AppBundle\Form\AddProductType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints;
 
@@ -142,32 +142,16 @@ class StoreController extends Controller
 
         $data = $form->getData();
         $error = [];
-        if (empty($data['qty'])) {
+        if (empty($data['qty']) || 1 > (int)$data['qty']) {
             $error[] = 'Product quantity is missing.';
         }
-        if (empty($data['shippingDate'])) {
+        if (empty($data['shippingDate']) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $data['shippingDate'])) {
             $error[] = 'Delivery date is missing.';
         }
 
         if (empty($error) && $form->isSubmitted() && $form->isValid()) {
             $session = $request->getSession();
-            $cart = $session->get('cart', []);
-
-            // TODO - Group and sort products in cart by delivery date.
-
-            $item = [];
-            if (isset($cart[$product->getId()])) {
-                $item = $cart[$product->getId()];
-            } else {
-                $item['product'] = $product;
-                $item['qty'] = 0;
-            }
-            $item['qty'] += (int)$data['qty'];
-            $item['taxes'] = (float)$this->getProductTaxes($product, $item['qty']);
-            $item['shippingDate'] = $data['shippingDate'];
-            $item['deliveryMethod'] = 'Delivery';
-            $cart[$product->getId()] = $item;
-            $session->set('cart', $cart);
+            $this->addProductToCart($session, $product, $data['qty'], $data['shippingDate']);
 
             $this->addFlash('success', 'Product successfully added to card.');
             return $this->redirectToRoute('store_cart');
@@ -198,6 +182,7 @@ class StoreController extends Controller
 
         return $this->render('store/cart.html.twig', [
             'cart' => $cart,
+            'deliveryCost' => self::DELIVERY_COST,
             'form' => $form->createView(),
             'uploadDirLarge' => Photo::getUploadDirLarge(),
             'departmentsInMenu' => $this->getDepartmentsInMenu()
@@ -394,5 +379,64 @@ class StoreController extends Controller
     {
         return $this->getDoctrine()->getManager()->getRepository(Department::class)
             ->findBy(['showInMenu' => true], ['position' => 'ASC']);
+    }
+
+    /**
+     * @param SessionInterface $session
+     * @param Product $product
+     * @param int $qty
+     * @param string $shippingDate
+     */
+    private function addProductToCart(SessionInterface $session, Product $product, $qty = 0, $shippingDate = '0000-00-00')
+    {
+        $cart = $session->get('cart', []);
+        if (!isset($cart['items'])) {
+            $cart['items'] = [];
+            $cart['deliveries'] = [];
+        }
+        if (!isset($cart['items'][$shippingDate])) {
+            $cart['items'][$shippingDate] = [];
+            $cart['deliveries'][$shippingDate] = [
+                'method' => 'Delivery',
+                'cost' => self::DELIVERY_COST
+            ];
+        }
+
+        $item = [];
+        if (isset($cart['items'][$shippingDate][$product->getId()])) {
+            $item = $cart['items'][$shippingDate][$product->getId()];
+        } else {
+            $item['product'] = $product;
+            $item['qty'] = 0;
+        }
+        $item['qty'] += (int)$qty;
+        $item['taxes'] = (float)$this->getProductTaxes($product, $item['qty']);
+        $item['shippingDate'] = $shippingDate;
+
+        $cart['items'][$shippingDate][$product->getId()] = $item;
+
+        $cart['qty'] = 0;
+        $cart['subtotal'] = 0;
+        $cart['taxes'] = 0;
+        $cart['delivery'] = 0;
+        $cart['total'] = 0;
+
+        // Calculate cart totals
+        foreach ($cart['items'] as $shippingDate => $items) {
+            foreach ($items as $item) {
+                /**
+                 * @var Product $product
+                 */
+                $product = $item['product'];
+                $cart['qty'] += $item['qty'];
+                $cart['subtotal'] += $item['qty'] * (float)$product->getPrice();
+                $cart['taxes'] += (float)$item['taxes'];
+                $cart['delivery'] += (float)$cart['deliveries'][$shippingDate]['cost'];
+                $cart['total'] += $cart['subtotal'] + $cart['taxes'] + $cart['delivery'];
+            }
+        }
+        ksort($cart['items']);
+
+        $session->set('cart', $cart);
     }
 }
