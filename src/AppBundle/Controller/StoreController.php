@@ -151,8 +151,7 @@ class StoreController extends Controller
         }
 
         if (empty($error) && $form->isSubmitted() && $form->isValid()) {
-            $session = $request->getSession();
-            $this->addProductToCart($session, $product, $data['qty'], $data['shippingDate']);
+            $this->addProductToCart($request, $product, $data['qty'], $data['shippingDate']);
 
             $this->addFlash('success', 'Product successfully added to card.');
             return $this->redirectToRoute('store_cart');
@@ -177,6 +176,7 @@ class StoreController extends Controller
     public function cartAction(Request $request)
     {
         $session = $request->getSession();
+        // $session->clear();
         $cart = $session->get('cart', []);
 
         $form = $this->createShoppingCartForm();
@@ -205,16 +205,31 @@ class StoreController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('update')->isClicked()) {
                 $this->cartUpdate($request);
-                $this->addFlash('success', 'Your cart was successfully updated');
+                $this->addFlash('success', 'Your cart was successfully updated.');
 
                 return $this->redirectToRoute('store_cart');
 
             } elseif ($form->get('checkout')->isClicked()) {
                 // todo - redirect to checkout
+
             }
         }
 
         return $this->cartAction($request);
+    }
+
+    /**
+     * @Route("/cart/remove/{shippingDate}", name="store_cart_remove", requirements={"$shippingDate":"\d{4}-\d{2}-\d{2}"})
+     * @Method({"GET"})
+     *
+     * @param string $shippingDate
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function removeFromCartAction($shippingDate = '', Request $request)
+    {
+        $this->removeFromCart($shippingDate, $request);
+        $this->addFlash('success', 'Delivery successfully removed from your cart.');
+        return $this->redirectToRoute('store_cart');
     }
 
     /**
@@ -412,14 +427,16 @@ class StoreController extends Controller
     }
 
     /**
-     * @param SessionInterface $session
+     * @param Request $request
      * @param Product $product
      * @param int $qty
      * @param string $shippingDate
      */
-    private function addProductToCart(SessionInterface $session, Product $product, $qty = 0, $shippingDate = '0000-00-00')
+    private function addProductToCart(Request $request, Product $product, $qty = 0, $shippingDate = '0000-00-00')
     {
+        $session = $request->getSession();
         $cart = $session->get('cart', []);
+
         if (!isset($cart['items'])) {
             $cart['items'] = [];
             $cart['deliveries'] = [];
@@ -464,17 +481,19 @@ class StoreController extends Controller
         $cart['total'] = 0;
 
         // Calculate cart totals
-        foreach ($cart['items'] as $shippingDate => $items) {
-            foreach ($items as $item) {
-                /**
-                 * @var Product $product
-                 */
-                $product = $item['product'];
-                $cart['qty'] += $item['qty'];
-                $cart['subtotal'] += $item['qty'] * (float)$product->getPrice();
-                $cart['taxes'] += (float)$item['taxes'];
-                $cart['delivery'] += (float)$cart['deliveries'][$shippingDate]['cost'];
-                $cart['total'] += $cart['subtotal'] + $cart['taxes'] + $cart['delivery'];
+        if (!empty($cart['items'])) {
+            foreach ($cart['items'] as $shippingDate => $items) {
+                foreach ($items as $item) {
+                    /**
+                     * @var Product $product
+                     */
+                    $product = $item['product'];
+                    $cart['qty'] += $item['qty'];
+                    $cart['subtotal'] += $item['qty'] * (float)$product->getPrice();
+                    $cart['taxes'] += (float)$item['taxes'];
+                    $cart['delivery'] += (float)$cart['deliveries'][$shippingDate]['cost'];
+                    $cart['total'] += $cart['subtotal'] + $cart['taxes'] + $cart['delivery'];
+                }
             }
         }
 
@@ -519,7 +538,27 @@ class StoreController extends Controller
             }
         }
         $cart = $this->calculateCartTotals($cart);
+        $session->set('cart', $cart);
+    }
 
+    /**
+     * @param string $shippingDate
+     * @param Request $request
+     */
+    private function removeFromCart($shippingDate = '', Request $request)
+    {
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        if (isset($cart['deliveries'][$shippingDate])) {
+            unset($cart['deliveries'][$shippingDate]);
+        }
+
+        if (isset($cart['items'][$shippingDate])) {
+            unset($cart['items'][$shippingDate]);
+        }
+
+        $cart = $this->calculateCartTotals($cart);
         $session->set('cart', $cart);
     }
 }
