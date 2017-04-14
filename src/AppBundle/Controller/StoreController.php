@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -190,6 +191,34 @@ class StoreController extends Controller
     }
 
     /**
+     * @Route("/cart", name="store_cart_update")
+     * @Method({"POST"})
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function cartUpdateAction(Request $request)
+    {
+        $form = $this->createShoppingCartForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('update')->isClicked()) {
+
+                $this->cartUpdate($request);
+                // return $this->redirectToRoute('store_cart');
+
+            } elseif ($form->get('checkout')->isClicked()) {
+                // todo - redirect to checkout
+            }
+        }
+
+        dump('update NOT clicked...');
+
+        return $this->cartAction($request);
+    }
+
+    /**
      * @param Product $product
      * @param float $qty
      * @return string
@@ -220,6 +249,8 @@ class StoreController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('store_cart'))
             ->setMethod('POST')
+            ->add('update', SubmitType::class, ['label' => 'Update cart', 'attr' => ['class' => 'button', 'required' => false]])
+            ->add('checkout', SubmitType::class, ['label' => 'Check out', 'attr' => ['class' => 'button', 'required' => false]])
             ->getForm();
     }
 
@@ -415,6 +446,18 @@ class StoreController extends Controller
 
         $cart['items'][$shippingDate][$product->getId()] = $item;
 
+        $cart = $this->calculateCartTotals($cart);
+
+        ksort($cart['items']);
+
+        $session->set('cart', $cart);
+    }
+
+    /**
+     * @param array $cart
+     * @return array
+     */
+    private function calculateCartTotals(array $cart) {
         $cart['qty'] = 0;
         $cart['subtotal'] = 0;
         $cart['taxes'] = 0;
@@ -428,6 +471,9 @@ class StoreController extends Controller
                  * @var Product $product
                  */
                 $product = $item['product'];
+
+                // dump($item['product']);
+
                 $cart['qty'] += $item['qty'];
                 $cart['subtotal'] += $item['qty'] * (float)$product->getPrice();
                 $cart['taxes'] += (float)$item['taxes'];
@@ -435,7 +481,50 @@ class StoreController extends Controller
                 $cart['total'] += $cart['subtotal'] + $cart['taxes'] + $cart['delivery'];
             }
         }
-        ksort($cart['items']);
+
+        dump($cart);
+
+        return $cart;
+    }
+
+    /**
+     * @param Request $request
+     */
+    private function cartUpdate(Request $request)
+    {
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        foreach ($request->request->all() as $key => $item) {
+            if (preg_match('/^delivery-method-(\d{4}-\d{2}-\d{2})$/', $key, $matches)) {
+                $shippingDate = $matches[1];
+                $method = $item;
+                if (isset($cart['deliveries'][$shippingDate])) {
+                    $cart['deliveries'][$shippingDate] = [
+                        'method' => $method,
+                        'cost' => ('Delivery' === $method) ? self::DELIVERY_COST : 0
+                    ];
+                }
+            }
+
+            if (preg_match('/^qty-(\d{4}-\d{2}-\d{2})-(\d+)$/', $key, $matches)) {
+                $shippingDate = $matches[1];
+                $productId = $matches[2];
+                $qty = (int)$item;
+                if (isset($cart['items'][$shippingDate][$productId])) {
+                    if (0 >= $qty) {
+                        unset($cart['items'][$shippingDate][$productId]);
+                    } else {
+                        $item = $cart['items'][$shippingDate][$productId];
+                        $item['qty'] = $qty;
+                        $item['taxes'] = (float)$this->getProductTaxes($item['product'], $item['qty']);
+                        $item['shippingDate'] = $shippingDate;
+                        $cart['items'][$shippingDate][$productId] = $item;
+                    }
+                }
+            }
+        }
+        $cart = $this->calculateCartTotals($cart);
 
         $session->set('cart', $cart);
     }

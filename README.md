@@ -28,6 +28,7 @@ which composer
 http://symfony.com/doc/current/bundles/FOSUserBundle/index.html
 https://sonata-project.org/bundles
 http://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html
+http://symfony.com/doc/current/controller/upload_file.html
 
 
 

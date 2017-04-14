@@ -11,6 +11,7 @@
         <hr>
         <div class="large-12 columns">
             {{ form_start(form) }}
+                {{ form_row(form._token) }}
                 <div class="row">
                     <div class="small-8 columns">
                         <h5>Item</h5>
@@ -75,7 +76,7 @@
                                 <div class="small-4 columns">
                                     <div class="row">
                                         <div class="large-4 columns">
-                                            <p><input type="number" name="4[qty]" value="{{ item.qty }}" maxlength="3" size="5"></p>
+                                            <p><input type="number" name="qty-{{ shippingDate }}-{{ item.product.id }}" value="{{ item.qty }}" maxlength="3" size="5"></p>
                                         </div>
                                         <div class="large-4 columns">
                                             <p><span class="price">${{ (item.qty * item.product.price)|number_format(2, '.', ',') }}</span></p>
@@ -104,9 +105,9 @@
                                 <h5>Taxes <em>${{ cart.taxes|number_format(2, '.', ',') }}</em></h5>
                                 <h5>Delivery Cost <em>${{ cart.delivery|number_format(2, '.', ',') }}</em></h5>
                                 <h4>Total <em>${{ cart.total|number_format(2, '.', ',') }}</em></h4>
-                                <input type="submit" value="Update cart" name="update" class="button"/>
+                                {{ form_widget(form.update) }}
                                 <span class="or">&nbsp;</span>
-                                <input type="submit" value="Check out" name="checkout" class="button"/>
+                                {{ form_widget(form.checkout) }}
                             </div>
                         </div>
                     </div>
@@ -122,7 +123,7 @@
                         </div>
                     </div>
                 {% endif %}
-            {{ form_end(form) }}
+            {{ form_end(form, {'render_rest': false}) }}
         </div>
     </div>
 {% endblock %}
