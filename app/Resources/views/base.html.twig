@@ -97,6 +97,15 @@
     </div>
 </header>
 
+{% for type, messages in app.session.flashbag.all() %}
+    <div data-alert class="alert-box {{ type }} radius"{% block alert_inline_styles %} style="margin-top: 46px; margin-bottom: 0;"{% endblock %}>
+        {% for message in messages %}
+            {{message}}
+        {% endfor %}
+        <a href="#" class="close">&times;</a>
+    </div>
+{% endfor %}
+
 {% block body %}{% endblock %}
 
 <footer id="footer" class="large-12 columns">

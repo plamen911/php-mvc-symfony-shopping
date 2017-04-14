@@ -195,7 +195,7 @@ class StoreController extends Controller
      * @Method({"POST"})
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function cartUpdateAction(Request $request)
     {
@@ -204,16 +204,15 @@ class StoreController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('update')->isClicked()) {
-
                 $this->cartUpdate($request);
-                // return $this->redirectToRoute('store_cart');
+                $this->addFlash('success', 'Your cart was successfully updated');
+
+                return $this->redirectToRoute('store_cart');
 
             } elseif ($form->get('checkout')->isClicked()) {
                 // todo - redirect to checkout
             }
         }
-
-        dump('update NOT clicked...');
 
         return $this->cartAction($request);
     }
@@ -471,9 +470,6 @@ class StoreController extends Controller
                  * @var Product $product
                  */
                 $product = $item['product'];
-
-                // dump($item['product']);
-
                 $cart['qty'] += $item['qty'];
                 $cart['subtotal'] += $item['qty'] * (float)$product->getPrice();
                 $cart['taxes'] += (float)$item['taxes'];
@@ -481,8 +477,6 @@ class StoreController extends Controller
                 $cart['total'] += $cart['subtotal'] + $cart['taxes'] + $cart['delivery'];
             }
         }
-
-        dump($cart);
 
         return $cart;
     }
