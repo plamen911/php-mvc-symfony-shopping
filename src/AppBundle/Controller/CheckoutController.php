@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class CheckoutController extends Controller
 {
     /**
-     * @var string Uniquely identifies the secured area
+     * @var string Uniquely identifies the secured area/firewall in security.yml
      */
     const providerKey = 'secured_area';
 
@@ -97,7 +97,7 @@ class CheckoutController extends Controller
                 return $this->authorizeAction($request);
             }
 
-            $this->setUserCredentials($user);
+            $this->setUserCredentials($user, self::providerKey);
         }
 
         return $this->redirectToRoute('checkout_authorize');
@@ -140,11 +140,12 @@ class CheckoutController extends Controller
 
     /**
      * @param \AppBundle\Entity\User $user
+     * @param string $providerKey
      */
-    private function setUserCredentials($user)
+    private function setUserCredentials($user, $providerKey)
     {
-        $token = new UsernamePasswordToken($user, null, self::providerKey, $user->getRoles());
+        $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
         $this->get('security.token_storage')->setToken($token);
-        $this->get('session')->set('_security_' . self::providerKey, serialize($token));
+        $this->get('session')->set('_security_' . $providerKey, serialize($token));
     }
 }
