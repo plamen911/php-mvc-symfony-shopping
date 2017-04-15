@@ -3,114 +3,37 @@
 {% block title %}| Login or Signup{% endblock %}
 
 {% block body %}
-<section id="adminLoginContainer" class="content-box">
-    <div class="row">
-        <div class="large-12 columns">
-            <div class="row">
-                <div class="large-6 columns">
-                    <fieldset>
-                        <legend>Already a Member?</legend>
-                        {{ form_start(loginForm) }}
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    {{ form_row(loginForm.email) }}
+    <section id="adminLoginContainer" class="content-box">
+        <div class="row">
+            <div class="large-12 columns">
+                <div class="row">
+                    <div class="large-6 columns">
+                        <fieldset>
+                            <legend>Already a Member?</legend>
+                            {{ form_start(loginForm) }}
+                                {{ form_row(loginForm.email) }}
+                                {{ form_row(loginForm.password) }}
+                                <div class="row">
+                                    <div class="large-12 columns">
+                                        <p><a href="#">Forgot your password?</a></p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    {{ form_row(loginForm.password) }}
+                                <div class="row">
+                                    <div class="large-12 columns">
+                                        <input type="submit" name="signin" value="Sign in" class="button expand">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    <p><a href="#">Forgot your password?</a></p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    <input type="submit" name="signin" value="Sign in" class="button expand">
-                                </div>
-                            </div>
-                        {{ form_end(loginForm) }}
-                    </fieldset>
-                </div>
-                <div class="large-6 columns">
-                    <fieldset>
-                        <legend>Not a Member?</legend>
-                        {{ form_start(signupForm) }}
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    <label>E-mail
-                                        <small>required</small>
-                                        <input id="sp_email" name="sp_email" value="" placeholder="E-mail..."
-                                               required="" type="email">
-                                    </label>
-                                    <small class="error">An email address is required.</small>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    <label>Contact First Name
-                                        <small>required</small>
-                                        <input id="sp_fname" name="sp_fname" value="" placeholder="First Name..."
-                                               required="" type="text">
-                                    </label>
-                                    <small class="error">Contact First Name is required.</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    <label>Contact Last Name
-                                        <small>required</small>
-                                        <input id="sp_lname" name="sp_lname" value="" placeholder="Last Name..."
-                                               required="" type="text">
-                                    </label>
-                                    <small class="error">Contact Last Name is required.</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    <label>Contact Phone
-                                        <small>required</small>
-                                        <input id="sp_phone" name="sp_phone" value="" placeholder="Phone..." required=""
-                                               type="tel">
-                                    </label>
-                                    <small class="error">Contact Phone Number is required.</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    <label>Password
-                                        <small>required</small>
-                                        <input id="sp_password" name="sp_password" value="" placeholder="Password..."
-                                               required="" type="password">
-                                    </label>
-                                    <small class="error">Your password must match the requirements.</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    <label>Reenter Password
-                                        <small>required</small>
-                                        <input id="sp_password2" name="sp_password2" value=""
-                                               placeholder="Reenter Password..." data-equalto="sp_password"
-                                               type="password">
-                                    </label>
-                                    <small class="error">The password did not match.</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="large-12 columns">
-                                    <input id="signup" name="signup" value="Create My Account" class="button expand"
-                                           type="submit">
-                                </div>
-                            </div>
-                        {{ form_end(signupForm) }}
-                    </fieldset>
+                            {{ form_end(loginForm) }}
+                        </fieldset>
+                    </div>
+                    <div class="large-6 columns">
+                        <fieldset>
+                            <legend>Not a Member?</legend>
+                            {{ form(signupForm, {'action': path('checkout_signup')}) }}
+                        </fieldset>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 {% endblock %}
