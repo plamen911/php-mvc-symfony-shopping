@@ -34,8 +34,15 @@ class StoreController extends Controller
      */
     public function indexAction()
     {
+        /**
+         * @var \Doctrine\Common\Persistence\ObjectManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
+        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
+
         return $this->render('store/index.html.twig', [
-            'departmentsInMenu' => $this->getDepartmentsInMenu()
+            'departmentsInMenu' => $departments
         ]);
     }
 
@@ -112,12 +119,19 @@ class StoreController extends Controller
 
         $form = $this->createProductForm($product);
 
+        /**
+         * @var \Doctrine\Common\Persistence\ObjectManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
+        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
+
         return $this->render('product/view.html.twig', [
             'error' => '',
             'product' => $product,
             'form' => $form->createView(),
             'uploadDirLarge' => Photo::getUploadDirLarge(),
-            'departmentsInMenu' => $this->getDepartmentsInMenu()
+            'departmentsInMenu' => $departments
         ]);
     }
 
@@ -157,12 +171,19 @@ class StoreController extends Controller
             return $this->redirectToRoute('store_cart');
         }
 
+        /**
+         * @var \Doctrine\Common\Persistence\ObjectManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
+        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
+
         return $this->render('product/view.html.twig', [
             'error' => (!empty($error)) ? implode('<br>', $error) : '',
             'product' => $product,
             'form' => $form->createView(),
             'uploadDirLarge' => Photo::getUploadDirLarge(),
-            'departmentsInMenu' => $this->getDepartmentsInMenu()
+            'departmentsInMenu' => $departments
         ]);
     }
 
@@ -181,12 +202,19 @@ class StoreController extends Controller
 
         $form = $this->createShoppingCartForm();
 
+        /**
+         * @var \Doctrine\Common\Persistence\ObjectManager $em
+         */
+        $em = $this->getDoctrine()->getManager();
+
+        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
+
         return $this->render('store/cart.html.twig', [
             'cart' => $cart,
             'deliveryCost' => self::DELIVERY_COST,
             'form' => $form->createView(),
             'uploadDirLarge' => Photo::getUploadDirLarge(),
-            'departmentsInMenu' => $this->getDepartmentsInMenu()
+            'departmentsInMenu' => $departments
         ]);
     }
 
@@ -206,12 +234,10 @@ class StoreController extends Controller
             if ($form->get('update')->isClicked()) {
                 $this->cartUpdate($request);
                 $this->addFlash('success', 'Your cart was successfully updated.');
-
                 return $this->redirectToRoute('store_cart');
 
             } elseif ($form->get('checkout')->isClicked()) {
-                // todo - redirect to checkout
-
+                return $this->redirectToRoute('checkout_authorize');
             }
         }
 
@@ -281,7 +307,7 @@ class StoreController extends Controller
             ->setAction($this->generateUrl('store_product_add', ['id' => $product->getId()]))
             ->setMethod('POST')
             ->add('qty', IntegerType::class, [
-                    'empty_data' => 0,
+                    'empty_data' => 1,
                     'required' => true,
 //                    'constraints' => [
 //                        new Constraints\GreaterThan(['value' => 0, 'message' => 'Please enter product quantity.'])
@@ -400,30 +426,23 @@ class StoreController extends Controller
     private function getSearchResults($term = '', $value = '')
     {
         /**
-         * @var \Doctrine\ORM\EntityManager $em
+         * @var \Doctrine\Common\Persistence\ObjectManager $em
          */
         $em = $this->getDoctrine()->getManager();
 
         $data = $em->getRepository(Product::class)
             ->findAllByKeyword($term, $value);
 
+        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
+
         return [
-            'departmentsInMenu' => $this->getDepartmentsInMenu(),
+            'departmentsInMenu' => $departments,
             'items' => $data->items,
             'departments' => $data->departments,
             'categories' => $data->categories,
             'keyword' => $data->keyword,
             'uploadDirLarge' => Photo::getUploadDirLarge()
         ];
-    }
-
-    /**
-     * @return Department[]
-     */
-    private function getDepartmentsInMenu()
-    {
-        return $this->getDoctrine()->getManager()->getRepository(Department::class)
-            ->findBy(['showInMenu' => true], ['position' => 'ASC']);
     }
 
     /**
