@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}| Payment{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <hr>
+        <div class="large-8 columns"><h2>Your Order</h2></div>
+    </div>
+    <div class="row">
+        <hr>
+        <div class="large-12 columns">
+            <!-- cart read only start -->
+            <div class="row">
+                <div class="small-8 columns">
+                    <h5>Item</h5>
+                </div>
+                <div class="small-4 columns">
+                    <div class="row">
+                        <div class="large-4 columns">
+                            <h5>&nbsp;</h5>
+                        </div>
+                        <div class="large-4 columns">
+                            <h5>Subtotal</h5>
+                        </div>
+                        <div class="large-4 columns">
+                            <h5>State Tax</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            {% if cart.items|length > 0 %}
+                {% for shippingDate, items in cart.items %}
+                    <div class="row">
+                        <div class="small-12 columns">
+                            <div class="row">
+                                <div class="small-6 columns">
+                                    <h3>Delivery Date: {% if shippingDate == "now"|date("Y-m-d") %}Today{% elseif shippingDate == "tomorrow"|date("Y-m-d") %}Tomorrow{% else %}{{ shippingDate|date("F jS, l") }}{% endif %}</h3>
+                                </div>
+                                <div class="small-6 columns">
+                                    <h3 class="subheader">Delivery Method: {{ cart.deliveries[shippingDate].method }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="subheader">Delivery Cost: ${{ cart.deliveries[shippingDate].cost|number_format(2, '.', ',') }}</h5>
+                    {% for item in items %}
+                        <div class="row">
+                            <div class="small-8 columns">
+                                <div class="row">
+                                    <div class="large-3 columns">
+                                        <a href="{{ path('store_product', {'id': item.product.id}) }}" title="View {{ item.product.name }}">
+                                            <img alt="{{ item.product.name }}" title="View {{ item.product.name }}" src="/{{ uploadDirLarge }}{{ item.product.photo }}"/>
+                                        </a>
+                                    </div>
+                                    <div class="large-9 columns">
+                                        <div class="row">
+                                            <div class="large-12 columns">
+                                                <h3>
+                                                    <a href="{{ path('store_product', {'id': item.product.id}) }}">
+                                                        {{ item.product.name }} <span> - ${{ item.product.price|number_format(2, '.', ',') }}</span>
+                                                    </a>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="small-4 columns">
+                                <div class="row">
+                                    <div class="large-4 columns">
+                                        <p class="qty"><strong>Qty:</strong> {{ item.qty }}</p>
+                                    </div>
+                                    <div class="large-4 columns">
+                                        <p class="price">${{ (item.qty * item.product.price)|number_format(2, '.', ',') }}</p>
+                                    </div>
+                                    <div class="large-4 columns">
+                                        <p class="price">${{ item.taxes|number_format(2, '.', ',') }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="large-12 columns">
+                                        <a href="{{ path('store_cart') }}" title="Change quantity">Change</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                {% endfor %}
+                <div class="row">
+                    <div class="large-8 columns">
+                        <a href="{{ path('store_index') }}" title="Continue shopping">Continue shopping</a>
+                    </div>
+                    <div class="large-4 columns">
+                        <div>
+                            <h5>Subtotal <em>${{ cart.subtotal|number_format(2, '.', ',') }}</em></h5>
+                            <h5>Taxes <em>${{ cart.taxes|number_format(2, '.', ',') }}</em></h5>
+                            <h5>Delivery Cost <em>${{ cart.delivery|number_format(2, '.', ',') }}</em></h5>
+                            <h5>Discount <em>${{ cart.discount|number_format(2, '.', ',') }}</em></h5>
+                            <h4>Total <em>${{ cart.total|number_format(2, '.', ',') }}</em></h4>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <!-- cart read only end -->
+        </div>
+        {#</div>#}
+    </div>
+
+
+{% endblock %}

@@ -5,7 +5,7 @@
 {% block body %}
     <div class="row">
         <hr>
-        <div class="large-8 columns"><h1>Shopping Cart</h1></div>
+        <div class="large-8 columns"><h2>Shopping Cart</h2></div>
     </div>
     <div class="row">
         <hr>
@@ -55,8 +55,8 @@
                                 <div class="small-8 columns">
                                     <div class="row">
                                         <div class="large-3 columns">
-                                            <a href="{{ path('store_product', {'id': item.product.id}) }}">
-                                                <img alt="{{ item.product.name }}" title="{{ item.product.name }}" src="/{{ uploadDirLarge }}{{ item.product.photo }}"/>
+                                            <a href="{{ path('store_product', {'id': item.product.id}) }}" title="View {{ item.product.name }}">
+                                                <img alt="{{ item.product.name }}" title="View {{ item.product.name }}" src="/{{ uploadDirLarge }}{{ item.product.photo }}"/>
                                             </a>
                                         </div>
                                         <div class="large-9 columns">

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Photo;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -50,6 +51,10 @@ class PaymentController extends Controller
         // 'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em)
 
 
-        return new Response("Payment form should go here...");
+        return $this->render('payment/form.html.twig', [
+            'cart' => $cart,
+            'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em),
+            'uploadDirLarge' => Photo::getUploadDirLarge()
+        ]);
     }
 }
