@@ -29,6 +29,17 @@ class PaymentController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $cart = $this->get('app.common')->getSessionCart($request);
+        if ($cart['qty'] == 0) {
+            return $this->redirectToRoute('store_index');
+        }
+
+        if ($this->getUser() == null) {
+            return $this->redirectToRoute('checkout_authorize');
+        }
+
+
+
         // http://localhost:3000/payment/
         /**
          * @var \Doctrine\Common\Persistence\ObjectManager $em

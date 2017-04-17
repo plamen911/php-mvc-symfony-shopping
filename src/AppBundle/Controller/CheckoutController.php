@@ -36,7 +36,9 @@ class CheckoutController extends Controller
      */
     public function authorizeAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        $cart = $this->get('app.common')->getSessionCart($request);
+
+        if ($this->getUser() != null && $cart['qty'] > 0) {
             return $this->redirectToRoute('payment_index');
         }
 
@@ -52,7 +54,7 @@ class CheckoutController extends Controller
         $signupForm->handleRequest($request);
 
         return $this->render('checkout/authorize.html.twig', [
-            'cart' => $this->get('app.common')->getSessionCart($request),
+            'cart' => $cart,
             'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em),
             'loginForm' => $loginForm->createView(),
             'signupForm' => $signupForm->createView(),
