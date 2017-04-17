@@ -11,7 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class CheckoutController
@@ -102,6 +101,8 @@ class CheckoutController extends Controller
             }
 
             $this->setUserCredentials($user, self::providerKey);
+
+            return $this->redirectToRoute('payment_index');
         }
 
         return $this->redirectToRoute('checkout_authorize');
@@ -112,10 +113,34 @@ class CheckoutController extends Controller
      * @Method({"POST"})
      *
      * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function signupAction(Request $request)
     {
+        $user = new User();
+        $form = $this->createForm(SignupType::class, $user);
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+//            $data = $form->getData();
+//            $plainPassword = (isset($data['password'])) ? $data['password'] : '';
+
+            $encoder = $this->get('security.password_encoder');
+            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
+
+            /**
+             * @var \Doctrine\Common\Persistence\ObjectManager $em
+             */
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            $this->setUserCredentials($user, self::providerKey);
+
+            return $this->redirectToRoute('payment_index');
+        }
+
+        return $this->authorizeAction($request);
     }
 
     /**
