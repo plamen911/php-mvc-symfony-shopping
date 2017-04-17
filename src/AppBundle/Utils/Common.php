@@ -9,6 +9,7 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\Department;
+use Symfony\Component\HttpFoundation\Request;
 
 class Common
 {
@@ -20,6 +21,15 @@ class Common
     {
         return $em->getRepository(Department::class)
             ->findBy(['showInMenu' => true], ['position' => 'ASC']);
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function getSessionCart(Request $request) {
+        $session = $request->getSession();
+        return $session->get('cart', []);
     }
 
 }

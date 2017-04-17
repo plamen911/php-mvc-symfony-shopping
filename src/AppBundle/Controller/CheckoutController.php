@@ -35,7 +35,9 @@ class CheckoutController extends Controller
      */
     public function authorizeAction(Request $request)
     {
-        // todo: if user is authorized - redirect to payment page
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirectToRoute('payment_index');
+        }
 
         /**
          * @var \Doctrine\Common\Persistence\ObjectManager $em

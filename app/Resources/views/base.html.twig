@@ -69,8 +69,8 @@
                 {% endif %}
                 <ul class="right">
                     <li>
-                        <a href="#" class="has-tip tip-bottom noradius" title="$0.00" style="border-bottom:0;">
-                            <span data-tooltip title="$0.00" data-options="disable_for_touch:true"><i class="fi-shopping-cart white"></i> 0 items</span>
+                        <a href="{{ path('store_cart') }}" class="has-tip tip-bottom noradius" title="$0.00" style="border-bottom:0;">
+                            <span data-tooltip title="${{ cart.total|number_format(2, '.', ',') }}" data-options="disable_for_touch:true"><i class="fi-shopping-cart white"></i> {{ cart.qty }} items</span>
                         </a>
                     </li>
                     <!-- Search Form -->

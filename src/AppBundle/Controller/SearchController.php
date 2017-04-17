@@ -34,7 +34,11 @@ class SearchController extends Controller
         $data = $em->getRepository(Product::class)
             ->findAllByKeyword($request->get('keyword', ''));
 
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
         return $this->render('admin/search/index.html.twig', [
+            'cart' => $cart,
             'items' => $data->items,
             'departments' => $data->departments,
             'categories' => $data->categories,

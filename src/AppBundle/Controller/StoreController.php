@@ -31,18 +31,20 @@ class StoreController extends Controller
 
     /**
      * @Route("/", name="store_index")
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         /**
          * @var \Doctrine\Common\Persistence\ObjectManager $em
          */
         $em = $this->getDoctrine()->getManager();
 
-        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
-
         return $this->render('store/index.html.twig', [
-            'departmentsInMenu' => $departments
+            'cart' => $this->get('app.common')->getSessionCart($request),
+            'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em)
         ]);
     }
 
@@ -55,9 +57,10 @@ class StoreController extends Controller
      */
     public function searchAction(Request $request)
     {
-        return $this->render('search/index.html.twig',
-            $this->getSearchResults($request->get('keyword', ''))
-        );
+        $data = $this->getSearchResults($request->get('keyword', ''));
+        $data['cart'] = $this->get('app.common')->getSessionCart($request);
+
+        return $this->render('search/index.html.twig', $data);
     }
 
     /**
@@ -65,10 +68,10 @@ class StoreController extends Controller
      * @Method({"GET"})
      *
      * @param Department $department
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
-     * @internal param Request $request
      */
-    public function searchByDepartment(Department $department)
+    public function searchByDepartment(Department $department, Request $request)
     {
         if ($department == null) {
             throw $this->createNotFoundException('Department not found');
@@ -76,6 +79,7 @@ class StoreController extends Controller
 
         $data = $this->getSearchResults('department', $department->getId());
         $data['keyword'] = '';
+        $data['cart'] = $this->get('app.common')->getSessionCart($request);
 
         return $this->render('search/index.html.twig', $data);
     }
@@ -85,10 +89,10 @@ class StoreController extends Controller
      * @Method({"GET"})
      *
      * @param Category $category
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
-     * @internal param Request $request
      */
-    public function searchByCategory(Category $category)
+    public function searchByCategory(Category $category, Request $request)
     {
         if ($category == null) {
             throw $this->createNotFoundException('Category not found');
@@ -96,6 +100,7 @@ class StoreController extends Controller
 
         $data = $this->getSearchResults('category', $category->getId());
         $data['keyword'] = '';
+        $data['cart'] = $this->get('app.common')->getSessionCart($request);
 
         return $this->render('search/index.html.twig', $data);
     }
@@ -105,9 +110,10 @@ class StoreController extends Controller
      * @Method({"GET"})
      *
      * @param Product $product
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function productAction(Product $product)
+    public function productAction(Product $product, Request $request)
     {
         if ($product == null) {
             throw $this->createNotFoundException('Product not found');
@@ -124,14 +130,13 @@ class StoreController extends Controller
          */
         $em = $this->getDoctrine()->getManager();
 
-        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
-
         return $this->render('product/view.html.twig', [
+            'cart' => $this->get('app.common')->getSessionCart($request),
+            'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em),
             'error' => '',
             'product' => $product,
             'form' => $form->createView(),
-            'uploadDirLarge' => Photo::getUploadDirLarge(),
-            'departmentsInMenu' => $departments
+            'uploadDirLarge' => Photo::getUploadDirLarge()
         ]);
     }
 
@@ -176,14 +181,13 @@ class StoreController extends Controller
          */
         $em = $this->getDoctrine()->getManager();
 
-        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
-
         return $this->render('product/view.html.twig', [
+            'cart' => $this->get('app.common')->getSessionCart($request),
+            'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em),
             'error' => (!empty($error)) ? implode('<br>', $error) : '',
             'product' => $product,
             'form' => $form->createView(),
-            'uploadDirLarge' => Photo::getUploadDirLarge(),
-            'departmentsInMenu' => $departments
+            'uploadDirLarge' => Photo::getUploadDirLarge()
         ]);
     }
 
@@ -196,9 +200,8 @@ class StoreController extends Controller
      */
     public function cartAction(Request $request)
     {
-        $session = $request->getSession();
         // $session->clear();
-        $cart = $session->get('cart', []);
+        $cart = $this->get('app.common')->getSessionCart($request);
 
         $form = $this->createShoppingCartForm();
 
@@ -207,14 +210,13 @@ class StoreController extends Controller
          */
         $em = $this->getDoctrine()->getManager();
 
-        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
-
         return $this->render('store/cart.html.twig', [
             'cart' => $cart,
+            'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em),
             'deliveryCost' => self::DELIVERY_COST,
             'form' => $form->createView(),
-            'uploadDirLarge' => Photo::getUploadDirLarge(),
-            'departmentsInMenu' => $departments
+            'uploadDirLarge' => Photo::getUploadDirLarge()
+
         ]);
     }
 
@@ -249,6 +251,7 @@ class StoreController extends Controller
      * @Method({"GET"})
      *
      * @param string $shippingDate
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function removeFromCartAction($shippingDate = '', Request $request)
@@ -279,8 +282,6 @@ class StoreController extends Controller
 
     /**
      * Creates a form to update product entities in shopping cart.
-     *
-     * @param Product $product The product entity
      *
      * @return \Symfony\Component\Form\Form The form
      */
@@ -433,10 +434,8 @@ class StoreController extends Controller
         $data = $em->getRepository(Product::class)
             ->findAllByKeyword($term, $value);
 
-        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
-
         return [
-            'departmentsInMenu' => $departments,
+            'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em),
             'items' => $data->items,
             'departments' => $data->departments,
             'categories' => $data->categories,
@@ -453,8 +452,7 @@ class StoreController extends Controller
      */
     private function addProductToCart(Request $request, Product $product, $qty = 0, $shippingDate = '0000-00-00')
     {
-        $session = $request->getSession();
-        $cart = $session->get('cart', []);
+        $cart = $this->get('app.common')->getSessionCart($request);
 
         if (!isset($cart['items'])) {
             $cart['items'] = [];
@@ -485,6 +483,7 @@ class StoreController extends Controller
 
         ksort($cart['items']);
 
+        $session = $request->getSession();
         $session->set('cart', $cart);
     }
 
@@ -524,8 +523,7 @@ class StoreController extends Controller
      */
     private function cartUpdate(Request $request)
     {
-        $session = $request->getSession();
-        $cart = $session->get('cart', []);
+        $cart = $this->get('app.common')->getSessionCart($request);
 
         foreach ($request->request->all() as $key => $item) {
             if (preg_match('/^delivery-method-(\d{4}-\d{2}-\d{2})$/', $key, $matches)) {
@@ -557,6 +555,8 @@ class StoreController extends Controller
             }
         }
         $cart = $this->calculateCartTotals($cart);
+
+        $session = $request->getSession();
         $session->set('cart', $cart);
     }
 
@@ -566,8 +566,7 @@ class StoreController extends Controller
      */
     private function removeFromCart($shippingDate = '', Request $request)
     {
-        $session = $request->getSession();
-        $cart = $session->get('cart', []);
+        $cart = $this->get('app.common')->getSessionCart($request);;
 
         if (isset($cart['deliveries'][$shippingDate])) {
             unset($cart['deliveries'][$shippingDate]);
@@ -578,6 +577,8 @@ class StoreController extends Controller
         }
 
         $cart = $this->calculateCartTotals($cart);
+
+        $session = $request->getSession();
         $session->set('cart', $cart);
     }
 }
