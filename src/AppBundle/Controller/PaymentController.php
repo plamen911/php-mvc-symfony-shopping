@@ -6,7 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\BrowserKit\Request;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -23,13 +23,13 @@ class PaymentController extends Controller
      *
      * @Route("/", name="payment_index")
      * @Method("GET")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      *
      * @param Request $request
      * @return Response
      */
     public function indexAction(Request $request)
     {
+        // http://localhost:3000/payment/
         /**
          * @var \Doctrine\Common\Persistence\ObjectManager $em
          */

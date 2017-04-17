@@ -31,11 +31,12 @@ class CheckoutController extends Controller
      * @Route("/authorize", name="checkout_authorize")
      * @Method({"GET"})
      *
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function authorizeAction(Request $request)
     {
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('payment_index');
         }
 
@@ -50,10 +51,9 @@ class CheckoutController extends Controller
         $loginForm->handleRequest($request);
         $signupForm->handleRequest($request);
 
-        $departments = $this->get('app.common')->getDepartmentsInMenu($em);
-
         return $this->render('checkout/authorize.html.twig', [
-            'departmentsInMenu' => $departments,
+            'cart' => $this->get('app.common')->getSessionCart($request),
+            'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em),
             'loginForm' => $loginForm->createView(),
             'signupForm' => $signupForm->createView(),
         ]);

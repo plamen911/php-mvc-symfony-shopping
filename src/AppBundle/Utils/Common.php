@@ -29,7 +29,17 @@ class Common
      */
     public function getSessionCart(Request $request) {
         $session = $request->getSession();
-        return $session->get('cart', []);
+        $cart = $session->get('cart', []);
+        if (empty($cart)) {
+            $cart['items'] = [];
+            $cart['qty'] = 0;
+            $cart['subtotal'] = 0;
+            $cart['taxes'] = 0;
+            $cart['delivery'] = 0;
+            $cart['total'] = 0;
+        }
+
+        return $cart;
     }
 
 }
