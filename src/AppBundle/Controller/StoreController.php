@@ -310,6 +310,7 @@ class StoreController extends Controller
             ->add('qty', IntegerType::class, [
                     'empty_data' => 1,
                     'required' => true,
+                    'data' => 1,
 //                    'constraints' => [
 //                        new Constraints\GreaterThan(['value' => 0, 'message' => 'Please enter product quantity.'])
 //                    ]

@@ -16,7 +16,20 @@
     <!-- foundation datepicker start -->
     <link rel="stylesheet" href="{{ asset('css/foundation-datepicker.css') }}"/>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    {% block stylesheets %}{% endblock %}
+    {% block stylesheets %}
+        <style type="text/css">
+            form div ul {
+                margin: 0;
+                padding: 0;
+            }
+
+            form div ul li {
+                list-style-type: none;
+                color: red;
+                font-size: .9em;
+            }
+    </style>
+    {% endblock %}
     <script src="{{ asset('js/foundation-datepicker.js') }}"></script>
     <!-- foundation datepicker end -->
 </head>
