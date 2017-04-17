@@ -122,9 +122,6 @@ class CheckoutController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-//            $data = $form->getData();
-//            $plainPassword = (isset($data['password'])) ? $data['password'] : '';
-
             $encoder = $this->get('security.password_encoder');
             $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
 
@@ -141,15 +138,6 @@ class CheckoutController extends Controller
         }
 
         return $this->authorizeAction($request);
-    }
-
-    /**
-     * @Route("/login", name="checkout_payment")
-     * @Method({"GET"})
-     */
-    public function paymentAction()
-    {
-
     }
 
     /**
