@@ -497,7 +497,6 @@ class StoreController extends Controller
         $cart['subtotal'] = 0;
         $cart['taxes'] = 0;
         $cart['delivery'] = 0;
-        $cart['discount'] = 0;
         $cart['total'] = 0;
 
         // Calculate cart totals
