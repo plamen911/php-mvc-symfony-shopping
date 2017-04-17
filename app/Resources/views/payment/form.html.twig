@@ -5,12 +5,11 @@
 {% block body %}
     <div class="row">
         <hr>
-        <div class="large-8 columns"><h2>Your Order</h2></div>
+        <div class="large-12 columns"><h2>Your Order</h2></div>
     </div>
     <div class="row">
         <hr>
         <div class="large-12 columns">
-            <!-- cart read only start -->
             <div class="row">
                 <div class="small-8 columns">
                     <h5>Item</h5>
@@ -103,10 +102,39 @@
                     </div>
                 </div>
             {% endif %}
-            <!-- cart read only end -->
         </div>
-        {#</div>#}
     </div>
+    <div class="row">
+        <div class="large-12 columns">
+            <hr>
+            <div class="row">
+                <div id="billing-info" class="large-6 columns">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Billing Info</h3>
+                        </div>
 
 
+                    </div>
+                </div>
+                <div id="shipping-info" class="large-6 columns">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Delivery Address Info
+                                <small>
+                                    <label style="display:inline;">
+                                        <input id="as_billing" name="as_billing" value="1" style="margin:0;"
+                                               type="checkbox">
+                                        same as billing
+                                    </label>
+                                </small>
+                            </h3>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

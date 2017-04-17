@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -138,9 +139,18 @@ class User implements UserInterface
      */
     private $roles;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\StoreOrder", mappedBy="user")
+     * @OrderBy({"orderDate" = "DESC"})
+     */
+    private $orders;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
+        $this->orders = new ArrayCollection();
         $this->deleted = 0;
     }
 
@@ -571,6 +581,30 @@ class User implements UserInterface
         $this->roles[] = $role;
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getOrders()
+    {
+        return $this->orders;
+    }
+
+    /**
+     * @param ArrayCollection $orders
+     */
+    public function setOrders($orders)
+    {
+        $this->orders = $orders;
+    }
+
+    /**
+     * @param StoreOrder $order
+     */
+    public function addOrder($order)
+    {
+        $this->getOrders()->add($order);
     }
 }
 
