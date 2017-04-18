@@ -148,7 +148,7 @@ class Product
         $this->price = 0;
         $this->qty = 0;
         $this->position = 0;
-        $this->isTaxable = 0;
+        $this->isTaxable = false;
         $this->tags = new ArrayCollection();
     }
 

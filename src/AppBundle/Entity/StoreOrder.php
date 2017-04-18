@@ -2,7 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 
 /**
  * StoreOrder
@@ -285,11 +287,20 @@ class StoreOrder
     private $user;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\StoreOrderDelivery", mappedBy="order")
+     * @OrderBy({"deliveryDate" = "ASC"})
+     */
+    private $deliveries;
+
+    /**
      * StoreOrder constructor.
      */
     public function __construct()
     {
         $this->orderDate = new \DateTime('now');
+        $this->deliveries = new ArrayCollection();
     }
 
     /**
@@ -1172,6 +1183,30 @@ class StoreOrder
     public function setUser($user)
     {
         $this->user = $user;
+    }
+
+    /**
+     * @return ArrayCollection|StoreOrderDelivery[]
+     */
+    public function getDeliveries()
+    {
+        return $this->deliveries;
+    }
+
+    /**
+     * @param ArrayCollection $deliveries
+     */
+    public function setDeliveries($deliveries)
+    {
+        $this->deliveries = $deliveries;
+    }
+
+    /**
+     * @param StoreOrderDelivery $delivery
+     */
+    public function addDelivery($delivery)
+    {
+        $this->deliveries->add($delivery);
     }
 }
 
