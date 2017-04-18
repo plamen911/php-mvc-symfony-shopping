@@ -721,3 +721,8 @@ h4.subheader {
     text-align: center;
     margin-bottom: 0.5em;
 }
+
+.skuPrice {
+    text-decoration: line-through;
+    color: #900;
+}

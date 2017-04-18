@@ -45,13 +45,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="large-4 columns">
-                        {{ form_row(form.price, {'label': 'Price', 'required': false}) }}
+                    <div class="large-6 columns">
+                        {{ form_row(form.oldPrice, {'label': 'Old Price', 'required': false}) }}
                     </div>
-                    <div class="large-4 columns">
+                    <div class="large-6 columns">
+                        {{ form_row(form.price, {'label': 'Actual Price', 'required': false}) }}
+                    </div>
+                </div>
+                <div class="row">
+                    {#<div class="large-4 columns">#}
+                        {#{{ form_row(form.price, {'label': 'Price', 'required': false}) }}#}
+                    {#</div>#}
+                    <div class="large-6 columns">
                         {{ form_row(form.qty, {'label': 'Qty', 'required': false}) }}
                     </div>
-                    <div class="large-4 columns">
+                    <div class="large-6 columns">
                         {{ form_row(form.dimension, {'label': 'Dimension', 'required': false}) }}
                     </div>
                 </div>

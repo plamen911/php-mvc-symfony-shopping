@@ -65,7 +65,12 @@
                                                     <h3>
                                                         <a href="{{ path('store_product', {'id': item.product.id}) }}">
                                                             {{ item.product.name }}
-                                                            <span> - ${{ item.product.price|number_format(2, '.', ',') }}</span>
+                                                            <span> -
+                                                                {% if item.product.oldPrice != '' and item.product.oldPrice > item.product.price %}
+                                                                    <span class="skuPrice">${{ item.product.oldPrice|number_format(2, '.', ',') }}</span>
+                                                                {% endif %}
+                                                                ${{ item.product.price|number_format(2, '.', ',') }}
+                                                            </span>
                                                         </a>
                                                     </h3>
                                                 </div>

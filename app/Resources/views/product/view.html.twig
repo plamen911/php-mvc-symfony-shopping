@@ -34,7 +34,11 @@
                         <p>{{ product.description }}</p>
                     </div>
                     <div id="product-price-{{ product.id }}">
-                        <p>$<span id="price-label">{{ product.price|number_format(2, '.', ',') }}</span></p>
+                        <p>{% if product.oldPrice != '' and product.oldPrice > product.price %}
+                                <span class="skuPrice">${{ product.oldPrice|number_format(2, '.', ',') }}</span>
+                            {% endif %}
+                            $<span id="price-label">{{ product.price|number_format(2, '.', ',') }}</span>
+                        </p>
                     </div>
                 </div>
                 <div class="large-2 columns">

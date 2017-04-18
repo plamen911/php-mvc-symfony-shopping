@@ -33,7 +33,12 @@
                                             </div>
                                             <div class="panel captionInner">
                                                 <h5>{{ product.name }}</h5>
-                                                <h6 class="subheader">${{ product.price }}</h6>
+                                                <h6 class="subheader">
+                                                    {% if product.oldPrice != '' and product.oldPrice > product.price %}
+                                                        <span class="skuPrice">${{ product.oldPrice|number_format(2, '.', ',') }}</span>
+                                                    {% endif %}
+                                                    ${{ product.price|number_format(2, '.', ',') }}
+                                                </h6>
                                             </div>
                                         </div>
                                     </div>

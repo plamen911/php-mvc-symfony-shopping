@@ -43,7 +43,15 @@ class Product
     /**
      * @var float
      *
+     * @ORM\Column(name="old_price", type="float", nullable=true)
+     */
+    private $oldPrice;
+
+    /**
+     * @var float
+     *
      * @ORM\Column(name="price", type="float", nullable=true)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $price;
 
@@ -136,6 +144,7 @@ class Product
     public function __construct()
     {
         $this->photos = new ArrayCollection();
+        $this->oldPrice = 0;
         $this->price = 0;
         $this->qty = 0;
         $this->position = 0;
@@ -199,6 +208,30 @@ class Product
     public function getIsTaxable()
     {
         return $this->isTaxable;
+    }
+
+    /**
+     * Set price
+     *
+     * @param float $oldPrice
+     *
+     * @return Product
+     */
+    public function setOldPrice($oldPrice)
+    {
+        $this->oldPrice = $oldPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get old price
+     *
+     * @return float
+     */
+    public function getOldPrice()
+    {
+        return $this->oldPrice;
     }
 
     /**

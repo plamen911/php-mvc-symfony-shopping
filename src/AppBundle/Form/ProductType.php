@@ -41,6 +41,7 @@ class ProductType extends AbstractType
             ])
             ->add('name', TextType::class)
             ->add('isTaxable', CheckboxType::class)
+            ->add('oldPrice', TextType::class)
             ->add('price', TextType::class)
             ->add('qty', TextType::class)
             ->add('dimension', ChoiceType::class, [
