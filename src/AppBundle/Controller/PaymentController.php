@@ -41,12 +41,9 @@ class PaymentController extends Controller
             return $this->redirectToRoute('checkout_authorize');
         }
 
-        $form = $this->createForm(StoreOrderType::class);
+        $form = $this->createForm(StoreOrderType::class, null, ['states' => $this->get('app.common')->getStates()]);
         $form->handleRequest($request);
 
-
-
-        // http://localhost:3000/payment/
         /**
          * @var \Doctrine\Common\Persistence\ObjectManager $em
          */

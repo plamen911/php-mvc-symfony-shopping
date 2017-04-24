@@ -123,47 +123,47 @@
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{ form_row(form.billingFirstName, {'label': 'First Name', 'required': true}) }}
+                            {{ form_row(form.billingFirstName) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{ form_row(form.billingLastName, {'label': 'Last Name', 'required': true}) }}
+                            {{ form_row(form.billingLastName) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{ form_row(form.billingEmail, {'label': 'E-mail', 'required': true}) }}
+                            {{ form_row(form.billingEmail) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{ form_row(form.billingPhone, {'label': 'Phone', 'required': true}) }}
+                            {{ form_row(form.billingPhone) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{ form_row(form.billingAddress, {'label': 'Address'}) }}
+                            {{ form_row(form.billingAddress) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{ form_row(form.billingAddress2, {'label': 'Address 2'}) }}
+                            {{ form_row(form.billingAddress2) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{ form_row(form.billingCity, {'label': 'City'}) }}
+                            {{ form_row(form.billingCity) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{ form_row(form.billingState, {'label': 'State'}) }}
+                            {{ form_row(form.billingState) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{ form_row(form.billingZip, {'label': 'Zip'}) }}
+                            {{ form_row(form.billingZip) }}
                         </div>
                     </div>
                 </div>
@@ -182,42 +182,42 @@
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
-                                {{ form_row(form.shippingFirstName, {'label': 'First Name', 'required': true}) }}
+                                {{ form_row(form.shippingFirstName) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
-                                {{ form_row(form.shippingLastName, {'label': 'Last Name', 'required': true}) }}
+                                {{ form_row(form.shippingLastName) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
-                                {{ form_row(form.shippingEmail, {'label': 'E-mail', 'required': true}) }}
+                                {{ form_row(form.shippingEmail) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
-                                {{ form_row(form.shippingPhone, {'label': 'Phone', 'required': true}) }}
+                                {{ form_row(form.shippingPhone) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
-                                {{ form_row(form.shippingAddress, {'label': 'Address'}) }}
+                                {{ form_row(form.shippingAddress) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
-                                {{ form_row(form.shippingAddress2, {'label': 'Address 2'}) }}
+                                {{ form_row(form.shippingAddress2) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
-                                {{ form_row(form.shippingCity, {'label': 'City'}) }}
+                                {{ form_row(form.shippingCity) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
-                                {{ form_row(form.shippingState, {'label': 'State'}) }}
+                                {{ form_row(form.shippingState) }}
                             </div>
                         </div>
                         <div class="row">
@@ -268,9 +268,39 @@
                             {{ form_row(form.creditCardName) }}
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.submit, {'attr': {'class': 'button expand'}}) }}
+                        </div>
+                    </div>
                 </div>
             </div>
             {{ form_end(form) }}
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(function () {
+        var billing2shipping = function () {
+            if ($('#as_billing').get(0).checked) {
+                $('input, select', '#billing-info').each(function () {
+                    var elem = $(this);
+                    $('#shipping' + elem.attr('id').replace(/^billing/, '')).val(elem.val());
+                });
+            }
+        };
+        $('#as_billing').bind('change', function () {
+            billing2shipping();
+        });
+        $('input', '#billing-info').bind('keyup change', function () {
+            billing2shipping();
+        });
+        $('select', '#billing-info').bind('change', function () {
+            billing2shipping();
+        });
+
+    });
+</script>
 {% endblock %}
