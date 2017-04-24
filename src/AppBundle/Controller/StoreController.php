@@ -37,15 +37,19 @@ class StoreController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $data = $this->getSearchResults($request->get('keyword', 'today'));
+        $data['cart'] = $this->get('app.common')->getSessionCart($request);
+
+        return $this->render('search/index.html.twig', $data);
         /**
          * @var \Doctrine\Common\Persistence\ObjectManager $em
          */
-        $em = $this->getDoctrine()->getManager();
-
-        return $this->render('store/index.html.twig', [
-            'cart' => $this->get('app.common')->getSessionCart($request),
-            'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em)
-        ]);
+//        $em = $this->getDoctrine()->getManager();
+//
+//        return $this->render('store/index.html.twig', [
+//            'cart' => $this->get('app.common')->getSessionCart($request),
+//            'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em)
+//        ]);
     }
 
     /**

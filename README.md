@@ -30,5 +30,5 @@ https://sonata-project.org/bundles
 http://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html
 http://symfony.com/doc/current/controller/upload_file.html
 
-
+http://elcodi.io/ - a fully-functional e-commerce application on top of the Symfony framework
 
