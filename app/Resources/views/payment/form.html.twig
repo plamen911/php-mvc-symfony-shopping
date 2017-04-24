@@ -112,6 +112,7 @@
     </div>
     <div class="row">
         <div class="large-12 columns">
+            {{ form_start(form) }}
             <hr>
             <div class="row">
                 <div id="billing-info" class="large-6 columns">
@@ -119,8 +120,51 @@
                         <div class="large-12 columns">
                             <h3>Billing Info</h3>
                         </div>
-
-
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.billingFirstName, {'label': 'First Name', 'required': true}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.billingLastName, {'label': 'Last Name', 'required': true}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.billingEmail, {'label': 'E-mail', 'required': true}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.billingPhone, {'label': 'Phone', 'required': true}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.billingAddress, {'label': 'Address'}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.billingAddress2, {'label': 'Address 2'}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.billingCity, {'label': 'City'}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.billingState, {'label': 'State'}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.billingZip, {'label': 'Zip'}) }}
+                        </div>
                     </div>
                 </div>
                 <div id="shipping-info" class="large-6 columns">
@@ -136,11 +180,97 @@
                                 </small>
                             </h3>
                         </div>
-
-
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{ form_row(form.shippingFirstName, {'label': 'First Name', 'required': true}) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{ form_row(form.shippingLastName, {'label': 'Last Name', 'required': true}) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{ form_row(form.shippingEmail, {'label': 'E-mail', 'required': true}) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{ form_row(form.shippingPhone, {'label': 'Phone', 'required': true}) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{ form_row(form.shippingAddress, {'label': 'Address'}) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{ form_row(form.shippingAddress2, {'label': 'Address 2'}) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{ form_row(form.shippingCity, {'label': 'City'}) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{ form_row(form.shippingState, {'label': 'State'}) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{ form_row(form.shippingZip) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div id="payment-info" class="large-6 columns">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Payment Info</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.creditCardType) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.creditCardNumber) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Expiration Date</label>
+                            <div class="row">
+                                <div class="large-6 columns">
+                                    {{ form_widget(form.creditCardMonth) }}
+                                </div>
+                                <div class="large-6 columns">
+                                    {{ form_widget(form.creditCardYear) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.creditCardCode) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{ form_row(form.creditCardName) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

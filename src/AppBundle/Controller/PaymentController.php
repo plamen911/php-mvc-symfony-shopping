@@ -3,12 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Photo;
+use AppBundle\Form\StoreOrderType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 
 /**
  * Class PaymentController
@@ -39,6 +41,9 @@ class PaymentController extends Controller
             return $this->redirectToRoute('checkout_authorize');
         }
 
+        $form = $this->createForm(StoreOrderType::class);
+        $form->handleRequest($request);
+
 
 
         // http://localhost:3000/payment/
@@ -54,7 +59,8 @@ class PaymentController extends Controller
         return $this->render('payment/form.html.twig', [
             'cart' => $cart,
             'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em),
-            'uploadDirLarge' => Photo::getUploadDirLarge()
+            'uploadDirLarge' => Photo::getUploadDirLarge(),
+            'form' => $form->createView()
         ]);
     }
 }
