@@ -63,47 +63,73 @@
                 <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
             </ul>
             <section class="top-bar-section">
-                {% if departmentsInMenu|length %}
-                    <ul class="left">
+                <ul class="left">
+                    {% if departmentsInMenu is defined %}
                         <li><a href="{{ path('store_search_by_keyword') }}?keyword=today">Today's menu</a></li>
                         <li><a href="{{ path('store_search_by_keyword') }}?keyword=tomorrow">Tomorrow's menu</a></li>
                         {% for department in departmentsInMenu %}
-                            <li class="has-dropdown"><a href="{{ path('store_search_by_department', {'id': department.id}) }}">{{ department.name }}</a>
+                            <li class="has-dropdown"><a
+                                        href="{{ path('store_search_by_department', {'id': department.id}) }}">{{ department.name }}</a>
                                 {% if department.categories|length %}
                                     <ul class="dropdown">
                                         {% for category in department.categories %}
-                                            <li><a href="{{ path('store_search_by_category', {'id': category.id}) }}">{{ category.name }}</a></li>
+                                            <li>
+                                                <a href="{{ path('store_search_by_category', {'id': category.id}) }}">{{ category.name }}</a>
+                                            </li>
                                         {% endfor %}
                                     </ul>
                                 {% endif %}
-                            </li><li class="divider"></li>
+                            </li>
+                            <li class="divider"></li>
                         {% endfor %}
-                    </ul>
-                {% endif %}
+                    {% elseif app.user %}
+                        <li><a href="{{ path('store_index') }}">Menu</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{{ path('account_orders') }}">My Orders</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{{ path('account_profile') }}">My Account</a></li>
+                    {% endif %}
+                </ul>
                 <ul class="right">
-                    <li>
-                        <a href="{{ path('store_cart') }}" class="has-tip tip-bottom noradius" title="$0.00" style="border-bottom:0;">
-                            <span data-tooltip title="${{ cart.total|number_format(2, '.', ',') }}" data-options="disable_for_touch:true"><i class="fi-shopping-cart white"></i> {{ cart.qty }} items</span>
-                        </a>
-                    </li>
-                    <!-- Search Form -->
-                    <li class="has-form hide-for-medium-down">
-                        <form action="{{ path('store_search_by_keyword') }}" accept-charset="utf-8" method="get" class="search-form" role="search">
-                            <div class="row collapse">
-                                <div class="large-8 small-9  columns">
-                                    <input type="text" id="search-field" name="keyword" value="{{ keyword|default('') }}" placeholder="Search Products..."
-                                           class="hint"/>
+                    {% if departmentsInMenu is defined %}
+                        <li>
+                            <a href="{{ path('store_cart') }}" class="has-tip tip-bottom noradius" title="$0.00" style="border-bottom:0;">
+                                <span data-tooltip title="${{ cart.total|number_format(2, '.', ',') }}" data-options="disable_for_touch:true"><i class="fi-shopping-cart white"></i> {{ cart.qty }} items</span>
+                            </a>
+                        </li>
+                        <!-- Search Form -->
+                        <li class="has-form hide-for-medium-down">
+                            <form action="{{ path('store_search_by_keyword') }}" accept-charset="utf-8" method="get" class="search-form" role="search">
+                                <div class="row collapse">
+                                    <div class="large-8 small-9 columns">
+                                        <input type="text" id="search-field" name="keyword" value="{{ keyword|default('') }}" placeholder="Search Products..."
+                                               class="hint"/>
+                                    </div>
+                                    <div class="large-4 small-3 columns">
+                                        <input type="submit" id="search-submit" class="button expand" value="Search"/>
+                                    </div>
                                 </div>
-                                <div class="large-4 small-3 columns">
-                                    <input type="submit" id="search-submit" class=" button expand" value="Search"/>
-                                </div>
-                            </div>
-                        </form>
-                    </li>
-                    <!-- End Search Form -->
-                    <li>
-                        <a href="#">Log In</a>
-                    </li>
+                            </form>
+                        </li>
+                        <!-- End Search Form -->
+                        {% if app.user %}
+                            <li>
+                                <a href="{{ path('account_orders') }}">My Orders</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ path('checkout_authorize') }}" title="Log In">Log In</a>
+                            </li>
+                        {% endif %}
+                    {% elseif app.user %}
+                        <li class="divider"></li>
+                        <li class="name">
+                            <h1><a href="{{ path('account_profile') }}">Welcome {{ app.user.firstName }}!</a></h1>
+                        </li>
+                        <li class="active">
+                            <a href="{{ path('logout_action') }}">Logout</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </section>
         </nav>

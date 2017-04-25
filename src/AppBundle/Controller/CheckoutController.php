@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Form\SignupType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -105,6 +106,22 @@ class CheckoutController extends Controller
             return $this->redirectToRoute('payment_index');
         }
 
+        return $this->redirectToRoute('checkout_authorize');
+    }
+
+    /**
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @Route("/logout", name="logout_action")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function logoutAction(Request $request)
+    {
+        //clear the token, cancel session and redirect
+        $this->get('security.token_storage')->setToken(null);
+        $request->getSession()->invalidate();
         return $this->redirectToRoute('checkout_authorize');
     }
 

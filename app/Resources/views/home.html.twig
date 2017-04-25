@@ -28,14 +28,20 @@
                 <img src="{{ asset('img/main-page-logo.svg') }}" alt="Tilbury and Skiff Logo" title="Tilbury &amp; Skiff" />
             </a>
         </div>
-        <ul class="nav-ul login">
-            <li>
-                <a href="{{ path('checkout_authorize') }}" title="Login">Login</a>
-            </li>
-            <li>
-                <a href="{{ path('checkout_authorize') }}" title="Sign Up">Sign Up</a>
-            </li>
-        </ul>
+        {% if app.user %}
+            <ul class="nav-ul login">
+                <li><a href="{{ path('account_orders') }}">My Orders</a></li>
+            </ul>
+        {% else %}
+            <ul class="nav-ul login">
+                <li>
+                    <a href="{{ path('checkout_authorize') }}" title="Log In">Log In</a>
+                </li>
+                <li>
+                    <a href="{{ path('checkout_authorize') }}" title="Sign Up">Sign Up</a>
+                </li>
+            </ul>
+        {% endif %}
         <a href="#" class="mobile-menu">
             <span></span>
             <span></span>
@@ -43,6 +49,7 @@
         </a>
     </nav>
 </header>
+
 <section id="contentWrapper">
     {% block body %}{% endblock %}
     <footer class="row">
