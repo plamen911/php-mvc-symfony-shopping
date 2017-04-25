@@ -6,9 +6,128 @@
     <section id="adminOrdersViewContainer" class="admin-content-container">
         <div class="row">
             <div class="large-12 columns">
-                <h3>Orders</h3>
-
+                <h3>{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</h3>
+                {{ form_start(form) }}
+                <div class="row">
+                    <div class="large-2 columns">
+                        {{ form_row(form.orderNum) }}
+                    </div>
+                    <div class="large-2 columns">
+                        {{ form_row(form.orderDateFrom) }}
+                    </div>
+                    <div class="large-2 columns">
+                        {{ form_row(form.orderDateTo) }}
+                    </div>
+                    <div class="large-2 columns">
+                        {{ form_row(form.deliveryDateFrom) }}
+                    </div>
+                    <div class="large-2 columns">
+                        {{ form_row(form.deliveryDateTo) }}
+                    </div>
+                    <div class="large-2 columns">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="button tiny">Search</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h4>Delivery Report</h4>
+                    </div>
+                    <div class="large-4 columns">
+                        <a id="lnkHidden_newpage" href="#" target="_blank" style="display: none;">Hidden link</a>
+                        {{ form_widget(form.deliveryDate) }}
+                    </div>
+                    <div class="large-2 columns">
+                        <a id="lnkDeliveryList" href="#" class="button tiny">Generate Report</a>
+                    </div>
+                    <div class="large-2 columns end">
+                        <a href="/admin/excel" class="button tiny">Export Orders</a>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+                <table class="large-12">
+                    <thead>
+                        <tr>
+                            <th>Order Num.</th>
+                            <th>Order Time</th>
+                            {% if app.user.isAdmin %}
+                                <th>Purchaser</th>
+                            {% endif %}
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th>Credit Card</th>
+                            <th>Shipping Address</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if orders|length %}
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.orderNum }}</td>
+                                <td>{{ order.orderDate|date("M j, Y H:i") }}</td>
+                                {% if app.user.isAdmin %}
+                                    <td>{{ order.billingFirstName }} {{ order.billingLastName }}</td>
+                                {% endif %}
+                                <td>{{ order.qty }}</td>
+                                <td>${{ order.total|number_format(2, '.', ',') }}</td>
+                                <td>{{ order.creditCardType }}</td>
+                                <td>{{ order.shippingAddress }}, {{ order.shippingCity }} {{ order.shippingState }}</td>
+                                <td><a href="#">View Detail</a></td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8">No records found.</td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+                {#<div>#}
+                    {#<p>Results...</p>#}
+                {#</div>#}
             </div>
         </div>
     </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            // implementation of disabled form fields
+            var nowTemp = new Date(),
+                now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+            now.setDate(now.getDate() + 1); // +1 day
+
+            $('#form_orderDateFrom, #form_orderDateTo').fdatepicker({
+                onRender: function (date) {
+                    return date.valueOf() > now.valueOf() ? 'disabled' : '';
+                }
+            });
+            $('#form_deliveryDateFrom, #form_deliveryDateTo, #form_deliveryDate').fdatepicker();
+
+            $('#lnkDeliveryList').bind('click', function(e){
+                e.preventDefault();
+                var delivery_date = $.trim($('#form_deliveryDate').val());
+                if(delivery_date == '') {
+                    alert('Please select delivery date.');
+                    $('#form_deliveryDate').focus();
+                    return false;
+                }
+
+                var ary = delivery_date.split('/');
+                mm = ary[0],
+                    dd = ary[1],
+                    yy = ary[2];
+
+                // Open a new browser window with JS.
+                var target = 'http://localhost/ivanov/enjoykitchenonline.com/admin/delivery_list/' + yy + '-' + mm + '-' + dd;
+                var $myLink = $('#lnkHidden_newpage');
+                $myLink.attr('href', target);
+                $myLink[0].click();
+                return false;
+            })
+        });
+    </script>
 {% endblock %}

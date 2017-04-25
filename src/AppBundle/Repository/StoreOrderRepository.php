@@ -10,4 +10,104 @@ namespace AppBundle\Repository;
  */
 class StoreOrderRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param array $params
+     * @return array
+     */
+    public function search(array $params)
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        if (!empty($params['userId'])) {
+            $qb->where('o.orderStatus = :orderStatus')
+                ->setParameter('orderStatus', 1);
+        }
+        if (!empty($params['userId'])) {
+            $qb->andWhere('o.userId = :userId')
+                ->setParameter('userId', $params['userId']);
+        }
+        if (!empty($params['orderNum'])) {
+            $qb->andWhere('o.orderNum LIKE :orderNum')
+                ->setParameter('orderNum', '%' . $params['orderNum'] . '%');
+        }
+        if (!empty($params['orderDateFrom']) && preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $params['orderDateFrom'], $matches)) {
+            $params['orderDateFrom'] = $matches[3] . '-' . $matches[1] . '-' . $matches[2] . ' 00:00:00';
+            $qb->andWhere('o.orderDate >= :orderDateFrom')
+                ->setParameter('orderDateFrom', $params['orderDate']);
+        }
+        if (!empty($params['orderDateTo']) && preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $params['orderDateTo'], $matches)) {
+            $params['orderDateTo'] = $matches[3] . '-' . $matches[1] . '-' . $matches[2] . ' 23:59:59';
+            $qb->andWhere('o.orderDate <= :orderDateTo')
+                ->setParameter('orderDateTo', $params['orderDate']);
+        }
+
+        // Delivery dates search
+        $IDs = array();
+        $hit = false;
+        $deliveryDateFrom = $deliveryDateTo = '';
+        if (!empty($params['deliveryDateFrom']) && preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $params['deliveryDateFrom'], $matches)) {
+            $deliveryDateFrom = $matches[3] . '-' . $matches[1] . '-' . $matches[2] . ' 00:00:00';
+            $hit = true;
+        }
+        if (!empty($params['deliveryDateTo']) && preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $params['deliveryDateTo'], $matches)) {
+            $deliveryDateTo = $matches[3] . '-' . $matches[1] . '-' . $matches[2] . ' 23:59:59';
+            $hit = true;
+        }
+
+        if (!empty($deliveryDateFrom) && !empty($deliveryDateTo)) {
+            $query = $this->getEntityManager()->createQuery(
+                    'SELECT DISTINCT d.orderId
+                    FROM AppBundle:StoreOrderDelivery d
+                    WHERE d.deliveryDate BETWEEN :deliveryDateFrom AND :deliveryDateTo'
+                )
+                ->setParameter('deliveryDateFrom', $deliveryDateFrom)
+                ->setParameter('deliveryDateTo', $deliveryDateTo);
+            $deliveries = $query->getResult();
+            if (!empty($deliveries)) {
+                foreach ($deliveries as $delivery) {
+                    $IDs[] = $delivery['orderId'];
+                }
+            }
+        } elseif (!empty($deliveryDateFrom)) {
+            $query = $this->getEntityManager()->createQuery(
+                'SELECT DISTINCT d.orderId
+                    FROM AppBundle:StoreOrderDelivery d
+                    WHERE d.delivery = :deliveryDate'
+                )
+                ->setParameter('deliveryDate', $deliveryDateFrom);
+            $deliveries = $query->getResult();
+            if (!empty($deliveries)) {
+                foreach ($deliveries as $delivery) {
+                    $IDs[] = $delivery['orderId'];
+                }
+            }
+        } elseif (!empty($deliveryDateTo)) {
+            $query = $this->getEntityManager()->createQuery(
+                'SELECT DISTINCT d.orderId
+                    FROM AppBundle:StoreOrderDelivery d
+                    WHERE d.delivery = :deliveryDate'
+            )
+                ->setParameter('deliveryDate', $deliveryDateTo);
+            $deliveries = $query->getResult();
+            if (!empty($deliveries)) {
+                foreach ($deliveries as $delivery) {
+                    $IDs[] = $delivery['orderId'];
+                }
+            }
+        }
+
+        if ($hit && empty($IDs)) {
+            $IDs[] = -1;
+        }
+        if (!empty($IDs)) {
+            $qb->andWhere('o.id IN (:deliveryIds)')
+                ->setParameter('deliveryIds', $IDs);
+        }
+
+        $qb->setMaxResults(1000)
+            ->orderBy('o.orderDate', 'DESC');
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
 }

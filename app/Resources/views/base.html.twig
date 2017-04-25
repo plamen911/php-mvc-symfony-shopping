@@ -173,62 +173,6 @@
     </div>
 </footer>
 <script type="text/javascript" src="{{ asset('js/custom.js') }}"></script>
-
-<script>
-    $(document).foundation({
-        abide: {
-            timeout: 1000,
-            validators: {
-                // Custom validator
-                productOptionChecked: function (el, required, parent) {
-                    var valid = false,
-                        groupopt = el.getAttribute('data-groupopt'),
-                        options = document.querySelectorAll('[data-groupopt]');
-
-                    if (options.length > 0) {
-                        for (var i = 0; i < options.length; i++) {
-                            if (options[i].getAttribute('data-groupopt') == groupopt && options[i].checked) {
-                                valid = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    return valid;
-                }
-            }
-        }
-    });
-
-    $(function () {
-        var nowTemp = new Date();
-        var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-
-        $('#upcoming-specials')
-            .fdatepicker({
-                onRender: function (date) {
-                    return date.valueOf() <= now.valueOf() ? 'disabled' : '';
-                }
-            })
-            .on('changeDate', function (ev, l) {
-                dealsDate = new Date(ev.date);
-
-                dealsDate.setDate(dealsDate.getDate() + 1);
-                var yy = dealsDate.getFullYear(),
-                    mm = dealsDate.getMonth(),
-                    dd = dealsDate.getDate();
-
-                mm += 1;
-                if (parseInt(mm) < 10) {
-                    mm = '0' + mm;
-                }
-                if (parseInt(dd) < 10) {
-                    dd = '0' + dd;
-                }
-                window.location.href = '/store/upcoming-specials/' + yy + '-' + mm + '-' + dd;
-            });
-    });
-</script>
 {% block javascripts %}{% endblock %}
 </body>
 </html>
