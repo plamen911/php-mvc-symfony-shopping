@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\SignupType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -146,6 +147,13 @@ class CheckoutController extends Controller
              * @var \Doctrine\Common\Persistence\ObjectManager $em
              */
             $em = $this->getDoctrine()->getManager();
+
+            /**
+             * @var \AppBundle\Entity\Role $userRole
+             */
+            $userRole = $em->getRepository(Role::class)->findOneBy(['name' => 'ROLE_USER']);
+
+            $user->addRole($userRole);
             $em->persist($user);
             $em->flush();
 

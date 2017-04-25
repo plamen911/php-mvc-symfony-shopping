@@ -606,5 +606,13 @@ class User implements UserInterface
     {
         $this->getOrders()->add($order);
     }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles());
+    }
 }
 

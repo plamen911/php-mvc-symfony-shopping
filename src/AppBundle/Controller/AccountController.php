@@ -41,8 +41,16 @@ class AccountController extends Controller
         $storeOrders = $em->getRepository(StoreOrder::class)
             ->findBy(['userId' => $this->getUser()->getId()], ['orderDate' => 'DESC']);
 
+        /**
+         * @var \AppBundle\Entity\User $user
+         */
+        $user = $this->getUser();
+
+        //$user->getRoles()
+
         return $this->render('account/orders.html.twig', [
-            'orders' => $storeOrders
+            'orders' => $storeOrders,
+            'who' => ''
         ]);
     }
 
