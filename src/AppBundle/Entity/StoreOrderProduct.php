@@ -50,6 +50,13 @@ class StoreOrderProduct
     private $price;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="total", type="float", nullable=true)
+     */
+    private $total;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="qty", type="integer", nullable=true)
@@ -129,8 +136,8 @@ class StoreOrderProduct
     /**
      * @var StoreOrderDelivery
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\StoreOrderDelivery", inversedBy="products")
-     * @ORM\JoinColumn(name="delivery_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\StoreOrderDelivery", inversedBy="products", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="delivery_id", referencedColumnName="id", nullable=false)
      */
     private $delivery;
 
@@ -224,7 +231,7 @@ class StoreOrderProduct
      */
     public function setPrice($price)
     {
-        $this->price = $price;
+        $this->price = (float)$price;
     }
 
     /**
@@ -240,7 +247,7 @@ class StoreOrderProduct
      */
     public function setQty($qty)
     {
-        $this->qty = $qty;
+        $this->qty = (int)$qty;
     }
 
     /**
@@ -417,6 +424,22 @@ class StoreOrderProduct
     public function setDelivery(StoreOrderDelivery $delivery)
     {
         $this->delivery = $delivery;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotal()
+    {
+        return $this->total;
+    }
+
+    /**
+     * @param float $total
+     */
+    public function setTotal(float $total)
+    {
+        $this->total = (float)$total;
     }
 }
 

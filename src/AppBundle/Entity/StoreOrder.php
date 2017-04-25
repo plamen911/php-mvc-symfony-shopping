@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * StoreOrder
@@ -78,14 +79,8 @@ class StoreOrder
     /**
      * @var string
      *
-     * @ORM\Column(name="delivery_method", type="string", length=255)
-     */
-    private $deliveryMethod;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="billing_first_name", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $billingFirstName;
 
@@ -93,6 +88,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="billing_last_name", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $billingLastName;
 
@@ -100,6 +96,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="billing_email", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $billingEmail;
 
@@ -114,6 +111,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="billing_address", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $billingAddress;
 
@@ -128,6 +126,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="billing_city", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $billingCity;
 
@@ -135,6 +134,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="billing_state", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $billingState;
 
@@ -142,6 +142,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="billing_zip", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $billingZip;
 
@@ -149,6 +150,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="shipping_first_name", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $shippingFirstName;
 
@@ -156,6 +158,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="shipping_last_name", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $shippingLastName;
 
@@ -163,6 +166,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="shipping_email", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $shippingEmail;
 
@@ -177,6 +181,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="shipping_address", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $shippingAddress;
 
@@ -191,6 +196,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="shipping_city", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $shippingCity;
 
@@ -198,6 +204,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="shipping_state", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $shippingState;
 
@@ -205,6 +212,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="shipping_zip", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $shippingZip;
 
@@ -212,6 +220,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="credit_card_type", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $creditCardType;
 
@@ -219,6 +228,7 @@ class StoreOrder
      * @var string
      *
      * @ORM\Column(name="credit_card_number", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $creditCardNumber;
 
@@ -231,22 +241,27 @@ class StoreOrder
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="credit_card_year", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $creditCardYear;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="credit_card_month", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $creditCardMonth;
 
     /**
      * @var string
+     * @Assert\NotBlank(message="This field is required.")
+     */
+    private $creditCardCode;
+
+    /**
+     * @var string
      *
      * @ORM\Column(name="credit_card_name", type="string", length=255)
+     * @Assert\NotBlank(message="This field is required.")
      */
     private $creditCardName;
 
@@ -289,7 +304,7 @@ class StoreOrder
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\StoreOrderDelivery", mappedBy="order")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\StoreOrderDelivery", mappedBy="order", cascade={"persist", "remove"})
      * @OrderBy({"deliveryDate" = "ASC"})
      */
     private $deliveries;
@@ -301,6 +316,9 @@ class StoreOrder
     {
         $this->orderDate = new \DateTime('now');
         $this->deliveries = new ArrayCollection();
+        $this->orderStatus = 0;
+        $this->orderNum = '';
+        $this->billingAddress2 = '';
     }
 
     /**
@@ -370,7 +388,7 @@ class StoreOrder
      */
     public function setQty($qty)
     {
-        $this->qty = $qty;
+        $this->qty = (int)$qty;
 
         return $this;
     }
@@ -394,7 +412,7 @@ class StoreOrder
      */
     public function setTaxes($taxes)
     {
-        $this->taxes = $taxes;
+        $this->taxes = (float)$taxes;
 
         return $this;
     }
@@ -418,7 +436,7 @@ class StoreOrder
      */
     public function setDelivery($delivery)
     {
-        $this->delivery = $delivery;
+        $this->delivery = (float)$delivery;
 
         return $this;
     }
@@ -442,7 +460,7 @@ class StoreOrder
      */
     public function setSubtotal($subtotal)
     {
-        $this->subtotal = $subtotal;
+        $this->subtotal = (float)$subtotal;
 
         return $this;
     }
@@ -466,7 +484,7 @@ class StoreOrder
      */
     public function setTotal($total)
     {
-        $this->total = $total;
+        $this->total = (float)$total;
 
         return $this;
     }
@@ -479,30 +497,6 @@ class StoreOrder
     public function getTotal()
     {
         return $this->total;
-    }
-
-    /**
-     * Set shippingMethod
-     *
-     * @param string $deliveryMethod
-     *
-     * @return StoreOrder
-     */
-    public function setDeliveryMethod($deliveryMethod)
-    {
-        $this->deliveryMethod = $deliveryMethod;
-
-        return $this;
-    }
-
-    /**
-     * Get shippingMethod
-     *
-     * @return string
-     */
-    public function getDeliveryMethod()
-    {
-        return $this->deliveryMethod;
     }
 
     /**
@@ -970,8 +964,7 @@ class StoreOrder
      */
     public function setCreditCardNumber($creditCardNumber)
     {
-        $this->creditCardNumber = substr($creditCardNumber, -4);// last 4 digits only
-
+        $this->creditCardNumber = str_repeat('*', strlen($creditCardNumber) - 4) . substr($creditCardNumber, -4);
         return $this;
     }
 
@@ -987,7 +980,7 @@ class StoreOrder
 
     /**
      * Set creditCardExpDate
-     *
+     **
      * @param string $creditCardExpDate
      *
      * @return StoreOrder
@@ -1207,6 +1200,22 @@ class StoreOrder
     public function addDelivery($delivery)
     {
         $this->deliveries->add($delivery);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreditCardCode()
+    {
+        return $this->creditCardCode;
+    }
+
+    /**
+     * @param string $creditCardCode
+     */
+    public function setCreditCardCode($creditCardCode)
+    {
+        $this->creditCardCode = $creditCardCode;
     }
 }
 

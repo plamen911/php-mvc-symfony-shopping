@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}| Payment Done{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <hr>
+        <div class="large-12 columns"><h2>Thank you for shopping with Enjoy Kitchen!</h2></div>
+    </div>
+    <div class="row">
+        <div class="large-12 columns">
+            <p>Your credit card ending in <strong>{{ storeOrder.creditCardNumber }}</strong> has been charged
+                <strong>${{ storeOrder.total|number_format(2, '.', ',') }}</strong>.<br/>
+                Your order number is <strong>{{ storeOrder.orderNum }}</strong>.</p>
+            <hr/>
+            <p>Enjoy Kitchen will review all orders and payments. If a problem is found during verification, we will notify you via email.</p>
+            <h5>What do you want to do next?</h5>
+            <ul class="inline-list">
+                <li><a href="#">Back to Order Details</a></li>
+                <li><a href="#">Go to Order List</a></li>
+                <li><a href="#">Continue Shopping</a></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+

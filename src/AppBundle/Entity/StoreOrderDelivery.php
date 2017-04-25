@@ -54,15 +54,15 @@ class StoreOrderDelivery
     /**
      * @var StoreOrder
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\StoreOrder", inversedBy="deliveries")
-     * @ORM\JoinColumn(name="order_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\StoreOrder", inversedBy="deliveries", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="order_id", referencedColumnName="id", nullable=false)
      */
     private $order;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\StoreOrderProduct", mappedBy="delivery")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\StoreOrderProduct", mappedBy="delivery", cascade={"persist", "remove"})
      * @OrderBy({"id" = "ASC"})
      */
     private $products;
@@ -95,7 +95,7 @@ class StoreOrderDelivery
      */
     public function setCost($cost)
     {
-        $this->cost = $cost;
+        $this->cost = (float)$cost;
 
         return $this;
     }

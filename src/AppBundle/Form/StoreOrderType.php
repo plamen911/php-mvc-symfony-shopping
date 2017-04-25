@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints;
 
 class StoreOrderType extends AbstractType
 {
@@ -39,13 +40,13 @@ class StoreOrderType extends AbstractType
         $states = $options['states'];
 
         $builder
-            ->add('billingFirstName',TextType::class, ['label' => 'First Name', 'attr' => ['placeholder' => 'First Name...']])
-            ->add('billingLastName',TextType::class, ['label' => 'Last Name', 'attr' => ['placeholder' => 'Last Name...']])
-            ->add('billingEmail',EmailType::class, ['label' => 'E-mail', 'attr' => ['placeholder' => 'E-mail...']])
-            ->add('billingPhone',TextType::class, ['label' => 'Phone', 'attr' => ['placeholder' => 'Phone...']])
-            ->add('billingAddress',TextType::class, ['label' => 'Address', 'attr' => ['placeholder' => 'Address...']])
-            ->add('billingAddress2',TextType::class, ['label' => 'Address 2', 'attr' => ['placeholder' => 'Address 2...']])
-            ->add('billingCity',TextType::class, ['label' => 'City', 'attr' => ['placeholder' => 'City...']])
+            ->add('billingFirstName',TextType::class, ['label' => 'First Name', 'required' => false, 'attr' => ['placeholder' => 'First Name...']])
+            ->add('billingLastName',TextType::class, ['label' => 'Last Name', 'required' => false, 'attr' => ['placeholder' => 'Last Name...']])
+            ->add('billingEmail',EmailType::class, ['label' => 'E-mail', 'required' => false, 'attr' => ['placeholder' => 'E-mail...']])
+            ->add('billingPhone',TextType::class, ['label' => 'Phone', 'required' => false, 'attr' => ['placeholder' => 'Phone...']])
+            ->add('billingAddress',TextType::class, ['label' => 'Address', 'required' => false, 'attr' => ['placeholder' => 'Address...']])
+            ->add('billingAddress2',TextType::class, ['label' => 'Address 2', 'required' => false, 'attr' => ['placeholder' => 'Address 2...']])
+            ->add('billingCity',TextType::class, ['label' => 'City', 'required' => false, 'attr' => ['placeholder' => 'City...']])
             ->add('billingState',ChoiceType::class, [
                     'label' => 'State',
                     'choices' => $states,
@@ -54,14 +55,14 @@ class StoreOrderType extends AbstractType
                     'empty_data' => null
                 ]
             )
-            ->add('billingZip',IntegerType::class,['label' => 'Zip', 'attr' => ['placeholder' => 'Zip...']])
-            ->add('shippingFirstName', TextType::class, ['label' => 'First Name', 'attr' => ['placeholder' => 'First Name...']])
-            ->add('shippingLastName',TextType::class, ['label' => 'Last Name', 'attr' => ['placeholder' => 'Last Name...']])
-            ->add('shippingEmail',EmailType::class ,['label' => 'E-mail', 'attr' => ['placeholder' => 'E-mail...']])
-            ->add('shippingPhone',TextType::class ,['label' => 'Phone', 'attr' => ['placeholder' => 'Phone...']])
-            ->add('shippingAddress',TextType::class ,['label' => 'Address', 'attr' => ['placeholder' => 'Address...']])
-            ->add('shippingAddress2',TextType::class ,['label' => 'Address 2', 'attr' => ['placeholder' => 'Address 2...']])
-            ->add('shippingCity',TextType::class ,['label' => 'City', 'attr' => ['placeholder' => 'City...']])
+            ->add('billingZip',TextType::class,['label' => 'Zip', 'required' => false, 'attr' => ['placeholder' => 'Zip...']])
+            ->add('shippingFirstName', TextType::class, ['label' => 'First Name', 'required' => false, 'attr' => ['placeholder' => 'First Name...']])
+            ->add('shippingLastName',TextType::class, ['label' => 'Last Name', 'required' => false, 'attr' => ['placeholder' => 'Last Name...']])
+            ->add('shippingEmail',EmailType::class ,['label' => 'E-mail', 'required' => false, 'attr' => ['placeholder' => 'E-mail...']])
+            ->add('shippingPhone',TextType::class ,['label' => 'Phone', 'required' => false, 'attr' => ['placeholder' => 'Phone...']])
+            ->add('shippingAddress',TextType::class ,['label' => 'Address', 'required' => false, 'attr' => ['placeholder' => 'Address...']])
+            ->add('shippingAddress2',TextType::class ,['label' => 'Address 2', 'required' => false, 'attr' => ['placeholder' => 'Address 2...']])
+            ->add('shippingCity',TextType::class ,['label' => 'City', 'required' => false, 'attr' => ['placeholder' => 'City...']])
             ->add('shippingState',ChoiceType::class, [
                     'label' => 'State',
                     'choices' => $states,
@@ -70,7 +71,7 @@ class StoreOrderType extends AbstractType
                     'empty_data' => null
                 ]
             )
-            ->add('shippingZip', IntegerType::class, ['label' => 'Zip', 'attr' => ['placeholder' => 'Zip...']])
+            ->add('shippingZip', TextType::class, ['label' => 'Zip', 'required' => false, 'attr' => ['placeholder' => 'Zip...']])
             ->add('creditCardType', ChoiceType::class, [
                     'label' => 'Credit Card Type',
                     'choices' => $cards,
@@ -79,12 +80,15 @@ class StoreOrderType extends AbstractType
                     'empty_data' => null
                 ]
             )
-            ->add('creditCardNumber', IntegerType::class, ['label' => 'Credit Card Number', 'attr' => ['placeholder' => 'Credit Card Number...']])
+            ->add('creditCardNumber', TextType::class, ['label' => 'Credit Card Number', 'required' => false, 'attr' => ['placeholder' => 'Credit Card Number...']])
             ->add('creditCardMonth', ChoiceType::class, [
                     'choices' => $months,
                     'required' => false,
                     'placeholder' => 'MM',
-                    'empty_data' => null
+                    'empty_data' => null,
+//                    'constraints' => [
+//                        new Constraints\NotBlank(['message' => 'This field is required'])
+//                    ]
                 ]
             )
             ->add('creditCardYear', ChoiceType::class, [
@@ -94,8 +98,8 @@ class StoreOrderType extends AbstractType
                     'empty_data' => null
                 ]
             )
-            ->add('creditCardCode', IntegerType::class, ['label' => 'Security Code', 'attr' => ['placeholder' => 'Security Code...']])
-            ->add('creditCardName', TextType::class, ['label' => 'Name on Card', 'attr' => ['placeholder' => 'Name on Card...']])
+            ->add('creditCardCode', IntegerType::class, ['label' => 'Security Code', 'required' => false, 'attr' => ['placeholder' => 'Security Code...']])
+            ->add('creditCardName', TextType::class, ['label' => 'Name on Card', 'required' => false, 'attr' => ['placeholder' => 'Name on Card...']])
             ->add('submit', SubmitType::class, ['label' => 'Place Order']);
     }
     
@@ -104,10 +108,11 @@ class StoreOrderType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'AppBundle\Entity\StoreOrder',
-            'states' => null
-        ));
+            'states' => null,
+            'allow_extra_fields' => true
+        ]);
     }
 
     /**
@@ -115,7 +120,6 @@ class StoreOrderType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        // return 'appbundle_storeorder';
         return '';
     }
 

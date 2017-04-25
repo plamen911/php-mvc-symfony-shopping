@@ -250,9 +250,11 @@
                             <label>Expiration Date</label>
                             <div class="row">
                                 <div class="large-6 columns">
+                                    {{ form_errors(form.creditCardMonth) }}
                                     {{ form_widget(form.creditCardMonth) }}
                                 </div>
                                 <div class="large-6 columns">
+                                    {{ form_errors(form.creditCardYear) }}
                                     {{ form_widget(form.creditCardYear) }}
                                 </div>
                             </div>
