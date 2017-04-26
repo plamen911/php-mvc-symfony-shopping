@@ -50,15 +50,29 @@ class AccountController extends Controller
             'deliveryDateTo' => $form['deliveryDateTo']->getData(),
         ];
 
+        $page = (null == $request->query->get('page')) ? 1 : (int)$request->query->get('page');
+        $limit = (null == $request->query->get('limit')) ? 20 : (int)$request->query->get('limit');
+
         /**
-         * @var \AppBundle\Entity\StoreOrder $storeOrders[]
+         * @var \Doctrine\ORM\Tools\Pagination\Paginator $storeOrders
          */
         $storeOrders = $em->getRepository(StoreOrder::class)
-            ->search($params);
+            ->search($params, $page, $limit);
+
+        $maxPages = (int)ceil($storeOrders->count() / $limit);
+        $thisPage = $page;
+
+        /**
+         * @var \AppBundle\Entity\StoreOrder $orders[]
+         */
+        $orders = $storeOrders->getIterator();
 
         return $this->render('account/orders.html.twig', [
-            'orders' => $storeOrders,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            // Pass through the 3 above variables to calculate pages in twig
+            'orders' => $orders,
+            'maxPages' => $maxPages,
+            'thisPage' => $thisPage,
         ]);
     }
 

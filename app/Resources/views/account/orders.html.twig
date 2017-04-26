@@ -47,18 +47,18 @@
                 {{ form_end(form) }}
                 <table class="large-12">
                     <thead>
-                        <tr>
-                            <th>Order Num.</th>
-                            <th>Order Time</th>
-                            {% if app.user.isAdmin %}
-                                <th>Purchaser</th>
-                            {% endif %}
-                            <th>Qty</th>
-                            <th>Total</th>
-                            <th>Credit Card</th>
-                            <th>Shipping Address</th>
-                            <th>&nbsp;</th>
-                        </tr>
+                    <tr>
+                        <th>Order Num.</th>
+                        <th>Order Time</th>
+                        {% if app.user.isAdmin %}
+                            <th>Purchaser</th>
+                        {% endif %}
+                        <th>Qty</th>
+                        <th>Total</th>
+                        <th>Credit Card</th>
+                        <th>Shipping Address</th>
+                        <th>&nbsp;</th>
+                    </tr>
                     </thead>
                     <tbody>
                     {% if orders|length %}
@@ -83,9 +83,26 @@
                     {% endif %}
                     </tbody>
                 </table>
-                {#<div>#}
-                    {#<p>Results...</p>#}
-                {#</div>#}
+                {% if maxPages > 1 %}
+                    <ul class="pagination pagination-sm">
+                        {# `«` arrow  #}
+                        <li {{ thisPage == 1 ? 'class="disabled"' }}>
+                            <a href="{{ path('account_orders', { page: thisPage - 1 < 1 ? 1 : thisPage - 1 }) }}">«</a>
+                        </li>
+
+                        {# Render each page number #}
+                        {% for i in 1..maxPages %}
+                            <li {{ thisPage == i ? 'class="active"' }}>
+                                <a href="{{ path('account_orders', { page: i }) }}">{{ i }}</a>
+                            </li>
+                        {% endfor %}
+
+                        {# `»` arrow #}
+                        <li {{ thisPage == maxPages ? 'class="disabled"' }}>
+                            <a href="{{ path('account_orders', { page: thisPage + 1 <= maxPages ? thisPage + 1 : thisPage }) }}">»</a>
+                        </li>
+                    </ul>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -107,10 +124,10 @@
             });
             $('#form_deliveryDateFrom, #form_deliveryDateTo, #form_deliveryDate').fdatepicker();
 
-            $('#lnkDeliveryList').bind('click', function(e){
+            $('#lnkDeliveryList').bind('click', function (e) {
                 e.preventDefault();
                 var delivery_date = $.trim($('#form_deliveryDate').val());
-                if(delivery_date == '') {
+                if (delivery_date == '') {
                     alert('Please select delivery date.');
                     $('#form_deliveryDate').focus();
                     return false;

@@ -2,6 +2,9 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Utils\PaginatorHelper;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 /**
  * StoreOrderRepository
  *
@@ -11,11 +14,21 @@ namespace AppBundle\Repository;
 class StoreOrderRepository extends \Doctrine\ORM\EntityRepository
 {
     /**
+     * https://anil.io/blog/symfony/doctrine/symfony-and-doctrine-pagination-with-twig/
+     * 1. Create & pass query to paginate method
+     * 2. Paginate will return a `\Doctrine\ORM\Tools\Pagination\Paginator` object
+     * 3. Return that object to the controller
+     *
      * @param array $params
-     * @return array
+     * @param integer $page The current page (passed from controller)
+     *
+     * @return \Doctrine\ORM\Tools\Pagination\Paginator
      */
-    public function search(array $params)
+    public function search(array $params, $page = 1, $limit = 20)
     {
+        $page = (int)$page;
+        $limit = (int)$limit;
+
         $qb = $this->createQueryBuilder('o');
 
         if (!empty($params['userId'])) {
@@ -56,10 +69,10 @@ class StoreOrderRepository extends \Doctrine\ORM\EntityRepository
 
         if (!empty($deliveryDateFrom) && !empty($deliveryDateTo)) {
             $query = $this->getEntityManager()->createQuery(
-                    'SELECT DISTINCT d.orderId
+                'SELECT DISTINCT d.orderId
                     FROM AppBundle:StoreOrderDelivery d
                     WHERE d.deliveryDate BETWEEN :deliveryDateFrom AND :deliveryDateTo'
-                )
+            )
                 ->setParameter('deliveryDateFrom', $deliveryDateFrom)
                 ->setParameter('deliveryDateTo', $deliveryDateTo);
             $deliveries = $query->getResult();
@@ -73,7 +86,7 @@ class StoreOrderRepository extends \Doctrine\ORM\EntityRepository
                 'SELECT DISTINCT d.orderId
                     FROM AppBundle:StoreOrderDelivery d
                     WHERE d.delivery = :deliveryDate'
-                )
+            )
                 ->setParameter('deliveryDate', $deliveryDateFrom);
             $deliveries = $query->getResult();
             if (!empty($deliveries)) {
@@ -104,10 +117,18 @@ class StoreOrderRepository extends \Doctrine\ORM\EntityRepository
                 ->setParameter('deliveryIds', $IDs);
         }
 
-        $qb->setMaxResults(1000)
-            ->orderBy('o.orderDate', 'DESC');
+//        $qb->setMaxResults(1000)
+//            ->orderBy('o.orderDate', 'DESC');
+//        $query = $qb->getQuery();
+//
+//        return $query->getResult();
+
+        $qb->orderBy('o.orderDate', 'DESC');
         $query = $qb->getQuery();
 
-        return $query->getResult();
+        $helper = new PaginatorHelper();
+        $paginator = $helper->paginate($query, $page, $limit);
+
+        return $paginator;
     }
 }
