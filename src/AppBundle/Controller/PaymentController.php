@@ -146,7 +146,8 @@ class PaymentController extends Controller
                             $orderProduct->setIsTaxable($product->getIsTaxable());
                             $orderProduct->setOldPrice($product->getOldPrice());
                             $orderProduct->setPrice($product->getPrice());
-                            $orderProduct->setQty($product->getQty());
+                            $orderProduct->setQty((float)$item['qty']);
+                            $orderProduct->setTaxes((float)$item['taxes']);
                             $orderProduct->setTotal($orderProduct->getQty() * $orderProduct->getPrice());
                             $orderProduct->setDimension($product->getDimension());
                             $orderProduct->setAvailability($product->getAvailability());
@@ -161,7 +162,7 @@ class PaymentController extends Controller
                             $orderProduct->setDelivery($delivery);
                             $delivery->addProduct($orderProduct);
 
-                            $productIdQtyMap[$product->getId()] = $product->getQty();
+                            $productIdQtyMap[$product->getId()] = (float)$item['qty'];
                         }
 
                         $storeOrder->addDelivery($delivery);

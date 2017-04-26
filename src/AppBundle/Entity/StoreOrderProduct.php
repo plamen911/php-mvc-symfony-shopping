@@ -52,6 +52,13 @@ class StoreOrderProduct
     /**
      * @var float
      *
+     * @ORM\Column(name="taxes", type="float", nullable=true)
+     */
+    private $taxes;
+
+    /**
+     * @var float
+     *
      * @ORM\Column(name="total", type="float", nullable=true)
      */
     private $total;
@@ -440,6 +447,22 @@ class StoreOrderProduct
     public function setTotal(float $total)
     {
         $this->total = (float)$total;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTaxes()
+    {
+        return $this->taxes;
+    }
+
+    /**
+     * @param float $taxes
+     */
+    public function setTaxes(float $taxes)
+    {
+        $this->taxes = $taxes;
     }
 }
 

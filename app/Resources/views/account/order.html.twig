@@ -4,7 +4,8 @@
 
 {% block breadcrumbs %}
     <ul class="breadcrumbs">
-        <li class="current"><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a></li>
+        <li><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a></li>
+        <li class="current"><a href="{{ path('account_order_details', {'id': order.id}) }}">Order #{{ order.orderNum }} Details, Order Date: {{ order.orderDate|date("M j, Y H:i") }}</a></li>
     </ul>
 {% endblock %}
 
@@ -38,21 +39,73 @@
                         <div class="small-12 columns">
                             <div class="row">
                                 <div class="small-6 columns">
-                                    <h3>Delivery Date: {% if shippingDate == "now"|date("Y-m-d") %}Today{% elseif shippingDate == "tomorrow"|date("Y-m-d") %}Tomorrow{% else %}{{ shippingDate|date("F jS, l") }}{% endif %</h3>
+                                    <h3>Delivery Date: {% if delivery.deliveryDate == "now"|date("Y-m-d") %}Today{% elseif delivery.deliveryDate == "tomorrow"|date("Y-m-d") %}Tomorrow{% else %}{{ delivery.deliveryDate|date("F jS, l") }}{% endif %}</h3>
                                 </div>
                                 <div class="small-6 columns">
-                                    <h3 class="subheader">Delivery Method: <?= $delivery_method ?></h3>
+                                    <h3 class="subheader">Delivery Method: {{ delivery.deliveryMethod }}</h3>
                                 </div>
                             </div>
                         </div>
                     </div>
-
+                    <h5 class="subheader">Delivery Cost: ${{ delivery.cost|number_format(2, '.', ',') }}</h5>
+                    {% for product in delivery.products %}
+                        <div class="row">
+                            <div class="small-8 columns">
+                                <div class="row">
+                                    <div class="large-9 columns">
+                                        <div class="row">
+                                            <div class="large-12 columns">
+                                                <h3>{{ product.name }} <span> -
+                                                        {% if product.oldPrice != '' and product.oldPrice > product.price %}
+                                                            <span class="skuPrice">${{ product.oldPrice|number_format(2, '.', ',') }}</span>
+                                                        {% endif %}
+                                                        ${{ product.price|number_format(2, '.', ',') }}
+                                                    </span>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="small-4 columns">
+                                <div class="row">
+                                    <div class="large-4 columns">
+                                        <p><span class="qty">{{ product.qty }}</span></p>
+                                    </div>
+                                    <div class="large-4 columns">
+                                        <p><span class="price">${{ (product.qty * product.price)|number_format(2, '.', ',') }}</p>
+                                    </div>
+                                    <div class="large-4 columns">
+                                        <p><span class="price">${{ product.taxes|number_format(2, '.', ',') }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                    {% endfor %}
                 {% endfor %}
+                <div class="row">
+                    <div class="large-9 columns">
+                        &nbsp;
+                    </div>
+                    <div class="large-3 columns">
+                        <h5>Subtotal <em>${{ order.subtotal|number_format(2, '.', ',') }}</em></h5>
+                        <h5>Taxes <em>${{ order.taxes|number_format(2, '.', ',') }}</em></h5>
+                        <h5>Delivery Cost <em>${{ order.delivery|number_format(2, '.', ',') }}</em></h5>
+                        <h4>Total <em>${{ order.total|number_format(2, '.', ',') }}</em></h4>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="large-12 columns">
+                        <p>Shopping cart is empty.</p>
+                    </div>
+                </div>
             {% endif %}
+            <hr />
         </div>
     </div>
-    {{ dump(order.deliveries) }}
-    {{ dump(order) }}
+
 
 {% endblock %}
 
