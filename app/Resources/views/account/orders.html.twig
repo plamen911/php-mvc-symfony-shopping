@@ -2,6 +2,12 @@
 
 {% block title %}| Orders{% endblock %}
 
+{% block breadcrumbs %}
+    <ul class="breadcrumbs">
+        <li class="current"><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a></li>
+    </ul>
+{% endblock %}
+
 {% block body %}
     <section id="adminOrdersViewContainer" class="admin-content-container">
         <div class="row">
@@ -73,7 +79,7 @@
                                 <td>${{ order.total|number_format(2, '.', ',') }}</td>
                                 <td>{{ order.creditCardType }}</td>
                                 <td>{{ order.shippingAddress }}, {{ order.shippingCity }} {{ order.shippingState }}</td>
-                                <td><a href="#">View Detail</a></td>
+                                <td><a href="{{ path('account_order_details', {'id': order.id}) }}">View Detail</a></td>
                             </tr>
                         {% endfor %}
                     {% else %}

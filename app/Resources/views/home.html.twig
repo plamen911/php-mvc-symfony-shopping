@@ -30,7 +30,7 @@
         </div>
         {% if app.user %}
             <ul class="nav-ul login">
-                <li><a href="{{ path('account_orders') }}">My Orders</a></li>
+                <li><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a></li>
             </ul>
         {% else %}
             <ul class="nav-ul login">

@@ -108,6 +108,8 @@ class PaymentController extends Controller
                 $creditCardExpDate = sprintf("%04d-%02d", $creditCardYear, $creditCardMonth);
                 $storeOrder->setCreditCardExpDate($creditCardExpDate);
 
+                $productIdQtyMap = [];
+
                 if (!empty($cart['items'])) {
                     $storeOrder->setQty($cart['qty']);
                     $storeOrder->setSubtotal($cart['subtotal']);
@@ -158,6 +160,8 @@ class PaymentController extends Controller
                             $orderProduct->setDeliveryId($delivery->getId());
                             $orderProduct->setDelivery($delivery);
                             $delivery->addProduct($orderProduct);
+
+                            $productIdQtyMap[$product->getId()] = $product->getQty();
                         }
 
                         $storeOrder->addDelivery($delivery);
@@ -191,6 +195,19 @@ class PaymentController extends Controller
                         // clean session cart
                         $session = $request->getSession();
                         $session->set('cart', []);
+
+                        // update inventory quantity
+                        if (!empty($productIdQtyMap)) {
+                            foreach ($productIdQtyMap as $productId => $qty) {
+                                /**
+                                 * @var \AppBundle\Entity\Product $productRepo
+                                 */
+                                $productRepo = $em->getRepository(Product::class)->find($productId);
+                                $productRepo->setQty($productRepo->getQty() - $qty);
+                                $em->persist($productRepo);
+                                $em->flush();
+                            }
+                        }
 
                         // TODO: Send confirmation e-mail
 

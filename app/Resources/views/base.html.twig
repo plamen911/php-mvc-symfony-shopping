@@ -85,7 +85,7 @@
                     {% elseif app.user %}
                         <li><a href="{{ path('store_index') }}">Menu</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ path('account_orders') }}">My Orders</a></li>
+                        <li><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a></li>
                         <li class="divider"></li>
                         <li><a href="{{ path('account_profile') }}">My Account</a></li>
                     {% endif %}
@@ -114,7 +114,7 @@
                         <!-- End Search Form -->
                         {% if app.user %}
                             <li>
-                                <a href="{{ path('account_orders') }}">My Orders</a>
+                                <a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a>
                             </li>
                         {% else %}
                             <li>
@@ -135,6 +135,8 @@
         </nav>
     </div>
 </header>
+
+{% block breadcrumbs %}{% endblock %}
 
 {% for type, messages in app.session.flashbag.all() %}
     <div data-alert class="alert-box {{ type }} radius"{% block alert_inline_styles %} style="margin-top: 46px; margin-bottom: 0;"{% endblock %}>

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}| Orders{% endblock %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumbs">
+        <li class="current"><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a></li>
+    </ul>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="large-12 columns">
+            <h3>Order #{{ order.orderNum }} Details, Order Date: {{ order.orderDate|date("M j, Y H:i") }}</h3>
+            <div class="row">
+                <div class="small-8 columns">
+                    <h5>Item</h5>
+                </div>
+                <div class="small-4 columns">
+                    <div class="row">
+                        <div class="large-4 columns">
+                            <h5>Qty</h5>
+                        </div>
+                        <div class="large-4 columns">
+                            <h5>Subtotal</h5>
+                        </div>
+                        <div class="large-4 columns">
+                            <h5>State Tax</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            {% if order.deliveries|length > 0 %}
+                {% for delivery in order.deliveries %}
+                    <p>{{ delivery.deliveryDate|date("M j, Y H:i") }}</p>
+                    <div class="row">
+                        <div class="small-12 columns">
+                            <div class="row">
+                                <div class="small-6 columns">
+                                    <h3>Delivery Date: {% if shippingDate == "now"|date("Y-m-d") %}Today{% elseif shippingDate == "tomorrow"|date("Y-m-d") %}Tomorrow{% else %}{{ shippingDate|date("F jS, l") }}{% endif %</h3>
+                                </div>
+                                <div class="small-6 columns">
+                                    <h3 class="subheader">Delivery Method: <?= $delivery_method ?></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    {{ dump(order.deliveries) }}
+    {{ dump(order) }}
+
+{% endblock %}
+

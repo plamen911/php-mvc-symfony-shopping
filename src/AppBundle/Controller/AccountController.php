@@ -77,6 +77,27 @@ class AccountController extends Controller
     }
 
     /**
+     * Display order details.
+     *
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @Route("/orders/{id}", name="account_order_details", requirements={"id": "\d+"})
+     * @Method("GET")
+     *
+     * @param StoreOrder $storeOrder
+     * @param Request $request
+     * @return Response
+     */
+    public function orderDetailsAction(StoreOrder $storeOrder, Request $request)
+    {
+
+
+
+        return $this->render('account/order.html.twig', [
+            'order' => $storeOrder
+        ]);
+    }
+
+    /**
      * Display user profile form.
      *
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
