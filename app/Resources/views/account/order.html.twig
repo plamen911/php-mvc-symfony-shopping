@@ -106,6 +106,144 @@
         </div>
     </div>
 
-
+    <div class="row">
+        <div class="large-12 columns">
+            <div class="row">
+                <div id="billing-info" class="large-6 columns">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Billing Info</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>First Name : {{ order.billingFirstName }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Last Name : {{ order.billingLastName }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>E-mail : {{ order.billingEmail }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Phone : {{ order.billingPhone }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Address : {{ order.billingAddress }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Address 2 : {{ order.billingAddress2 }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>City : {{ order.billingCity }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>State : {{ order.billingState }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Zip : {{ order.billingZip }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="shipping-info" class="large-6 columns">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Shipping Info</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>First Name : {{ order.shippingFirstName }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Last Name : {{ order.shippingLastName }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>E-mail : {{ order.shippingEmail }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Phone : {{ order.shippingPhone }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Address : {{ order.shippingAddress }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Address 2 : {{ order.shippingAddress2 }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>City : {{ order.shippingCity }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>State : {{ order.shippingState }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Zip : {{ order.shippingZip }}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="payment-info" class="large-6 columns">
+            <div class="row">
+                <div class="large-12 columns">
+                    <h3>Payment Info</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Credit Card Type : {{ order.creditCardType }}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Expiration Date : {{ order.creditCardMonth }} / {{ order.creditCardYear }}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Credit Card Number : {{ order.creditCardNumber }}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Name on Card : {{ order.creditCardName }}</label>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 

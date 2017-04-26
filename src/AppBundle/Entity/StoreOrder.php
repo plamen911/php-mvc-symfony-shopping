@@ -1023,7 +1023,7 @@ class StoreOrder
      */
     public function getCreditCardYear()
     {
-        return $this->creditCardYear;
+        return substr($this->getCreditCardExpDate(), 0, 4);
     }
 
     /**
@@ -1047,7 +1047,7 @@ class StoreOrder
      */
     public function getCreditCardMonth()
     {
-        return $this->creditCardMonth;
+        return substr($this->getCreditCardExpDate(), -2);
     }
 
     /**
