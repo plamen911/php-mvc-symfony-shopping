@@ -35,7 +35,7 @@
                         <button type="submit" class="button tiny">Search</button>
                     </div>
                 </div>
-                <div class="row">
+{#                <div class="row">
                     <div class="large-12 columns">
                         <h4>Delivery Report</h4>
                     </div>
@@ -49,8 +49,8 @@
                     <div class="large-2 columns end">
                         <a href="/admin/excel" class="button tiny">Export Orders</a>
                     </div>
-                </div>
-                {{ form_end(form) }}
+                </div>#}
+                {{ form_end(form, {'render_rest': false}) }}
                 <table class="large-12">
                     <thead>
                     <tr>
