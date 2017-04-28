@@ -1,0 +1,54 @@
+<?php
+
+namespace AppBundle\Form;
+
+use AppBundle\Entity\User;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class ProfileType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $states = $options['states'];
+
+        $builder
+            ->add('firstName', TextType::class, ['label' => 'First Name', 'attr' => ['placeholder' => 'First Name...']])
+            ->add('lastName', TextType::class, ['label' => 'Last Name', 'attr' => ['placeholder' => 'Last Name...']])
+            ->add('email', EmailType::class, ['label' => 'E-mail', 'attr' => ['placeholder' => 'E-mail...']])
+            ->add('phone', TextType::class, ['label' => 'Phone', 'attr' => ['placeholder' => 'Phone...']])
+            ->add('address', TextType::class, ['label' => 'Address', 'attr' => ['placeholder' => 'Address...']])
+            ->add('city', TextType::class, ['label' => 'City', 'attr' => ['placeholder' => 'City...']])
+            ->add('state',ChoiceType::class, [
+                    'label' => 'State',
+                    'choices' => $states,
+                    'required' => false,
+                    'placeholder' => '- select -',
+                    'empty_data' => null
+                ]
+            )
+            ->add('zip',TextType::class,['label' => 'Zip', 'required' => false, 'attr' => ['placeholder' => 'Zip...']])
+            ->add('submit', SubmitType::class, ['label' => 'Save Changes']);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => User::class,
+            'states' => null,
+            'allow_extra_fields' => true
+        ]);
+    }
+
+    public function getBlockPrefix()
+    {
+        return 'app_bundle_profile_type';
+    }
+}

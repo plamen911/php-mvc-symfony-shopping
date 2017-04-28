@@ -3,8 +3,36 @@
 {% block title %}| My Profile{% endblock %}
 
 {% block body %}
-
-    <hr>
-    {{ dump(app.user) }}
-
+    <div class="row">
+        <hr>
+        <div class="large-12 columns"><h2>Your Profile</h2></div>
+    </div>
+    <div class="row">
+        <div class="large-12 columns">
+            {{ form_start(form) }}
+            <div class="row">
+                <div class="large-6 columns">
+                    {{ form_row(form.firstName) }}
+                    {{ form_row(form.lastName) }}
+                    {{ form_row(form.email) }}
+                    <div>
+                        <label for="oldPassword" class="required">Old Password</label>
+                        <input id="oldPassword" name="oldPassword" placeholder="Old Password..." value="" type="password">
+                    </div>
+                    <div>
+                        <label for="newPassword" class="required">New Password</label>
+                        <input id="newPassword" name="newPassword" placeholder="New Password..." value="" type="password">
+                    </div>
+                </div>
+                <div class="large-6 columns">
+                    {{ form_row(form.phone) }}
+                    {{ form_row(form.address) }}
+                    {{ form_row(form.city) }}
+                    {{ form_row(form.state) }}
+                    {{ form_row(form.zip) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}

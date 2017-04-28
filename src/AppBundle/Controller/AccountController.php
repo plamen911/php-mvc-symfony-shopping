@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\StoreOrder;
+use AppBundle\Form\ProfileType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -89,9 +90,6 @@ class AccountController extends Controller
      */
     public function orderDetailsAction(StoreOrder $storeOrder, Request $request)
     {
-
-
-
         return $this->render('account/order.html.twig', [
             'order' => $storeOrder
         ]);
@@ -102,18 +100,50 @@ class AccountController extends Controller
      *
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      * @Route("/", name="account_profile")
-     * @Method("GET")
+     * @Method({"GET","POST"})
      *
      * @param Request $request
      * @return Response
      */
     public function profileAction(Request $request)
     {
+        /**
+         * @var \AppBundle\Entity\User $user
+         */
+        $user = $this->getUser();
+        $form = $this->createForm(ProfileType::class, $user, ['states' => $this->get('app.common')->getStates()]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $oldPassword = $request->get('oldPassword');
+            $newPassword = $request->get('newPassword');
+
+            // Change user password
+            if (!empty($oldPassword) && !empty($newPassword)) {
+                $encoder = $this->get('security.password_encoder');
+                if (!$encoder->isPasswordValid($user, $oldPassword)) {
+                    $this->addFlash('alert', 'Wrong old password!');
+                    return $this->render('account/profile.html.twig', [
+                        'form' => $form->createView()
+                    ]);
+                }
+                $user->setPassword($encoder->encodePassword($user, $newPassword));
+            }
+
+            /**
+             * @var \Doctrine\Common\Persistence\ObjectManager $em
+             */
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Your profile was successfully updated.');
+            $this->redirectToRoute('account_profile');
+        }
 
         return $this->render('account/profile.html.twig', [
-
+            'form' => $form->createView()
         ]);
-
     }
 
     /**
