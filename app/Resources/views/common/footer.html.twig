@@ -1,0 +1,38 @@
+<footer class="row">
+    <div class="large-12 columns">
+        <hr>
+        <div class="row">
+            <div class="large-6 columns">
+                <p>&copy; Tilbury &amp; Skiff</p>
+            </div>
+            <div class="large-6 columns">
+                <ul class="inline-list right" style="line-height: 1.6em">
+                    <li>
+                        <a href="{{ url('homepage') }}">Our Store</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('about') }}">About Us</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('privacy') }}">Privacy</a>
+                    </li>
+                    {% if app.user %}
+                        <li>
+                            <a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('logout_action') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="{{ path('checkout_authorize') }}">Sign In</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('checkout_authorize') }}">Join</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>

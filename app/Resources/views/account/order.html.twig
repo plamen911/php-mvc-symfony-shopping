@@ -4,7 +4,7 @@
 
 {% block breadcrumbs %}
     <ul class="breadcrumbs">
-        <li><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a></li>
+        <li><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %} {% else %}My{% endif %} Orders</a></li>
         <li class="current"><a href="{{ path('account_order_details', {'id': order.id}) }}">Order #{{ order.orderNum }} Details, Order Date: {{ order.orderDate|date("M j, Y H:i") }}</a></li>
     </ul>
 {% endblock %}

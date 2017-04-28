@@ -30,7 +30,12 @@
         </div>
         {% if app.user %}
             <ul class="nav-ul login">
-                <li><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a></li>
+                <li>
+                    <a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a>
+                </li>
+                <li>
+                    <a href="{{ path('logout_action') }}">Logout</a>
+                </li>
             </ul>
         {% else %}
             <ul class="nav-ul login">
@@ -52,43 +57,9 @@
 
 <section id="contentWrapper">
     {% block body %}{% endblock %}
-    <footer class="row">
-        <div class="large-12 columns">
-            <hr>
-            <div class="row">
-                <div class="large-6 columns">
-                    <p>&copy; Tilbury &amp; Skiff</p>
-                </div>
-                <div class="large-6 columns">
-                    <ul class="inline-list right" style="line-height: 1.6em">
-                        <li>
-                            <a href="{{ url('homepage') }}">Our Store</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('about') }}">About Us</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('privacy') }}">Privacy</a>
-                        </li>
-                        <li>
-                            <a href="#">Sign In</a>
-                        </li>
-                        <li>
-                            <a href="#">Join</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#" class="fi-social-facebook" style="font-size: 1.6em;"></a>
-                        </li>
-                        <li>
-                            <a href="#" class="fi-social-twitter large" style="font-size: 1.6em;"></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
+    {% include ('common/footer.html.twig') %}
 </section>
+
 <script type="text/javascript" src="{{ asset('js/vendor/jquery.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/custom.js') }}"></script>
 

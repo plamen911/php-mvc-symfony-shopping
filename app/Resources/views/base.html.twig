@@ -85,7 +85,11 @@
                     {% elseif app.user %}
                         <li><a href="{{ path('store_index') }}">Menu</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a></li>
+                        {% if app.user.isAdmin %}
+                            <li><a href="{{ path('department_index') }}">Manage Store</a></li>
+                            <li class="divider"></li>
+                        {% endif %}
+                        <li><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %} {% else %}My{% endif %} Orders</a></li>
                         <li class="divider"></li>
                         <li><a href="{{ path('account_profile') }}">My Account</a></li>
                     {% endif %}
@@ -114,7 +118,7 @@
                         <!-- End Search Form -->
                         {% if app.user %}
                             <li>
-                                <a href="{{ path('account_orders') }}">{% if app.user.isAdmin %}Store{% else %}My{% endif %} Orders</a>
+                                <a href="{{ path('account_orders') }}">{% if app.user.isAdmin %} {% else %}My{% endif %} Orders</a>
                             </li>
                         {% else %}
                             <li>
@@ -149,31 +153,8 @@
 
 {% block body %}{% endblock %}
 
-<footer id="footer" class="large-12 columns">
-    <div class="row">
-        <div class="large-6 medium-6 small-12 columns social">
-            <div id="footerNav">
-                <a href="#" title="Instagram" target="_blank">
-                    <i class="fa fa-instagram"></i>
-                </a>
-                <a href="#" title="Facebook" target="_blank">
-                    <i class="fa fa-facebook"></i>
-                </a>
-                <a href="#" title="Twitter" target="_blank">
-                    <i class="fa fa-twitter"></i>
-                </a>
-            </div>
-        </div>
-        <div class="large-6 medium-6 small-12 columns contacts">
-            <h3>
-                <a href="mailto:hello@enjoykitchencatering.com" target="_blank">hello@enjoykitchencatering.com</a>
-            </h3>
-            <h3>
-                <a href="#" target="_blank">508.XXX.XXXX</a>
-            </h3>
-        </div>
-    </div>
-</footer>
+{% include ('common/footer.html.twig') %}
+
 <script type="text/javascript" src="{{ asset('js/custom.js') }}"></script>
 {% block javascripts %}{% endblock %}
 </body>
