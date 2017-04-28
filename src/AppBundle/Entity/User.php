@@ -129,6 +129,13 @@ class User implements UserInterface
     private $deleted;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="banned", type="boolean", nullable=true)
+     */
+    private $banned;
+
+    /**
      * @var ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Role", inversedBy="users")
@@ -151,7 +158,8 @@ class User implements UserInterface
     {
         $this->roles = new ArrayCollection();
         $this->orders = new ArrayCollection();
-        $this->deleted = 0;
+        $this->deleted = false;
+        $this->banned = false;
     }
 
     /**
@@ -501,6 +509,22 @@ class User implements UserInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isBanned()
+    {
+        return $this->banned;
+    }
+
+    /**
+     * @param bool $banned
+     */
+    public function setBanned(bool $banned)
+    {
+        $this->banned = $banned;
+    }
+
+    /**
      * Returns the roles granted to the user.
      *
      * <code>
@@ -613,6 +637,22 @@ class User implements UserInterface
     public function isAdmin()
     {
         return in_array('ROLE_ADMIN', $this->getRoles());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEditor()
+    {
+        return in_array('ROLE_EDITOR', $this->getRoles());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUser()
+    {
+        return in_array('ROLE_USER', $this->getRoles());
     }
 }
 

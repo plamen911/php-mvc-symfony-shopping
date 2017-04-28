@@ -63,37 +63,7 @@
                 <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
             </ul>
             <section class="top-bar-section">
-                <ul class="left">
-                    {% if departmentsInMenu is defined %}
-                        <li><a href="{{ path('store_search_by_keyword') }}?keyword=today">Today's menu</a></li>
-                        <li><a href="{{ path('store_search_by_keyword') }}?keyword=tomorrow">Tomorrow's menu</a></li>
-                        {% for department in departmentsInMenu %}
-                            <li class="has-dropdown"><a
-                                        href="{{ path('store_search_by_department', {'id': department.id}) }}">{{ department.name }}</a>
-                                {% if department.categories|length %}
-                                    <ul class="dropdown">
-                                        {% for category in department.categories %}
-                                            <li>
-                                                <a href="{{ path('store_search_by_category', {'id': category.id}) }}">{{ category.name }}</a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </li>
-                            <li class="divider"></li>
-                        {% endfor %}
-                    {% elseif app.user %}
-                        <li><a href="{{ path('store_index') }}">Menu</a></li>
-                        <li class="divider"></li>
-                        {% if app.user.isAdmin %}
-                            <li><a href="{{ path('department_index') }}">Manage Store</a></li>
-                            <li class="divider"></li>
-                        {% endif %}
-                        <li><a href="{{ path('account_orders') }}">{% if app.user.isAdmin %} {% else %}My{% endif %} Orders</a></li>
-                        <li class="divider"></li>
-                        <li><a href="{{ path('account_profile') }}">My Account</a></li>
-                    {% endif %}
-                </ul>
+                {% include (':common:nav_menu.html.twig') %}
                 <ul class="right">
                     {% if departmentsInMenu is defined %}
                         <li>

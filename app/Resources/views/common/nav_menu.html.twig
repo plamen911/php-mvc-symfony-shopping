@@ -1,0 +1,6 @@
+{% if departmentsInMenu is defined %}
+    {% include (':common:public_nav_menu.html.twig') %}
+{% elseif app.user %}
+    {% include (':common:protected_nav_menu.html.twig') %}
+{% endif %}
+

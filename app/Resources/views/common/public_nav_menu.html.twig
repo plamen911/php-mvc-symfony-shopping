@@ -1,0 +1,19 @@
+<ul class="left">
+    <li><a href="{{ path('store_search_by_keyword') }}?keyword=today">Today's menu</a></li>
+    <li><a href="{{ path('store_search_by_keyword') }}?keyword=tomorrow">Tomorrow's menu</a></li>
+    {% for department in departmentsInMenu %}
+        <li class="has-dropdown"><a
+                    href="{{ path('store_search_by_department', {'id': department.id}) }}">{{ department.name }}</a>
+            {% if department.categories|length %}
+                <ul class="dropdown">
+                    {% for category in department.categories %}
+                        <li>
+                            <a href="{{ path('store_search_by_category', {'id': category.id}) }}">{{ category.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+        <li class="divider"></li>
+    {% endfor %}
+</ul>
