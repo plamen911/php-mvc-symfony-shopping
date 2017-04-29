@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}| User Profile{% endblock %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumbs">
+        <li><a href="{{ path('admin_users') }}">Users</a></li>
+        <li class="current"><a href="{{ path('admin_user_edit', {'id': user.id}) }}">User Account</a></li>
+    </ul>
+{% endblock %}
+
+{% block body %}
+    <section>
+        <div class="row">
+            <div class="large-12 columns">
+                <h3>User Account</h3>
+                {% include ('admin/users/form.html.twig') %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

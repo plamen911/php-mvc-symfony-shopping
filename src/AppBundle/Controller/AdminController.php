@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
+use AppBundle\Form\ProfileType;
 use Doctrine\Common\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -93,6 +94,90 @@ class AdminController extends Controller
 
         return $this->render('admin/users/editors.html.twig', [
             'users' => $users
+        ]);
+    }
+
+    /**
+     * Edit store user.
+     *
+     * @Route("/user/{id}", name="admin_user_edit", requirements={"id": "\d+"})
+     * @Method({"GET","POST"})
+     *
+     * @param User $user
+     * @param Request $request
+     * @return Response
+     */
+    public function editUserAction(User $user, Request $request)
+    {
+        $form = $this->createForm(ProfileType::class, $user, [
+            'states' => $this->get('app.common')->getStates(),
+            'action' => $this->generateUrl('admin_user_edit', ['id' => $user->getId()]),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $request->get('password');
+            if (!empty($password)) {
+                $encoder = $this->get('security.password_encoder');
+                $user->setPassword($encoder->encodePassword($user, $password));
+            }
+
+            /**
+             * @var \Doctrine\ORM\EntityManager $em
+             */
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'User profile was successfully updated.');
+            return $this->redirectToRoute('admin_users');
+        }
+
+        return $this->render('admin/users/edit_user.html.twig', [
+            'user' => $user,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * Edit store editor.
+     *
+     * @Route("/editor/{id}", name="admin_editor_edit", requirements={"id": "\d+"})
+     * @Method({"GET","POST"})
+     *
+     * @param User $user
+     * @param Request $request
+     * @return Response
+     */
+    public function editEditorAction(User $user, Request $request)
+    {
+        $form = $this->createForm(ProfileType::class, $user, [
+            'states' => $this->get('app.common')->getStates(),
+            'action' => $this->generateUrl('admin_editor_edit', ['id' => $user->getId()]),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $request->get('password');
+            if (!empty($password)) {
+                $encoder = $this->get('security.password_encoder');
+                $user->setPassword($encoder->encodePassword($user, $password));
+            }
+
+            /**
+             * @var \Doctrine\ORM\EntityManager $em
+             */
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Editor profile was successfully updated.');
+            return $this->redirectToRoute('admin_editors');
+        }
+
+        return $this->render('admin/users/edit_editor.html.twig', [
+            'user' => $user,
+            'form' => $form->createView()
         ]);
     }
 

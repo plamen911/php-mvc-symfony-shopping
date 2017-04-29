@@ -1,0 +1,20 @@
+{{ form_start(form) }}
+<div class="row">
+    <div class="large-6 columns">
+        {{ form_row(form.firstName) }}
+        {{ form_row(form.lastName) }}
+        {{ form_row(form.email) }}
+        <div>
+            <label for="password" class="required">Password</label>
+            <input id="password" name="password" placeholder="Password..." value="" type="password">
+        </div>
+        {{ form_row(form.phone) }}
+    </div>
+    <div class="large-6 columns">
+        {{ form_row(form.address) }}
+        {{ form_row(form.city) }}
+        {{ form_row(form.state) }}
+        {{ form_row(form.zip) }}
+    </div>
+</div>
+{{ form_end(form) }}

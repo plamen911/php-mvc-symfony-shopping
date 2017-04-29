@@ -31,6 +31,7 @@
                             <td>{{ user.email }}</td>
                             <td>{{ user.roles|join(', ') }}</td>
                             <td>{% if app.user.id != user.id %}
+                                    <a href="{{ path('admin_user_edit', {'id': user.id}) }}">Edit</a> |
                                     {% if user.enabled == false %}
                                         <a href="{{ path('admin_users') }}?unban={{ user.id }}">Unban</a>
                                     {% else %}
