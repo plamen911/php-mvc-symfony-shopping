@@ -3,10 +3,14 @@
 {% block title %}Search Results{% endblock %}
 
 {% block body %}
-    <section id="adminSearchViewContainer" class="admin-content-container">
+    <section>
+        <div class="row">
+            <div class="large-12">
+                <h3>Search Results</h3>
+            </div>
+        </div>
         <div class="row">
             <div class="large-12 columns">
-                <h3>Search Results</h3>
                 {% if items|length > 0 %}
                 <ul>
                     {% for departmentId, catgs in items %}

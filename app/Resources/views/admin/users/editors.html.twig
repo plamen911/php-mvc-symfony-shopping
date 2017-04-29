@@ -9,37 +9,40 @@
 {% endblock %}
 
 {% block body %}
-    <section id="adminProductsDetailViewContainer" class="admin-content-container">
+    <section>
         <div class="row">
-            <table class="large-12">
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>E-mail</th>
-                        <th>Role(s)</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for user in users %}
-                    <tr{% if user.enabled == false %} class="banned"{% endif %}>
-                        <td>{{ user.firstName }}</td>
-                        <td>{{ user.lastName }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.roles|join(', ') }}</td>
-                        <td>{% if app.user.id != user.id %}
-                                {% if user.enabled == false %}
-                                    <a href="{{ path('admin_editors') }}?unban={{ user.id }}">Unban</a>
-                                {% else %}
-                                    <a href="{{ path('admin_editors') }}?ban={{ user.id }}">Ban</a>
+            <div class="large-12">
+                <h3>Store Editors</h3>
+                <table class="large-12">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>E-mail</th>
+                            <th>Role(s)</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr{% if user.enabled == false %} class="banned"{% endif %}>
+                            <td>{{ user.firstName }}</td>
+                            <td>{{ user.lastName }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.roles|join(', ') }}</td>
+                            <td>{% if app.user.id != user.id %}
+                                    {% if user.enabled == false %}
+                                        <a href="{{ path('admin_editors') }}?unban={{ user.id }}">Unban</a>
+                                    {% else %}
+                                        <a href="{{ path('admin_editors') }}?ban={{ user.id }}">Ban</a>
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 {% endblock %}

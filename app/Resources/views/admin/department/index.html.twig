@@ -9,17 +9,13 @@
 {% endblock %}
 
 {% block body %}
-    <section id="adminIndexViewContainer" class="admin-content-container">
+    <section id="adminIndexViewContainer">
         <div class="row">
             <div class="large-8 columns large-centered">
                 <form id="itemsForm">
                     <div class="row">
                         <div class="large-12 columns">
                             <h3>Store Departments</h3>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="large-12 columns">
                             <ul id="sortable">
                                 {% for department in departments %}
                                     <li id="item_{{ department.id }}">
