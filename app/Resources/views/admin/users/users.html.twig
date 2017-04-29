@@ -23,13 +23,13 @@
                 </thead>
                 <tbody>
                 {% for user in users %}
-                    <tr{% if user.banned %} class="banned"{% endif %}>
+                    <tr{% if user.enabled == false %} class="banned"{% endif %}>
                         <td>{{ user.firstName }}</td>
                         <td>{{ user.lastName }}</td>
                         <td>{{ user.email }}</td>
                         <td>{{ user.roles|join(', ') }}</td>
                         <td>{% if app.user.id != user.id %}
-                                {% if user.banned %}
+                                {% if user.enabled == false %}
                                     <a href="{{ path('admin_users') }}?unban={{ user.id }}">Unban</a>
                                 {% else %}
                                     <a href="{{ path('admin_users') }}?ban={{ user.id }}">Ban</a>

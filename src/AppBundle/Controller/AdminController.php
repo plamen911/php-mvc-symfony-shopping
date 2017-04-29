@@ -79,12 +79,12 @@ class AdminController extends Controller
 
         if ($request->query->get('ban')) {
             $userId = (int)$request->query->get('ban');
-            if ($this->setBanned($em, $userId, true)) {
+            if ($this->setBanned($em, $userId, false)) {
                 return $this->redirectToRoute('admin_editors');
             }
         } elseif ($request->query->get('unban')) {
             $userId = (int)$request->query->get('unban');
-            if ($this->setBanned($em, $userId, false)) {
+            if ($this->setBanned($em, $userId, true)) {
                 return $this->redirectToRoute('admin_editors');
             }
         }
@@ -102,17 +102,17 @@ class AdminController extends Controller
     /**
      * @param ObjectManager $em
      * @param int $userId
-     * @param bool $banned
+     * @param bool $enabled
      * @return bool
      */
-    private function setBanned(ObjectManager $em, int $userId, bool $banned)
+    private function setBanned(ObjectManager $em, int $userId, bool $enabled)
     {
         if ($userId != $this->getUser()->getId()) {
             /**
              * @var \AppBundle\Entity\User $user
              */
             $user = $em->getRepository(User::class)->find($userId);
-            $user->setBanned($banned);
+            $user->setEnabled($enabled);
             $em->persist($user);
             $em->flush();
 

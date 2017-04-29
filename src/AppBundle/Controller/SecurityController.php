@@ -31,6 +31,9 @@ class SecurityController extends Controller
             $this->addFlash('alert', $error->getMessage());
         }
 
+        dump($this->getUser());
+        dump($error);
+
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
             'error'         => $error,

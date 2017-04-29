@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,7 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  * @UniqueEntity(fields="email", message="Sorry, this e-mail address is already used.")
  */
-class User implements UserInterface
+// class User implements UserInterface
+class User implements AdvancedUserInterface
 {
     /**
      * @var int
@@ -131,9 +133,9 @@ class User implements UserInterface
     /**
      * @var bool
      *
-     * @ORM\Column(name="banned", type="boolean", nullable=true)
+     * @ORM\Column(name="enabled", type="boolean", nullable=true)
      */
-    private $banned;
+    private $enabled;
 
     /**
      * @var ArrayCollection
@@ -159,7 +161,7 @@ class User implements UserInterface
         $this->roles = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->deleted = false;
-        $this->banned = false;
+        $this->enabled = true;
     }
 
     /**
@@ -509,22 +511,6 @@ class User implements UserInterface
     }
 
     /**
-     * @return bool
-     */
-    public function isBanned()
-    {
-        return $this->banned;
-    }
-
-    /**
-     * @param bool $banned
-     */
-    public function setBanned(bool $banned)
-    {
-        $this->banned = $banned;
-    }
-
-    /**
      * Returns the roles granted to the user.
      *
      * <code>
@@ -653,6 +639,78 @@ class User implements UserInterface
     public function isUser()
     {
         return in_array('ROLE_USER', $this->getRoles());
+    }
+
+
+    /**
+     * Checks whether the user's account has expired.
+     *
+     * Internally, if this method returns false, the authentication system
+     * will throw an AccountExpiredException and prevent login.
+     *
+     * @return bool true if the user's account is non expired, false otherwise
+     *
+     * @see AccountExpiredException
+     */
+    public function isAccountNonExpired()
+    {
+        // TODO: Implement isAccountNonExpired() method.
+        return true;
+    }
+
+    /**
+     * Checks whether the user is locked.
+     *
+     * Internally, if this method returns false, the authentication system
+     * will throw a LockedException and prevent login.
+     *
+     * @return bool true if the user is not locked, false otherwise
+     *
+     * @see LockedException
+     */
+    public function isAccountNonLocked()
+    {
+        // TODO: Implement isAccountNonLocked() method.
+        return true;
+    }
+
+    /**
+     * Checks whether the user's credentials (password) has expired.
+     *
+     * Internally, if this method returns false, the authentication system
+     * will throw a CredentialsExpiredException and prevent login.
+     *
+     * @return bool true if the user's credentials are non expired, false otherwise
+     *
+     * @see CredentialsExpiredException
+     */
+    public function isCredentialsNonExpired()
+    {
+        // TODO: Implement isCredentialsNonExpired() method.
+        return true;
+    }
+
+    /**
+     * Checks whether the user is enabled.
+     *
+     * Internally, if this method returns false, the authentication system
+     * will throw a DisabledException and prevent login.
+     *
+     * @return bool true if the user is enabled, false otherwise
+     *
+     * @see DisabledException
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setEnabled(bool $enabled)
+    {
+        $this->enabled = $enabled;
     }
 }
 
