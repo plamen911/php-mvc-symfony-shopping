@@ -12,7 +12,7 @@
     <section>
         <div class="row">
             <div class="large-12">
-                <h3>Store Editors</h3>
+                <h3>Store Editors | <a href="{{ path('admin_editor_create') }}" title="Add new store editor">New Editor</a></h3>
                 <table class="large-12">
                     <thead>
                         <tr>
@@ -29,7 +29,7 @@
                             <td>{{ user.firstName }}</td>
                             <td>{{ user.lastName }}</td>
                             <td>{{ user.email }}</td>
-                            <td>{{ user.roles|join(', ') }}</td>
+                            <td>{{ user.roles|join(', ')|replace({'ROLE_': ''}) }}</td>
                             <td>{% if app.user.id != user.id %}
                                     <a href="{{ path('admin_editor_edit', {'id': user.id}) }}">Edit</a> |
                                     {% if user.enabled == false %}

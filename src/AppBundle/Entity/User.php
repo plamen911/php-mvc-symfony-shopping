@@ -56,7 +56,7 @@ class User implements AdvancedUserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255)
-     * @Assert\NotBlank(message="This field is required.")
+     * @Assert\NotBlank(message="Password field is required.")
      */
     private $password;
 

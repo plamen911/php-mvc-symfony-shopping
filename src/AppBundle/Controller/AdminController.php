@@ -32,6 +32,8 @@ class AdminController extends Controller
      */
     public function usersAction(Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_ADMIN', 'ROLE_EDITOR'], null, 'Unable to access this page!');
+
         /**
          * @var \Doctrine\Common\Persistence\ObjectManager $em
          */
@@ -70,6 +72,8 @@ class AdminController extends Controller
      */
     public function editorsAction(Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_ADMIN'], null, 'Unable to access this page!');
+
         /**
          * @var \Doctrine\Common\Persistence\ObjectManager $em
          */
@@ -100,7 +104,7 @@ class AdminController extends Controller
     /**
      * Edit store user.
      *
-     * @Route("/user/{id}", name="admin_user_edit", requirements={"id": "\d+"})
+     * @Route("/user/edit/{id}", name="admin_user_edit", requirements={"id": "\d+"})
      * @Method({"GET","POST"})
      *
      * @param User $user
@@ -109,6 +113,8 @@ class AdminController extends Controller
      */
     public function editUserAction(User $user, Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_ADMIN', 'ROLE_EDITOR'], null, 'Unable to access this page!');
+
         $form = $this->createForm(ProfileType::class, $user, [
             'states' => $this->get('app.common')->getStates(),
             'action' => $this->generateUrl('admin_user_edit', ['id' => $user->getId()]),
@@ -140,9 +146,65 @@ class AdminController extends Controller
     }
 
     /**
+     * Edit store user.
+     *
+     * @Route("/user/create", name="admin_user_create")
+     * @Method({"GET","POST"})
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function createUserAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted(['ROLE_ADMIN', 'ROLE_EDITOR'], null, 'Unable to access this page!');
+
+        $password = $request->get('password');
+
+        $user = new User();
+        $user->setPassword($password);
+        $form = $this->createForm(ProfileType::class, $user, [
+            'states' => $this->get('app.common')->getStates(),
+            'action' => $this->generateUrl('admin_user_create'),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && empty($password)) {
+            $this->addFlash('alert', 'Password is missing.');
+            return $this->render('admin/users/create_user.html.twig', [
+                'user' => $user,
+                'form' => $form->createView()
+            ]);
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $encoder = $this->get('security.password_encoder');
+            $user->setPassword($encoder->encodePassword($user, $password));
+
+            /**
+             * @var \Doctrine\ORM\EntityManager $em
+             */
+            $em = $this->getDoctrine()->getManager();
+
+            $userRole = $em->getRepository(Role::class)->findOneBy(['name' => 'ROLE_USER']);
+            $user->addRole($userRole);
+
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'User profile was successfully created.');
+            return $this->redirectToRoute('admin_users');
+        }
+
+        return $this->render('admin/users/create_user.html.twig', [
+            'user' => $user,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
      * Edit store editor.
      *
-     * @Route("/editor/{id}", name="admin_editor_edit", requirements={"id": "\d+"})
+     * @Route("/editor/edit/{id}", name="admin_editor_edit", requirements={"id": "\d+"})
      * @Method({"GET","POST"})
      *
      * @param User $user
@@ -151,6 +213,8 @@ class AdminController extends Controller
      */
     public function editEditorAction(User $user, Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_ADMIN'], null, 'Unable to access this page!');
+
         $form = $this->createForm(ProfileType::class, $user, [
             'states' => $this->get('app.common')->getStates(),
             'action' => $this->generateUrl('admin_editor_edit', ['id' => $user->getId()]),
@@ -176,6 +240,62 @@ class AdminController extends Controller
         }
 
         return $this->render('admin/users/edit_editor.html.twig', [
+            'user' => $user,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * Edit store editor.
+     *
+     * @Route("/editor/create", name="admin_editor_create")
+     * @Method({"GET","POST"})
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function createEditorAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted(['ROLE_ADMIN'], null, 'Unable to access this page!');
+
+        $password = $request->get('password');
+
+        $user = new User();
+        $user->setPassword($password);
+        $form = $this->createForm(ProfileType::class, $user, [
+            'states' => $this->get('app.common')->getStates(),
+            'action' => $this->generateUrl('admin_editor_create'),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && empty($password)) {
+            $this->addFlash('alert', 'Password is missing.');
+            return $this->render('admin/users/create_editor.html.twig', [
+                'user' => $user,
+                'form' => $form->createView()
+            ]);
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $encoder = $this->get('security.password_encoder');
+            $user->setPassword($encoder->encodePassword($user, $password));
+
+            /**
+             * @var \Doctrine\ORM\EntityManager $em
+             */
+            $em = $this->getDoctrine()->getManager();
+
+            $userRole = $em->getRepository(Role::class)->findOneBy(['name' => 'ROLE_EDITOR']);
+            $user->addRole($userRole);
+
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Editor profile was successfully created.');
+            return $this->redirectToRoute('admin_editors');
+        }
+
+        return $this->render('admin/users/create_editor.html.twig', [
             'user' => $user,
             'form' => $form->createView()
         ]);

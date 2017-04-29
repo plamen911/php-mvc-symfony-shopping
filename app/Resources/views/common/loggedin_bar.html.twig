@@ -1,7 +1,7 @@
 {% if app.user %}
     <div class="columns small-12" data-sticky-container>
         <div class="sticky" data-sticky data-margin-top="0" style="width: 100%">
-            <h6 class="subheader text-right">Logged in as: {{ app.user.firstName }} ({{ app.user.roles|join(', ') }})</h6>
+            <h6 class="subheader text-right">Logged in as: {{ app.user.firstName }} ({{ app.user.roles|join(', ')|replace({'ROLE_': ''}) }})</h6>
         </div>
     </div>
 {% endif %}
