@@ -17,8 +17,13 @@ php bin/console doctrine:schema:update --force
 
 php bin/console generate:doctrine:crud
 
-php bin/console cache:clear
 php bin/console debug:route
+
+php bin/console cache:clear
+php bin/console cache:clear --env=prod
+php bin/console cache:clear --env=prod --no-warmup
+php bin/console assets:install web
+php bin/console assets:install web --symlink
 
 composer require symfony/var-dumper
 

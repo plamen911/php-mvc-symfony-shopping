@@ -428,7 +428,7 @@ class StoreOrderProduct
     /**
      * @param StoreOrderDelivery $delivery
      */
-    public function setDelivery(StoreOrderDelivery $delivery)
+    public function setDelivery($delivery)
     {
         $this->delivery = $delivery;
     }
@@ -444,7 +444,7 @@ class StoreOrderProduct
     /**
      * @param float $total
      */
-    public function setTotal(float $total)
+    public function setTotal($total)
     {
         $this->total = (float)$total;
     }
@@ -460,7 +460,7 @@ class StoreOrderProduct
     /**
      * @param float $taxes
      */
-    public function setTaxes(float $taxes)
+    public function setTaxes($taxes)
     {
         $this->taxes = $taxes;
     }

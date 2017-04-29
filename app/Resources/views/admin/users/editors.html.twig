@@ -11,7 +11,7 @@
 {% block body %}
     <section>
         <div class="row">
-            <div class="large-12">
+            <div class="large-12 columns">
                 <h3>Store Editors | <a href="{{ path('admin_editor_create') }}" title="Add new store editor">New Editor</a></h3>
                 <table class="large-12">
                     <thead>
@@ -24,23 +24,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for user in users %}
-                        <tr{% if user.enabled == false %} class="banned"{% endif %}>
-                            <td>{{ user.firstName }}</td>
-                            <td>{{ user.lastName }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.roles|join(', ')|replace({'ROLE_': ''}) }}</td>
-                            <td>{% if app.user.id != user.id %}
-                                    <a href="{{ path('admin_editor_edit', {'id': user.id}) }}">Edit</a> |
-                                    {% if user.enabled == false %}
-                                        <a href="{{ path('admin_editors') }}?unban={{ user.id }}">Unban</a>
-                                    {% else %}
-                                        <a href="{{ path('admin_editors') }}?ban={{ user.id }}">Ban</a>
+                    {% if users|length %}
+                        {% for user in users %}
+                            <tr{% if user.enabled == false %} class="banned"{% endif %}>
+                                <td>{{ user.firstName }}</td>
+                                <td>{{ user.lastName }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.roles|join(', ')|replace({'ROLE_': ''}) }}</td>
+                                <td>{% if app.user.id != user.id %}
+                                        <a href="{{ path('admin_editor_edit', {'id': user.id}) }}">Edit</a> |
+                                        {% if user.enabled == false %}
+                                            <a href="{{ path('admin_editors') }}?unban={{ user.id }}">Unban</a>
+                                        {% else %}
+                                            <a href="{{ path('admin_editors') }}?ban={{ user.id }}">Ban</a>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
-                            </td>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">No editors found.</td>
                         </tr>
-                    {% endfor %}
+                    {% endif %}
                     </tbody>
                 </table>
             </div>

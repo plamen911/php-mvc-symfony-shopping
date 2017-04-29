@@ -138,7 +138,7 @@ class AccountController extends Controller
             $em->flush();
 
             $this->addFlash('success', 'Your profile was successfully updated.');
-            $this->redirectToRoute('account_profile');
+            return $this->redirectToRoute('account_profile');
         }
 
         return $this->render('account/profile.html.twig', [

@@ -26,8 +26,8 @@ use Symfony\Component\Validator\Constraints;
  */
 class StoreController extends Controller
 {
-    private const STATE_TAX = 7;
-    private const DELIVERY_COST = 35;
+    private $stateTax = 7;
+    private $deliveryCost = 35;
 
     /**
      * @Route("/", name="store_index")
@@ -208,7 +208,7 @@ class StoreController extends Controller
         return $this->render('store/cart.html.twig', [
             'cart' => $cart,
             'departmentsInMenu' => $this->get('app.common')->getDepartmentsInMenu($em),
-            'deliveryCost' => self::DELIVERY_COST,
+            'deliveryCost' => $this->deliveryCost,
             'form' => $form->createView(),
             'uploadDirLarge' => Photo::getUploadDirLarge()
 
@@ -268,7 +268,7 @@ class StoreController extends Controller
          * @var Product $product
          */
         if ($product->getIsTaxable()) {
-            $taxPercent = self::STATE_TAX;
+            $taxPercent = $this->stateTax;
             $taxes = ($qty * $taxPercent) * $taxPercent / 100;
         }
 
@@ -458,7 +458,7 @@ class StoreController extends Controller
             $cart['items'][$shippingDate] = [];
             $cart['deliveries'][$shippingDate] = [
                 'method' => 'Delivery',
-                'cost' => self::DELIVERY_COST
+                'cost' => $this->deliveryCost
             ];
         }
 
@@ -528,7 +528,7 @@ class StoreController extends Controller
                 if (isset($cart['deliveries'][$shippingDate])) {
                     $cart['deliveries'][$shippingDate] = [
                         'method' => $method,
-                        'cost' => ('Delivery' === $method) ? self::DELIVERY_COST : 0
+                        'cost' => ('Delivery' === $method) ? $this->deliveryCost : 0
                     ];
                 }
             }

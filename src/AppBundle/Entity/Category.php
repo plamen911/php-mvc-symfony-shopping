@@ -154,7 +154,7 @@ class Category
     /**
      * @return int
      */
-    public function getDepartmentId(): int
+    public function getDepartmentId()
     {
         return $this->departmentId;
     }
@@ -162,7 +162,7 @@ class Category
     /**
      * @param int $departmentId
      */
-    public function setDepartmentId(int $departmentId)
+    public function setDepartmentId($departmentId)
     {
         $this->departmentId = $departmentId;
     }

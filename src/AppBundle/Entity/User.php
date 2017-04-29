@@ -542,7 +542,7 @@ class User implements AdvancedUserInterface
      * @param array $roles
      * @return $this
      */
-    public function setRoles(array $roles)
+    public function setRoles($roles)
     {
         $this->roles = $roles;
         return $this;
@@ -708,7 +708,7 @@ class User implements AdvancedUserInterface
     /**
      * @param bool $enabled
      */
-    public function setEnabled(bool $enabled)
+    public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
     }
