@@ -3,6 +3,8 @@
 
 A Symfony project created on March 26, 2017, 5:14 pm.
 
+App URL: http://phpmvc.lynxlake.org/
+
 ```
 php bin/console server:run
 php bin/console server:run localhost:3000
