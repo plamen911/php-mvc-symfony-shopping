@@ -39,6 +39,7 @@
                             {% endif %}
                             $<span id="price-label">{{ product.price|number_format(2, '.', ',') }}</span>
                         </p>
+                        <p>Availability: {{ product.qty }}</p>
                     </div>
                 </div>
                 <div class="large-2 columns">
