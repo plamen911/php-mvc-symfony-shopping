@@ -48,9 +48,6 @@ class AdminController extends Controller
             }
         }
 
-        dump($request);
-        //$request->
-
         /**
          * @var \AppBundle\Entity\User[] $users
          */
