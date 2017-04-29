@@ -726,3 +726,8 @@ h4.subheader {
     text-decoration: line-through;
     color: #900;
 }
+
+.banned td {
+    text-decoration: line-through;
+    color: #666;
+}

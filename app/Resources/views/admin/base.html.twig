@@ -104,15 +104,7 @@
         </ul>
         <section class="top-bar-section">
             {% if app.user %}
-                <ul class="left">
-                    <li><a href="{{ path('store_index') }}">Menu</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{{ path('department_index') }}">Manage Store</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{{ path('account_orders') }}">Orders</a></li>
-                    <li class="divider"></li>
-                    <li><a href="{{ path('account_profile') }}">My Account</a></li>
-                </ul>
+                {% include (':common:protected_nav_menu.html.twig') %}
             {% endif %}
             <ul class="right">
                 <li class="divider"></li>

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\AppBundle;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\Role\RoleInterface;
@@ -89,6 +90,22 @@ class Role implements RoleInterface
     public function getRole()
     {
         return $this->getName();
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
+
+    /**
+     * @param ArrayCollection $users
+     */
+    public function setUsers(ArrayCollection $users)
+    {
+        $this->users = $users;
     }
 }
 

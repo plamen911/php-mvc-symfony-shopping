@@ -1,6 +1,9 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Utils\{
+    PaginatorHelper
+};
 
 /**
  * UserRepository

@@ -8,6 +8,8 @@
 
 namespace AppBundle\Utils;
 
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class PaginatorHelper
@@ -24,7 +26,7 @@ class PaginatorHelper
      *     $paginator->count() # Count of ALL posts (ie: `20` posts)
      *     $paginator->getIterator() # ArrayIterator
      *
-     * @param Doctrine\ORM\Query $dql DQL Query Object
+     * @param Query|QueryBuilder $dql DQL Query Object
      * @param integer $page Current page (defaults to 1)
      * @param integer $limit The total number per page (defaults to 5)
      *

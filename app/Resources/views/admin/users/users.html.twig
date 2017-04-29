@@ -1,0 +1,45 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Store Users{% endblock %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumbs">
+        <li class="current"><a href="{{ path('admin_users') }}">Users</a></li>
+    </ul>
+{% endblock %}
+
+{% block body %}
+    <section id="adminProductsDetailViewContainer" class="admin-content-container">
+        <div class="row">
+            <table class="large-12">
+                <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>E-mail</th>
+                    <th>Role(s)</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr{% if user.banned %} class="banned"{% endif %}>
+                        <td>{{ user.firstName }}</td>
+                        <td>{{ user.lastName }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.roles|join(', ') }}</td>
+                        <td>{% if app.user.id != user.id %}
+                                {% if user.banned %}
+                                    <a href="{{ path('admin_users') }}?unban={{ user.id }}">Unban</a>
+                                {% else %}
+                                    <a href="{{ path('admin_users') }}?ban={{ user.id }}">Ban</a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}

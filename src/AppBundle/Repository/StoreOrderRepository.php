@@ -21,8 +21,9 @@ class StoreOrderRepository extends \Doctrine\ORM\EntityRepository
      *
      * @param array $params
      * @param integer $page The current page (passed from controller)
+     * @param int $limit
      *
-     * @return \Doctrine\ORM\Tools\Pagination\Paginator
+     * @return Paginator
      */
     public function search(array $params, $page = 1, $limit = 20)
     {

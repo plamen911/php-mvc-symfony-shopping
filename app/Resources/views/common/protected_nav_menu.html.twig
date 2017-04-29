@@ -7,10 +7,10 @@
     <li class="divider"></li>
     {% if app.user.isAdmin or app.user.isEditor %}
         <li class="divider"></li>
-        <li><a href="#">Users</a></li>
+        <li><a href="{{ path('admin_users') }}">Users</a></li>
         <li class="divider"></li>
         {% if app.user.isAdmin %}
-            <li><a href="#">Editors</a></li>
+            <li><a href="{{ path('admin_editors') }}">Editors</a></li>
             <li class="divider"></li>
         {% endif %}
     {% endif %}
