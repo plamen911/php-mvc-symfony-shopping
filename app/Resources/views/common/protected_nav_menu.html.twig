@@ -1,8 +1,10 @@
 <ul class="left">
     <li><a href="{{ path('store_index') }}">Menu</a></li>
     <li class="divider"></li>
-    <li><a href="{{ path('department_index') }}">Manage Store</a></li>
-    <li class="divider"></li>
+    {% if app.user.isAdmin or app.user.isEditor %}
+        <li><a href="{{ path('department_index') }}">Manage Store</a></li>
+        <li class="divider"></li>
+    {% endif %}
     <li><a href="{{ path('account_orders') }}">Orders</a></li>
     <li class="divider"></li>
     {% if app.user.isAdmin or app.user.isEditor %}
