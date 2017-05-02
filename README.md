@@ -32,6 +32,44 @@ composer require symfony/var-dumper
 which composer
 ```
 
+```
+ssh ubuntu@192.168.100.100
+cd ~/.ssh/
+ls
+vim authorized_keys
+ssh-keygen -b 4096 -t rsa
+ls | grep deploy
+cat deploy      # private key
+cat deploy.pub  # public key
+cat authorized_keys
+cd /var/www/
+git --version
+cd /var/logs/
+vim prod.log
+git log --oneline
+git checkout 9589927
+```
+
+```
+vim deploy.sh
+```
+
+```
+#!/bin/sh
+git pull origin master
+composer install
+php bin/console doctrine:schema:update --force --env=prod
+php bin/console cache:clear --env=prod
+php bin/console assets:install --env=prod
+```
+
+```
+sh deploy.sh
+```
+
+to quit Vim type `:q<Enter>` to exit
+
+
 http://symfony.com/doc/current/bundles/FOSUserBundle/index.html
 https://sonata-project.org/bundles
 http://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html
