@@ -67,8 +67,22 @@ php bin/console assets:install --env=prod
 sh deploy.sh
 ```
 
-to quit Vim type `:q<Enter>` to exit
+https://deployer.org/
 
+```
+dep deploy
+composer require deployer/deployer --dev
+php vendor/bin/dep init
+php vendor/bin/dep deploy
+```
+
+phpmd/phpmd - PHPMD - PHP Mess Detector - https://phpmd.org/about.html
+
+squizlabs/php_codesniffer
+
+http://www.php-fig.org/psr/psr-2/ - PSR-2: Coding Style Guide
+
+to quit Vim type `:q<Enter>` to exit OR `:wq<Enter>`
 
 http://symfony.com/doc/current/bundles/FOSUserBundle/index.html
 https://sonata-project.org/bundles

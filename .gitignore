@@ -23,4 +23,5 @@ phpunit.xml.dist
 /web/uploads/lg/
 /web/uploads/th/
 /web/uploads/originals/
+deploy.php
 
