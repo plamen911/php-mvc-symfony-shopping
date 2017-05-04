@@ -9,3 +9,7 @@ services:
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
     app.common:
         class: AppBundle\Utils\Common
+    listener.notfound:
+        class: AppBundle\EventListener\HttpNotFoundListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
